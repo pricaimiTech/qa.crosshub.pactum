@@ -1,0 +1,85 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "nodenext",
+    "module": "nodenext",
+    "target": "es2022",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "types": ["node", "mocha"],
+    "paths": {
+      "@core/*": ["./core/src/*"],
+      "@core/constants": ["./core/src/constants"],
+      "@core/services/*": ["./core/src/services/*"],
+      "@core/utils/*": ["./core/src/utils/*"],
+      "@core/interfaces/*": ["./core/src/interface/*"],
+      "@core/data/*": ["./core/src/data/*"],
+      "@core/builders/*": ["./core/src/dataBuilder/*"],
+      "@core/business/*": ["./core/src/business/*"],
+      "@app/constants": ["./constants"],
+      "@shared-data/*": ["./data/*"],
+      "@preSetup/*": ["./preSetup/*"],
+
+      "@addons/*": ["./addons/*"],
+      "@addons-data/*": ["./addons/data/*"],
+      "@addons-tests/*": ["./addons/tests/*"],
+
+      "@appointments/*": ["./appointments/*"],
+      "@appointments-data/*": ["./appointments/data/*"],
+      "@appointments-tests/*": ["./appointments/tests/*"],
+
+      "@audit/*": ["./audit/*"],
+      "@audit-data/*": ["./audit/data/*"],
+      "@audit-tests/*": ["./audit/tests/*"],
+
+      "@auth/*": ["./auth/*"],
+      "@auth-data/*": ["./auth/data/*"],
+      "@auth-tests/*": ["./auth/tests/*"],
+
+      "@banners/*": ["./banners/*"],
+      "@banners-data/*": ["./banners/data/*"],
+      "@banners-tests/*": ["./banners/tests/*"],
+
+      "@billing/*": ["./billing/*"],
+      "@billing-data/*": ["./billing/data/*"],
+      "@billing-tests/*": ["./billing/tests/*"],
+
+      "@branding/*": ["./branding/*"],
+      "@branding-data/*": ["./branding/data/*"],
+      "@branding-tests/*": ["./branding/tests/*"],
+
+      "@catalog/*": ["./catalog/*"],
+      "@catalog-data/*": ["./catalog/data/*"],
+      "@catalog-tests/*": ["./catalog/tests/*"],
+
+      "@dashboard/*": ["./dashboard/*"],
+      "@dashboard-data/*": ["./dashboard/data/*"],
+      "@dashboard-tests/*": ["./dashboard/tests/*"],
+
+      "@forms/*": ["./forms/*"],
+      "@forms-data/*": ["./forms/data/*"],
+      "@forms-tests/*": ["./forms/tests/*"],
+
+      "@groups/*": ["./groups/*"],
+      "@groups-data/*": ["./groups/data/*"],
+      "@groups-tests/*": ["./groups/tests/*"],
+
+      "@people/*": ["./people/*"],
+      "@people-data/*": ["./people/data/*"],
+      "@people-tests/*": ["./people/tests/*"],
+
+      "@plans/*": ["./plans/*"],
+      "@plans-data/*": ["./plans/data/*"],
+      "@plans-tests/*": ["./plans/tests/*"],
+
+      "@privacy/*": ["./privacy/*"],
+      "@privacy-data/*": ["./privacy/data/*"],
+      "@privacy-tests/*": ["./privacy/tests/*"],
+
+      "@tenants/*": ["./tenants/*"],
+      "@tenants-data/*": ["./tenants/data/*"],
+      "@tenants-tests/*": ["./tenants/tests/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}

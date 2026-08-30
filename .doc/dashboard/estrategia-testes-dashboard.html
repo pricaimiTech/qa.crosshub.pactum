@@ -1,0 +1,1550 @@
+<title>Estratégia de Testes do Dashboard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#F5F6F9; --surface:#FFFFFF; --surface-2:#EEF0F5;
+  --ink:#141A26; --ink-2:#4B5768; --ink-3:#77828F; --rule:#D9DDE6;
+  --accent:#2F49D1; --accent-soft:#E5E9FB;
+  --pass:#0E6F4E; --pass-soft:#DCF0E7;
+  --warn:#9A5B00; --warn-soft:#FAECD6;
+  --fail:#A9231C; --fail-soft:#FADFDD;
+  --shadow:0 1px 2px rgba(20,26,38,.05),0 8px 24px -16px rgba(20,26,38,.25);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0D111A; --surface:#141A26; --surface-2:#1C2433;
+    --ink:#EDF0F5; --ink-2:#A9B3C2; --ink-3:#7C8798; --rule:#2A3444;
+    --accent:#8D9DF5; --accent-soft:#1E2745;
+    --pass:#6FD3A8; --pass-soft:#12291F;
+    --warn:#E6B15E; --warn-soft:#2C2113;
+    --fail:#F19189; --fail-soft:#2E1614;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -18px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0D111A; --surface:#141A26; --surface-2:#1C2433;
+  --ink:#EDF0F5; --ink-2:#A9B3C2; --ink-3:#7C8798; --rule:#2A3444;
+  --accent:#8D9DF5; --accent-soft:#1E2745;
+  --pass:#6FD3A8; --pass-soft:#12291F;
+  --warn:#E6B15E; --warn-soft:#2C2113;
+  --fail:#F19189; --fail-soft:#2E1614;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -18px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font-family:"Source Serif 4",Georgia,serif;font-size:17px;line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px 96px;display:flex;flex-direction:column;gap:44px}
+
+header.top{padding:56px 0 0;display:flex;flex-direction:column;gap:22px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0}
+h1{font-family:Archivo,system-ui,sans-serif;font-weight:700;font-size:clamp(2.1rem,5.4vw,3.3rem);line-height:1.03;letter-spacing:-.022em;margin:0;text-wrap:balance}
+.lede{margin:0;max-width:66ch;color:var(--ink-2);font-size:1.09rem}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:2px;overflow:hidden}
+.meta div{background:var(--surface);padding:12px 14px}
+.meta dt{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin:0 0 3px}
+.meta dd{margin:0;font-size:.95rem;font-weight:600;font-family:Archivo,sans-serif}
+
+section{display:flex;flex-direction:column;gap:18px}
+h2{font-family:Archivo,sans-serif;font-weight:600;font-size:1.55rem;letter-spacing:-.014em;margin:0;padding-bottom:10px;border-bottom:2px solid var(--ink);text-wrap:balance;scroll-margin-top:16px}
+h3{font-family:Archivo,sans-serif;font-weight:600;font-size:1.12rem;margin:0;letter-spacing:-.008em}
+h4{font-family:Archivo,sans-serif;font-weight:600;font-size:1rem;margin:0;color:var(--ink-2)}
+p{margin:0}
+.note{color:var(--ink-2);font-size:.97rem;max-width:74ch}
+ul,ol{margin:0;padding-left:1.25rem;display:flex;flex-direction:column;gap:7px}
+li{font-size:.98rem}
+
+.verdict{background:var(--surface);border:1px solid var(--rule);border-left:4px solid var(--accent);border-radius:2px;padding:22px 24px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
+.verdict strong{font-family:Archivo,sans-serif;font-size:1.15rem}
+.scoreboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:12px}
+.score{background:var(--surface);border:1px solid var(--rule);border-radius:2px;padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+.score b{font-family:Archivo,sans-serif;font-size:1.9rem;line-height:1;font-variant-numeric:tabular-nums}
+.score span{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.score.ok b{color:var(--pass)}
+.score.warn b{color:var(--warn)}
+.score.bad b{color:var(--fail)}
+
+.pill{display:inline-flex;align-items:center;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:600;padding:3px 8px;border-radius:2px;white-space:nowrap}
+.pill.pass{background:var(--pass-soft);color:var(--pass)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.fail{background:var(--fail-soft);color:var(--fail)}
+.pill.info{background:var(--accent-soft);color:var(--accent)}
+.pill.unit{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--rule)}
+.pill.api{background:var(--accent-soft);color:var(--accent)}
+.pill.e2e{background:var(--warn-soft);color:var(--warn)}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--rule);border-radius:2px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:680px;font-size:.93rem}
+th,td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);background:var(--surface-2);font-weight:600;white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+td.id{font-family:"IBM Plex Mono",monospace;font-size:.84rem;white-space:nowrap;color:var(--accent);font-weight:500}
+td.prio{white-space:nowrap;width:1%}
+td.dim{font-family:Archivo,sans-serif;font-weight:600;white-space:nowrap}
+
+/* índice */
+nav.toc{background:var(--surface);border:1px solid var(--rule);border-radius:2px;padding:20px 22px;box-shadow:var(--shadow)}
+nav.toc ol{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px 22px}
+nav.toc li{display:flex;gap:9px;align-items:baseline;font-size:.95rem}
+nav.toc .n{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-3)}
+nav.toc a{text-decoration:none;font-family:Archivo,sans-serif;font-weight:600}
+nav.toc a:hover{text-decoration:underline}
+
+/* bloco de módulo */
+.module{background:var(--surface);border:1px solid var(--rule);border-radius:2px;box-shadow:var(--shadow);padding:26px 26px 28px;display:flex;flex-direction:column;gap:18px}
+.module.risk-alto{border-left:4px solid var(--fail)}
+.module.risk-medio{border-left:4px solid var(--warn)}
+.module.risk-baixo{border-left:4px solid var(--accent)}
+.modmeta{margin:0;display:grid;grid-template-columns:minmax(130px,auto) 1fr;gap:5px 18px;font-size:.92rem;background:var(--surface-2);padding:14px 16px;border-radius:2px}
+.modmeta dt{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);padding-top:.32em}
+.modmeta dd{margin:0}
+.mhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-bottom:10px;border-bottom:2px solid var(--ink)}
+.mhead h2{border:none;padding:0;flex:1 1 260px}
+
+.callout{background:var(--accent-soft);border:1px solid var(--rule);border-radius:2px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;font-size:.96rem}
+.callout.danger{background:var(--fail-soft)}
+.callout.plain{background:var(--surface-2)}
+.callout h4{margin-bottom:2px}
+pre.ascii{font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;background:var(--surface-2);border:1px solid var(--rule);border-radius:2px;padding:16px 18px;overflow-x:auto;margin:0;color:var(--ink-2)}
+code{font-family:"IBM Plex Mono",monospace;font-size:.86em;background:var(--surface-2);padding:1px 5px;border-radius:2px}
+a{color:var(--accent)}
+footer{border-top:1px solid var(--rule);padding-top:20px;color:var(--ink-3);font-size:.88rem;display:flex;flex-direction:column;gap:6px}
+
+@media (max-width:640px){
+  .modmeta{grid-template-columns:1fr;gap:2px 0}
+  .modmeta dd{margin-bottom:8px}
+  .module{padding:20px 16px 22px}
+}
+@media print{
+  :root{--ground:#fff;--surface:#fff;--surface-2:#f4f4f6;--shadow:none}
+  body{font-size:10.5pt}
+  .wrap{max-width:none;gap:26px;padding-bottom:0}
+  .module{break-inside:avoid-page;box-shadow:none}
+  table{min-width:0;font-size:8.6pt}
+  th,td{padding:5px 7px}
+  nav.toc{break-after:page}
+  header.top{padding-top:0}
+}
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <p class="eyebrow">Estratégia de testes · Dashboard do tenant</p>
+  <h1>Estratégia de Testes do Dashboard</h1>
+  <p class="lede">Análise de risco e plano de cobertura para os onze módulos do console do tenant (<code>apps/dashboard</code> + rotas <code>/dashboard/**</code> da API), construída sobre as especificações PRD/ADR de <code>docs/dash/</code>. Aplica <b>SFDPOT</b> para descobrir o que testar e <b>RCRCRC</b> para decidir em que ordem, e entrega, por módulo, cenários priorizados de API e de E2E prontos para virar backlog de automação.</p>
+  <dl class="meta">
+    <div><dt>Escopo</dt><dd>Dashboard (console do tenant)</dd></div>
+    <div><dt>Base</dt><dd>feat/fase-2-codemod-cor-dashboard @ 6a943fb</dd></div>
+    <div><dt>Fonte</dt><dd>docs/dash/ · 13 arquivos</dd></div>
+    <div><dt>Data</dt><dd>29/08/2026</dd></div>
+    <div><dt>Autoria</dt><dd>Priscila Caimi</dd></div>
+    <div><dt>Método</dt><dd>SFDPOT + RCRCRC (Bach)</dd></div>
+  </dl>
+</header>
+
+<section>
+  <h2 id="panorama">Panorama</h2>
+  <div class="scoreboard">
+    <div class="score"><b>11</b><span>módulos</span></div>
+    <div class="score"><b>80</b><span>endpoints /dashboard</span></div>
+    <div class="score bad"><b>0</b><span>testes hoje</span></div>
+    <div class="score ok"><b>46</b><span>casos unitários</span></div>
+    <div class="score ok"><b>159</b><span>casos de API</span></div>
+    <div class="score ok"><b>31</b><span>jornadas E2E</span></div>
+    <div class="score bad"><b>111</b><span>casos P0</span></div>
+  </div>
+  <div class="verdict">
+    <strong>O Dashboard é a maior superfície do produto e a única sem nenhuma cobertura automatizada.</strong>
+    <p>São onze módulos, oitenta endpoints sob <code>/dashboard/**</code> e um front concentrado em <code>apps/dashboard/app/dashboard-console.tsx</code> — <b>2.950 linhas só no arquivo raiz</b>, mais ~23.400 linhas somando todos os painéis de <code>app/</code>. O <code>package.json</code> do app traz apenas o placeholder <code>"test": "node --test"</code>, e nenhuma das sete specs de <code>apps/api/test/</code> toca uma rota de tenant: elas cobrem <code>admin/*</code>, RLS e autenticação.</p>
+    <p>Ao mesmo tempo, a branch atual acabou de <b>extrair quatro painéis</b> de dentro do console (home, privacy, branding, shop) e reestilizá-los com a biblioteca — a maior movimentação de código do dashboard em toda a história do repositório, feita sem rede de proteção. Este documento parte daí: prioriza o que está quente, ancora cada caso em uma regra literal da documentação do módulo e diz explicitamente o que <i>não</i> dá para testar hoje.</p>
+  </div>
+</section>
+
+<section>
+  <h2 id="como-ler">Como ler este documento</h2>
+  <p class="note">Duas heurísticas de James Bach, usadas para responder perguntas diferentes. Elas não competem — a primeira gera a lista, a segunda ordena a lista.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Heurística</th><th>Pergunta que responde</th><th>Dimensões</th><th>Onde aparece aqui</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="dim">SFDPOT</td>
+        <td><b>O que testar?</b> Varre o produto por ângulos independentes para que nenhuma classe de risco passe despercebida.</td>
+        <td><i>Structure</i> (estrutura) · <i>Function</i> (função) · <i>Data</i> (dados) · <i>Platform</i> (plataforma) · <i>Operations</i> (operação) · <i>Time</i> (tempo)</td>
+        <td>Uma tabela de seis linhas por módulo</td>
+      </tr>
+      <tr>
+        <td class="dim">RCRCRC</td>
+        <td><b>Em que ordem testar?</b> Prioriza regressão quando não há tempo nem cobertura para rodar tudo.</td>
+        <td><i>Recent</i> (recente) · <i>Core</i> (essencial) · <i>Risky</i> (arriscado) · <i>Configuration-sensitive</i> (sensível a configuração) · <i>Conformance</i> (conformidade) · <i>Complex</i> (complexo)</td>
+        <td>Uma tabela global e uma por módulo</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="callout plain">
+    <h4>Convenções</h4>
+    <ul>
+      <li><b>Prioridade.</b> <span class="pill fail">P0</span> bloqueia o release — regra de negócio, dinheiro, permissão ou isolamento de tenant. <span class="pill warn">P1</span> degrada a operação sem impedi-la. <span class="pill info">P2</span> é polimento e conveniência.</li>
+      <li><b>Camada.</b> Cada caso carrega a etiqueta da camada em que deve ser implementado. <span class="pill unit">UNIT</span> é teste de método — função pura, sem banco e sem HTTP, escrito junto do código que ele prova. <span class="pill api">API</span> é teste funcional no endpoint, com banco real e token de verdade. <span class="pill e2e">E2E</span> é o que será automatizado pela interface, atravessando Dashboard, API e app do cliente. A etiqueta não é sugestão: um caso etiquetado UNIT que só existe como teste de API custa segundos a mais por execução e não aponta a linha que quebrou.</li>
+      <li><b>IDs.</b> <code>UNIT-&lt;MOD&gt;-nn</code> para teste de método, <code>API-&lt;MOD&gt;-nn</code> para contrato de API e <code>E2E-&lt;MOD&gt;-nn</code> para jornada de ponta a ponta. A coluna <b>Relação</b> das tabelas unitárias aponta o caso de API que aquele teste de método sustenta — os dois não se substituem: o unitário prova a aritmética, o de API prova que ela chegou na resposta. A coluna <b>Doc</b> rastreia o ID de QA que já existe na especificação do módulo (<code>AG-15</code>, <code>F-14</code>, <code>C-11</code>…), para que este documento não crie uma numeração paralela.</li>
+      <li><b>Rastreabilidade.</b> Todo caso P0 nasce de uma regra escrita em <code>docs/dash/</code>. Quando o caso é novo — descoberto pela heurística e não previsto na doc — ele aparece marcado <span class="pill info">novo</span>.</li>
+    </ul>
+  </div>
+</section>
+
+<nav class="toc">
+  <h3 style="margin-bottom:14px">Módulos, em ordem de prioridade</h3>
+  <ol>
+    <li><span class="n">01</span><a href="#m-agendamentos">Agendamentos</a></li>
+    <li><span class="n">02</span><a href="#m-formularios">Formulários</a></li>
+    <li><span class="n">03</span><a href="#m-lgpd">Privacidade e LGPD</a></li>
+    <li><span class="n">04</span><a href="#m-clientes">Clientes</a></li>
+    <li><span class="n">05</span><a href="#m-home">Home</a></li>
+    <li><span class="n">06</span><a href="#m-grupos">Grupos</a></li>
+    <li><span class="n">07</span><a href="#m-catalogo">Catálogo</a></li>
+    <li><span class="n">08</span><a href="#m-marca">Marca e aparência</a></li>
+    <li><span class="n">09</span><a href="#m-banners">Banners</a></li>
+    <li><span class="n">10</span><a href="#m-menu">Menu e navegação</a></li>
+    <li><span class="n">11</span><a href="#m-anonimizacao">Anonimização</a></li>
+  </ol>
+  <p class="note" style="margin-top:16px">Antes deles: <a href="#situacao">situação atual</a> · <a href="#transversal">análise transversal</a> · <a href="#rcrcrc-global">priorização global</a>. Depois: <a href="#piramide">pirâmide</a> · <a href="#sequencia">sequência</a> · <a href="#saida">critérios de saída</a>.</p>
+</nav>
+
+<section>
+  <h2 id="situacao">1. Situação atual e pré-requisitos</h2>
+  <p class="note">O que existe hoje de infraestrutura de teste no monorepo, levantado diretamente dos arquivos de configuração.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Alvo</th><th>Runner</th><th>Configuração</th><th>Testes hoje</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">apps/api</td><td>Jest 29 + ts-jest + <b>supertest 7</b></td><td><code>apps/api/jest.config.cjs</code> — <code>testRegex: .*\.spec\.ts$</code>, ambiente node</td><td>7 specs — <b>nenhuma cobre <code>/dashboard/**</code></b></td></tr>
+      <tr><td class="dim">apps/admin</td><td>Vitest 4 + RTL + jsdom + MSW</td><td><code>apps/admin/vitest.config.mts</code> — projects <code>unit</code> e <code>ui</code></td><td>13 arquivos (9 em <code>lib/</code>, 4 em <code>tests/</code>)</td></tr>
+      <tr><td class="dim">apps/dashboard</td><td>— placeholder <code>node --test</code></td><td>nenhuma</td><td><b>0</b></td></tr>
+      <tr><td class="dim">E2E</td><td>—</td><td>nenhum <code>playwright.config.*</code> no repositório</td><td><b>0</b></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>1.1 O que já dá para reaproveitar</h3>
+  <ul>
+    <li><b><code>apps/api/test/admin-contract.integration.spec.ts</code></b> — o padrão de teste de contrato a copiar: guarda de ambiente <code>describeIntegration</code>, bootstrap com <code>Test.createTestingModule({ imports: [AppModule] })</code> e semeadura por <code>pg.Pool</code> de superusuário com slugs únicos por rodada (<code>it-${Date.now().toString(36)}</code>).</li>
+    <li><b><code>apps/api/test/rls.integration.spec.ts</code></b> — prova de isolamento multi-tenant conectando como <code>application_user</code> (RLS aplicada) contra <code>postgres</code> (RLS ignorada). Cada módulo deve ter um caso análogo.</li>
+    <li><b><code>docs/test-strategy/estrategia-testes-admin.md</code></b> — a estratégia irmã do <code>apps/admin</code>. As camadas unitária e de componentes descritas lá valem aqui sem alteração de método.</li>
+  </ul>
+
+  <h3>1.2 Autenticação nos testes de API</h3>
+  <p class="note">Três audiências de JWT convivem na API, todas HS256 assinadas com <code>JWT_ACCESS_SECRET</code>, TTL de 15 minutos e <b>sem endpoint de refresh</b>. Os guards leem apenas <code>Authorization: Bearer &lt;token&gt;</code> — <b>não existe header de tenant</b>; o <code>tenantId</code> viaja dentro do token.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Audiência</th><th>Login</th><th>Guard</th><th>Usa para testar</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Tenant admin</td><td><code>POST /auth/platform/tenant/login</code> <code>{ slug, email, password }</code></td><td><code>TenantAuthGuard</code></td><td>Todas as rotas <code>/dashboard/**</code></td></tr>
+      <tr><td class="dim">Cliente final</td><td><code>POST /auth/platform/public/activate</code> e <code>.../public/login</code></td><td><code>EndUserAuthGuard</code></td><td>O outro lado de formulários, reservas e agendamentos (<code>/public/**</code>)</td></tr>
+      <tr><td class="dim">Platform admin</td><td><code>POST /auth/platform/login</code></td><td><code>PlatformAuthGuard</code></td><td>Preparar tenant e add-ons para o cenário</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">Pré-requisito de seed: linha em <code>tenants</code> com <code>status='active'</code> e linha em <code>users</code> com <code>role='tenant_admin'</code>, <code>is_active=true</code> e <code>password_hash</code> Argon2id. O <code>validateAccessToken</code> reconfere <code>isActive</code> e papel <b>a cada requisição</b>, então desativar o admin invalida um token vivo — isso é, por si só, um caso de teste.</p>
+
+  <h3>1.3 Pré-requisitos que ainda não existem</h3>
+  <div class="callout danger">
+    <h4>Sem estes cinco itens, boa parte desta estratégia é intestável</h4>
+    <ul>
+      <li><b>Playwright instalado e configurado.</b> Não há <code>playwright.config.*</code> no repositório. O único vestígio é a dependência em <code>packages/ui</code>, usada apenas por <code>scripts/audit-rendered.mjs</code> para capturas de tela.</li>
+      <li><b>Suíte de specs de tenant em <code>apps/api/test/</code>.</b> Sugestão de organização: um arquivo por módulo (<code>dashboard-appointments.integration.spec.ts</code>, <code>dashboard-forms.integration.spec.ts</code>…), todos sobre o mesmo helper de seed.</li>
+      <li><b>Fábrica de tenant de teste com dois papéis distintos.</b> Um Administrador Principal (<code>is_primary_admin = true</code>) e um administrador comum <b>sem</b> <code>can_view_sensitive_data</code>. Sem esse par, nenhum cenário de LGPD é executável — e LGPD é o eixo de permissão mais transversal do produto.</li>
+      <li><b>Controle do relógio.</b> Janelas de 24 h e 7 dias na Home, limite de cancelamento de 24 h em Agendamentos e retenção em dias no LGPD dependem de tempo. Sem <i>fake timers</i> no backend ou semeadura com datas relativas, esses casos viram testes instáveis.</li>
+      <li><b>Extração da lógica pura para funções testáveis.</b> Hoje quase nada do que esta estratégia etiqueta como <span class="pill unit">UNIT</span> é chamável isoladamente: a aritmética de janelas vive dentro de <code>private async slots(db, …)</code> (<code>appointments.service.ts:72</code>), a distribuição de grupos dentro de <code>create(tenantId, actor, input)</code> (<code>groups.service.ts:156</code>) e as janelas da Home dentro de <code>home(tenantId, actorUserId)</code> (<code>dashboard.service.ts:43</code>) — todas atrás de uma transação. Sem extrair essas funções para módulos sem <code>db</code>, todo caso unitário desta estratégia vira caso de API, que é exatamente o desequilíbrio que se quer corrigir.</li>
+      <li><b>Ambiente com add-on <code>appointment_analytics</code> ligado e desligado.</b> <code>GET /dashboard/appointments/analytics</code> responde <code>400</code> quando o tenant não tem direito — precisa das duas configurações para testar os dois lados.</li>
+    </ul>
+  </div>
+  <div class="callout">
+    <h4>Restrição estrutural do front que muda o desenho dos testes E2E</h4>
+    <p><code>apps/dashboard</code> tem <b>uma única rota, <code>/</code></b>. A navegação entre módulos é estado React (<code>dashboard-console.tsx:357</code>), não roteamento. Consequências diretas:</p>
+    <ul>
+      <li><b>Deep link não existe.</b> Toda jornada E2E precisa partir do login e navegar por cliques — não há como abrir <code>/clientes</code> direto.</li>
+      <li><b>Recarregar a página volta para a Home</b> e descarta a subvisão. Isso é comportamento especificado (Menu, critério 8), não defeito — e por isso vira caso de teste.</li>
+      <li><b>Atalho legítimo:</b> semear <code>sessionStorage</code> com <code>crosshub.tenantToken</code> e <code>crosshub.tenantSlug</code> para pular o login nos cenários que não estão testando o login. Vale lembrar do TTL de 15 minutos.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2 id="transversal">2. Análise transversal</h2>
+  <p class="note">Seis eixos que atravessam todos os módulos. Cada um gera um caso repetido em cada bloco — é o custo fixo da cobertura, e ignorá-lo é o jeito mais fácil de deixar um furo de segurança passar.</p>
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Eixo</th><th>Dimensão</th><th>Por que importa</th><th>Como cai nos casos</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="dim">Isolamento multi-tenant</td><td>Data · Risky</td>
+        <td>RLS forçada e chaves compostas <code>(tenant_id, id)</code> em todas as tabelas. Toda especificação de <code>docs/dash/</code> tem pelo menos um item de acesso cruzado (H-01, C-11, G-11, F-14, AG-18).</td>
+        <td>Um caso <code>API-&lt;MOD&gt;-XT</code> por módulo: token do tenant A tocando recurso do tenant B → <code>404</code> ou <code>403</code>, <b>nunca <code>200</code></b>, nunca vazamento parcial em lista.</td>
+      </tr>
+      <tr>
+        <td class="dim">UI não é fronteira de segurança</td><td>Operations · Conformance</td>
+        <td>Afirmado explicitamente em cinco ADRs (Menu, LGPD, Banners, Marca, Catálogo): esconder um botão não é controle de acesso.</td>
+        <td>Todo caso de permissão precisa de variante que <b>ignora a interface</b> e chama a rota direto com supertest. Um teste E2E de botão escondido não substitui isso.</td>
+      </tr>
+      <tr>
+        <td class="dim"><code>canViewSensitiveData</code></td><td>Function · Risky</td>
+        <td>Atravessa Home, Formulários, Clientes e Menu. O filtro é aplicado <b>antes da contagem</b> — logo, o número exibido também muda, não só a lista.</td>
+        <td>Cada módulo afetado testa duas vezes: com autorização e sem. O caso sem autorização confere que o agregado <b>não conta</b> o item oculto.</td>
+      </tr>
+      <tr>
+        <td class="dim">Padrão de upload</td><td>Platform</td>
+        <td>Mesma forma em Clientes, Catálogo, Banners e Marca: banco guarda <code>key</code>, API deriva <code>url</code>, limite de 5 MB, JPEG/PNG/WebP.</td>
+        <td>Bateria comum (tipo inválido, 5 MB + 1 byte, chave de outro tenant) <b>mais</b> um caso da divergência real: <b>Marca remove o ativo anterior; Banners não remove</b> e deixa órfão.</td>
+      </tr>
+      <tr>
+        <td class="dim">Paginação ausente</td><td>Platform · Complex</td>
+        <td>Só <code>GET /dashboard/forms/submissions</code> e <code>GET /dashboard/forms/:id/submissions</code> paginam (<code>pageSize</code> máx. 100). Pessoas, formulários, grupos, produtos, reservas e atribuições retornam a lista integral.</td>
+        <td>Caso de volume por módulo: semear 500 registros e medir. Não é performance por vaidade — é a diferença entre um tenant grande usar o produto ou não.</td>
+      </tr>
+      <tr>
+        <td class="dim">Fuso horário</td><td>Time</td>
+        <td>Fuso do tenant com fallback <code>America/Sao_Paulo</code>. Governa as janelas de 24 h e 7 dias da Home, a geração de horários e o limite de 24 h para cancelamento.</td>
+        <td>Casos de borda no limite: 23 h 59 min e 24 h 01 min; e um tenant em fuso diferente para provar que a comparação não usa UTC nem o relógio do servidor.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2 id="rcrcrc-global">3. Priorização global — RCRCRC</h2>
+  <p class="note">As áreas que pontuam em cada dimensão, com a evidência que sustenta a classificação. O histórico de commits e a contagem de alterações por diretório foram consultados diretamente no repositório.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>Áreas do dashboard</th><th>Evidência</th><th>Peso</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="dim">Recent</td>
+        <td>Painéis extraídos do console · Agendamentos · Add-ons</td>
+        <td><code>dashboard-console.tsx</code> sofreu quatro extrações consecutivas <b>nesta branch</b> (<code>df6558a</code> → <code>6a943fb</code>: home, privacy, branding, shop) mais o codemod de cor <code>45ccb1b</code> e <code>66cf5ff</code> (<code>@layer base</code>). <code>apps/api/src/appointments</code> é o backend mais recente (8 commits, 14/08). <code>a9f448c fix: importar AuthModule no AddonsModule</code> mexeu na fiação de autenticação do gate de add-on.</td>
+        <td><span class="pill fail">Alto</span></td>
+      </tr>
+      <tr>
+        <td class="dim">Core</td>
+        <td>Login do tenant → Home → Clientes → Formulários</td>
+        <td>Sem essa linha o produto não entrega nada: é como o tenant cadastra quem atende e coleta informação. <code>apps/api/src/people</code> e <code>src/auth</code> lideram o histórico com 11 commits cada.</td>
+        <td><span class="pill fail">Alto</span></td>
+      </tr>
+      <tr>
+        <td class="dim">Risky</td>
+        <td>Agendamentos · LGPD · isolamento de tenant</td>
+        <td>Agendamentos concentra o único tratamento explícito de concorrência do produto (advisory lock por <code>tenant + serviço + profissional + início</code>) e uma máquina de sete estados. LGPD decide quem lê dado sensível, com <code>403</code> e <code>409</code> exigidos por contrato. Falha de RLS vaza dado entre clientes.</td>
+        <td><span class="pill fail">Alto</span></td>
+      </tr>
+      <tr>
+        <td class="dim">Configuration-sensitive</td>
+        <td>Agendamentos · Formulários · Banners · Catálogo</td>
+        <td><code>approval_mode</code>, <code>professional_selection_mode</code>, <code>audience_mode</code>, <code>submission_mode</code>, retenção de 1 a 3650 dias, carrossel (intervalo, altura, indicadores), gate do add-on <code>appointment_analytics</code> e o e-mail Resend que só dispara com <code>contact_email</code> + <code>RESEND_API_KEY</code> + <code>EMAIL_FROM</code>. Cada chave dessas dobra o espaço de teste.</td>
+        <td><span class="pill warn">Médio</span></td>
+      </tr>
+      <tr>
+        <td class="dim">Conformance</td>
+        <td>LGPD · Agendamentos · contrato Swagger</td>
+        <td>As especificações exigem <b>mensagens literais</b> ("Você não possui a permissão para visualizar respostas sensíveis.", "Para realizar outro agendamento neste dia, entre em contato com a administração.", "Horário indisponível."). O contrato publicado em <code>/docs-json</code> precisa bater com as rotas reais.</td>
+        <td><span class="pill warn">Médio</span></td>
+      </tr>
+      <tr>
+        <td class="dim">Complex</td>
+        <td>Agendamentos · wizard de Grupos · wizard de Formulários</td>
+        <td>Agendamentos é a especificação mais extensa de <code>docs/dash/</code>. O wizard de Grupos tem distribuição sequencial com <b>descarte silencioso de excedente</b>. O de Formulários tem quatro passos e substituição integral do conjunto de perguntas.</td>
+        <td><span class="pill warn">Médio</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="callout">
+    <h4>Cruzamento das dimensões</h4>
+    <p><b>Agendamentos pontua em quatro das seis dimensões</b> — Recent, Risky, Configuration-sensitive e Complex — e por isso abre este documento. É onde uma falha custa mais caro: um horário vendido duas vezes é um cliente na porta sem atendimento.</p>
+    <p>Mas o risco <i>imediato</i>, o que decide se esta branch pode ser mesclada, é outro: a <b>regressão dos quatro painéis extraídos do console</b> (Recent × Core). Extrair quatro painéis de um console de milhares de linhas sem nenhum teste é a operação mais perigosa em curso, e ela não tem nada a ver com regra de negócio — é fiação de props e token de cor. Daí o caso <code>E2E-REG-01</code> ser tratado como pré-condição de merge, não como item de backlog.</p>
+    <p><b>Ordem de ataque:</b> (1) <code>E2E-REG-01</code> e os P0 de Agendamentos e LGPD; (2) o núcleo Clientes/Formulários; (3) o resto.</p>
+  </div>
+</section>
+
+<section class="module risk-alto" id="m-agendamentos">
+  <div class="mhead"><h2>1. Agendamentos</h2><span class="pill fail">Risco alto</span><span class="pill info">Recent · Risky · Config · Complex</span></div>
+  <dl class="modmeta">
+    <dt>Especificação</dt><dd><code>docs/dash/agendamentos/prd-adr-especificacao-agendamentos-v2.md</code></dd>
+    <dt>API</dt><dd><code>/dashboard/appointments/**</code> (~26 rotas) e <code>/public/appointments/**</code> · <code>apps/api/src/appointments/appointments.controller.ts</code></dd>
+    <dt>Front</dt><dd><code>apps/dashboard/app/appointments-{agenda,services,professionals,availability,blocks,packages,settings,analytics}-panel.tsx</code></dd>
+    <dt>QA na doc</dt><dd>AG-01 … AG-25</dd>
+  </dl>
+  <p class="note">Serviços executados por profissionais com disponibilidade recorrente, duração, intervalo e capacidade configuráveis — atende tanto agenda individual (fisioterapia, capacidade 1) quanto em grupo (personal, capacidade 5). Inclui financeiro, pacotes de créditos e indicadores premium.</p>
+
+  <h3>SFDPOT</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>O que existe aqui</th><th>Risco</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Structure</td><td>Oito abas no console (agenda, serviços, profissionais, disponibilidade, bloqueios, pacotes, configurações, indicadores), seis tabelas (<code>professionals</code>, <code>appointment_services</code>, <code>service_professionals</code>, <code>professional_availability</code>, <code>appointment_blocks</code>, <code>appointments</code>) mais <code>calendar_holidays</code>, que é <b>global e não tem <code>tenant_id</code></b>.</td><td>Tabela global entre tenants é a única exceção ao modelo de isolamento. Precisa de caso próprio.</td></tr>
+      <tr><td class="dim">Function</td><td>Geração de janelas, distribuição automática de profissional, aprovação manual ou automática, bloqueios, reagendamento (cancelar + criar ligados por <code>rescheduled_from_id</code>), pagamentos, reembolsos e crédito de pacote.</td><td>A janela é <b>calculada, nunca persistida</b> — não há linha no banco para conferir. Erro de aritmética só aparece comparando com a regra escrita.</td></tr>
+      <tr><td class="dim">Data</td><td><code>weekday</code> 0=domingo…6=sábado, turnos <code>morning/afternoon/night</code> (só rótulo visual), duração &gt; 0, intervalo ≥ 0, capacidade inteira &gt; 0, nome de serviço único por tenant sem diferenciar maiúsculas.</td><td>Off-by-one em <code>weekday</code> desloca a agenda inteira em um dia e passa despercebido em teste de dia único.</td></tr>
+      <tr><td class="dim">Platform</td><td>Advisory lock do Postgres, RLS, quatro índices mínimos em <code>appointments</code>, gate de capability <code>appointment_analytics</code>.</td><td>O lock é a única defesa contra <i>overbooking</i>. Se o teste não for concorrente de verdade, ele passa sem provar nada.</td></tr>
+      <tr><td class="dim">Operations</td><td>Admin cria, aprova, recusa, cancela, conclui e marca falta; cliente cria e cancela pelo app. Regras <b>assimétricas</b>: o limite de um por dia e o prazo de 24 h valem só para o cliente.</td><td>Aplicar a regra do cliente ao admin trava a operação do balcão; não aplicá-la ao cliente abre a agenda.</td></tr>
+      <tr><td class="dim">Time</td><td>Prazo de 24 h no fuso do tenant, janelas já passadas omitidas, feriados nacionais fixos e móveis, agenda por dia/semana/mês.</td><td>Feriado móvel (Páscoa, Carnaval, Corpus Christi) muda de data todo ano — teste com data fixa apodrece.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>RCRCRC</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>Evidência</th><th>Peso</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Recent</td><td>Backend mais novo do repositório: 8 commits, o último em 14/08/2026 (<code>3450214 complete saas appointment operations</code>, <code>f779c74 add appointment financials and packages</code>, <code>950169f feat: permitir editar agendamentos aprovados</code>).</td><td><span class="pill fail">Alto</span></td></tr>
+      <tr><td class="dim">Risky</td><td>Único ponto do produto com concorrência tratada. Sete estados com transições irreversíveis. Envolve dinheiro (pagamentos, reembolsos, créditos).</td><td><span class="pill fail">Alto</span></td></tr>
+      <tr><td class="dim">Configuration-sensitive</td><td><code>approval_mode</code> × <code>professional_selection_mode</code> × capacidade × add-on: quatro eixos independentes de configuração.</td><td><span class="pill fail">Alto</span></td></tr>
+      <tr><td class="dim">Complex</td><td>Especificação mais longa de <code>docs/dash/</code>; aritmética de janelas, desempate de distribuição em três níveis, interação entre bloqueio e elegibilidade.</td><td><span class="pill fail">Alto</span></td></tr>
+      <tr><td class="dim">Conformance</td><td>Três mensagens literais exigidas pela especificação.</td><td><span class="pill warn">Médio</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos unitários <span class="pill unit">camada UNIT · teste de método</span></h3>
+  <p class="note">Toda a aritmética do módulo — grade de horários, sobreposição, saldo de crédito e prazo de cancelamento — é cálculo puro hoje escondido atrás de uma transação. Extraída, ela roda em milissegundos e aponta a linha exata que quebrou; pela API, o mesmo erro chega como uma lista de horários errada, sem dizer por quê.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Alvo</th><th>O que prova</th><th>Relação</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">UNIT-AG-01</td><td><code>slots()</code> → extrair <code>generateSlots(regra, duracao, intervalo)</code> · <code>appointments.service.ts:73</code> <span class="pill warn">extrair</span></td><td>08:00–12:00 com 60 min e intervalo 0 devolve exatamente 08:00, 09:00, 10:00, 11:00. 07:00–12:00 com 60 min e intervalo 5 devolve 07:00, 08:05, 09:10, 10:15 — a próxima ultrapassa o fim do turno. Serviço de 90 min em turno de 60 min devolve lista vazia.</td><td>API-AG-01, -02, -03</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-AG-02</td><td>passo do cursor na mesma função · <code>cursor += (duracao + intervalo)</code></td><td>O intervalo entra no <b>passo</b>, não na checagem de cabimento — que usa só a duração. Trocar os dois desloca a grade inteira sem nunca estourar o turno, que é o erro mais difícil de enxergar pela resposta da API.</td><td>API-AG-02</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-AG-03</td><td>predicado de bloqueio <code>block.startsAt &lt; slotEnd &amp;&amp; block.endsAt &gt; cursor</code> <span class="pill warn">extrair</span></td><td>Sobreposição parcial fecha a janela; bloqueio que termina exatamente no início da janela <b>não</b> fecha. As quatro posições relativas (antes, encostando, cruzando, contendo) em quatro asserções.</td><td>API-AG-24, -25</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-AG-04</td><td>predicado de ocupação — conjunto <code>occupying</code> · <code>appointments.service.ts:10</code></td><td>Só <code>pending</code> e <code>approved</code> ocupam vaga. Os sete estados percorridos um a um: <code>rejected</code>, <code>cancelled_by_client</code>, <code>cancelled_by_admin</code>, <code>completed</code> e <code>no_show</code> liberam a capacidade.</td><td>API-AG-17, -18</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-AG-05</td><td><code>at(date, time)</code> · <code>appointments.service.ts:86</code></td><td>A função monta o instante com offset <b>fixo <code>-03:00</code></b> — não lê <code>appointmentSettings.timezone</code>. O teste fixa o comportamento atual e falha no dia em que o fuso do tenant passar a valer, que é o que a especificação descreve. É a divergência mais barata de detectar aqui e a mais cara de detectar pela API.</td><td>API-AG-04 · divergência a decidir</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-AG-06</td><td><code>localDate(value)</code> · <code>appointments.service.ts:87</code></td><td>Mesmo caso: <code>America/Sao_Paulo</code> está escrito no código. É esta função que decide a qual dia um agendamento pertence — logo, quem decide a cota diária do cliente.</td><td>API-AG-07, -08</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-AG-07</td><td><code>dayBoundary(date, timezone, end)</code> · <code>appointments.service.ts:88</code></td><td>A única das três que respeita o fuso recebido. Bordas <code>00:00:00.000</code> e <code>23:59:59.999</code> em três fusos (−03, UTC, +09) e num dia de mudança de horário de verão.</td><td>API-AG-04, API-H-03</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-AG-08</td><td><code>holidays(year)</code> · <code>appointments.service.ts:89</code></td><td>Devolve <b>apenas os nove feriados fixos</b>. Páscoa, Carnaval e Corpus Christi não existem na implementação. O teste registra a ausência — e é ele, não o de API, que deve reprovar quando o caso <code>API-AG-28</code> for escrito contra a especificação.</td><td>API-AG-27, -28</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">UNIT-AG-09</td><td>saldo de <code>restorePackageCredit()</code> → extrair <code>saldoDevolvivel(entradas)</code> · <code>appointments.service.ts:79</code> <span class="pill warn">extrair</span></td><td>Devolução nunca passa do consumido; a segunda devolução do mesmo agendamento resulta em zero; agendamento sem contrato não gera lançamento. Aritmética de crédito conferida sem tocar no razão.</td><td>API-AG-31</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-AG-10</td><td>prazo de cancelamento de <code>cancelByClient()</code> → extrair <code>podeCancelar(inicio, agora, horas)</code> · <code>appointments.service.ts:65</code> <span class="pill warn">extrair</span></td><td>Com <code>cancellationNoticeHours = 24</code>: 23 h 59 min recusa, 24 h 00 min recusa (a comparação é <code>&lt;</code>), 24 h 01 min aceita. E a mensagem interpola o valor configurado, não o literal 24.</td><td>API-AG-19, -20</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos de API <span class="pill api">camada API · funcional no endpoint</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Cenário</th><th>Pré-condição</th><th>Resultado esperado</th><th>Doc</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">API-AG-01</td><td>Geração de janelas sem intervalo</td><td>Serviço 60 min, intervalo 0, capacidade 5; disponibilidade 08:00–12:00</td><td><code>GET .../availability</code> devolve exatamente 4 janelas: 08:00, 09:00, 10:00, 11:00</td><td>AG-01</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AG-02</td><td>Geração de janelas com intervalo</td><td>Serviço 60 min, intervalo 5, capacidade 1; disponibilidade 07:00–12:00</td><td>Exatamente 07:00, 08:05, 09:10, 10:15 — a próxima (11:20) ultrapassaria 12:00 e não é criada</td><td>AG-02</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AG-03</td><td>Janela que não cabe no turno</td><td>Serviço 90 min; turno 08:00–09:00</td><td>Nenhuma janela retornada — <code>fim &lt;= fim do turno</code> nunca é satisfeito</td><td>AG-03</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AG-04</td><td>Janelas já passadas são omitidas</td><td>Consulta do dia corrente às 14:00 no fuso do tenant</td><td>Janelas com início anterior a 14:00 não aparecem; as futuras sim</td><td>AG-04</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-AG-05</td><td>Disponibilidade sobreposta é rejeitada</td><td><code>PUT .../professionals/:id/availability</code> com duas regras no mesmo dia da semana que se cruzam</td><td><code>400</code>; nada persistido — a operação é atômica</td><td>AG-05</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AG-06</td><td>Validação de parâmetros do serviço</td><td>Duração 0; intervalo −1; capacidade 0; fim &lt; início</td><td><code>400</code> em cada variação, com o campo inválido identificado</td><td>AG-06</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-AG-07</td><td>Limite de um agendamento por dia — cliente</td><td>Cliente já tem um <code>pending</code> ou <code>approved</code> na data; tenta outro em serviço diferente</td><td>Bloqueio com a mensagem literal <i>"Para realizar outro agendamento neste dia, entre em contato com a administração."</i></td><td>AG-07</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AG-08</td><td>Cancelado não bloqueia novo agendamento</td><td>Cliente cancelou o agendamento do dia e tenta novo</td><td><code>201</code> — só <code>pending</code> e <code>approved</code> ocupam a cota diária</td><td>AG-07</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AG-09</td><td>Admin não tem limite diário</td><td>Admin cria dois agendamentos para a mesma pessoa na mesma data</td><td>Ambos criados — a regra de um por dia vale só para o cliente</td><td>AG-08</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AG-10</td><td><code>approval_mode: manual</code></td><td>Serviço com aprovação manual; cliente agenda</td><td>Nasce <code>pending</code> e <b>já consome capacidade</b> (ADR-004)</td><td>AG-09</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AG-11</td><td><code>approval_mode: automatic</code></td><td>Serviço com aprovação automática; cliente agenda</td><td>Nasce <code>approved</code>, sem passar por <code>pending</code></td><td>AG-09</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AG-12</td><td>Seleção de profissional <code>automatic</code></td><td>Cliente envia <code>professionalId</code> em serviço com seleção automática</td><td><code>400</code> — a API rejeita a escolha explícita</td><td>AG-23</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-AG-13</td><td>Seleção de profissional <code>required</code></td><td>Cliente omite <code>professionalId</code> em serviço que exige escolha</td><td><code>400</code>, tanto na consulta de disponibilidade quanto na criação</td><td>AG-25</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-AG-14</td><td>Desempate da distribuição automática</td><td>Dois profissionais elegíveis com a mesma ocupação na data</td><td>Vence o de menor <code>sort_order</code>; empatando o <code>sort_order</code>, o menor UUID. Determinístico entre execuções.</td><td>AG-10</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-AG-15</td><td>Distribuição respeita elegibilidade</td><td>Profissional vinculado ao serviço mas sem disponibilidade naquela janela</td><td>Nunca é escolhido — o filtro é "gera exatamente aquela janela", não "está vinculado"</td><td>AG-11</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AG-16</td><td><b>Concorrência na última vaga</b></td><td>Janela com <code>remainingCapacity: 1</code>; duas requisições simultâneas de clientes distintos</td><td>Uma <code>201</code>, outra <code>409 "Horário indisponível."</code>. <b>Nunca duas confirmadas.</b> Repetir 20 vezes para valer.</td><td>AG-15</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AG-17</td><td>Capacidade esgotada</td><td>Serviço com capacidade 5 e cinco agendamentos ativos na janela</td><td>Sexta tentativa → <code>409</code>; a janela some da disponibilidade ou vem com <code>remainingCapacity: 0</code></td><td>AG-14</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AG-18</td><td>Cancelamento libera vaga</td><td>Capacidade esgotada; um agendamento é cancelado</td><td>A janela volta a aceitar agendamento na mesma transação seguinte</td><td>AG-14</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-AG-19</td><td>Prazo de 24 h — cliente</td><td>Cancelamento a 23 h 59 min do início, no fuso do tenant</td><td>Rejeitado. A 24 h 01 min, aceito. Bordas testadas nos dois lados.</td><td>AG-12</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AG-20</td><td>Prazo de 24 h não vale para o admin</td><td>Admin cancela um agendamento que começa em 1 hora</td><td>Aceito</td><td>AG-12</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-AG-21</td><td>Reagendamento encadeia os registros</td><td>Admin chama <code>POST /dashboard/appointments/:id/reschedule</code> com novo horário e motivo</td><td>O original vira cancelado com <code>rescheduled_to_id</code>; o novo aponta <code>rescheduled_from_id</code>. A vaga antiga é liberada e a nova, ocupada. Sem <code>startsAt</code> ou sem motivo, <code>400</code>.</td><td>AG-13</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-AG-22</td><td><b>Reagendamento pelo cliente não existe na API</b></td><td>Chamar <code>POST /public/me/appointments/:id/reschedule</code>, que a especificação documenta</td><td><code>404</code> — a rota <b>não existe</b> no controller. O cliente só cancela. Divergência entre especificação e código, verificada em <code>appointments.controller.ts</code>.</td><td>AG-13</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AG-23</td><td>Transições de estado inválidas</td><td><code>PATCH .../:id</code> tentando <code>completed</code> → <code>approved</code>, ou aprovar um <code>rejected</code></td><td><code>400</code>. Os cinco estados finais (<code>rejected</code>, <code>cancelled_by_client</code>, <code>cancelled_by_admin</code>, <code>completed</code>, <code>no_show</code>) não voltam.</td><td>AG-16</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AG-24</td><td>Bloqueio impede criação mas preserva o passado</td><td>Bloqueio criado sobre uma janela que já tem agendamento</td><td>O agendamento existente <b>não é cancelado</b>; novas tentativas na janela são recusadas</td><td>AG-17</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AG-25</td><td>Bloqueio parcial não fecha a janela</td><td>Dois profissionais elegíveis; só um é bloqueado</td><td>A janela continua disponível, atendida pelo outro</td><td>AG-17</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-AG-26</td><td>Bloqueio sem alvo</td><td><code>POST .../blocks</code> sem <code>professionalId</code> nem <code>serviceId</code></td><td><code>400</code> — ao menos um dos dois é obrigatório</td><td>AG-17</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-AG-27</td><td>Feriado é visual, não bloqueia</td><td>Consulta de disponibilidade em feriado nacional sem bloqueio cadastrado</td><td>Janelas normalmente disponíveis; o calendário apenas <b>sinaliza</b> o feriado com o nome</td><td>AG-19</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-AG-28</td><td>Feriado móvel</td><td>Carnaval, Páscoa e Corpus Christi em dois anos distintos</td><td>Datas corretas nos dois anos — a tabela não pode ter só data fixa</td><td>AG-20</td><td class="prio"><span class="pill info">P2</span></td></tr>
+      <tr><td class="id">API-AG-29</td><td>Exclusão de profissional com histórico</td><td><code>DELETE .../professionals/:id</code> em profissional com agendamentos</td><td>Conflito; a alternativa oferecida é inativar. Sem histórico, exclui.</td><td>AG-21</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-AG-30</td><td>Gate do add-on de indicadores</td><td><code>GET .../analytics</code> em tenant sem <code>appointment_analytics</code></td><td><code>400</code>. Com o add-on ligado, <code>200</code> com os agregados.</td><td>—<span class="pill info">novo</span></td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-AG-31</td><td>Crédito de pacote</td><td>Agendamento pago por pacote é cancelado; depois usa a restauração excepcional</td><td>O saldo em <code>package-contracts/:id/ledger</code> fecha em todas as etapas — nada de crédito criado do nada nem sumido</td><td>—<span class="pill info">novo</span></td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AG-32</td><td>Notas internas não vazam para o app</td><td>Agendamento com nota interna e bloqueio com motivo; consulta por <code>/public/me/appointments</code></td><td>Nenhum dos dois campos aparece no payload do cliente</td><td>AG-18</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AG-XT</td><td>Isolamento entre tenants</td><td>Token do tenant A em serviço, profissional, bloqueio e agendamento do tenant B</td><td><code>404</code> ou <code>403</code> em todas as rotas; listas do A nunca trazem registro do B</td><td>AG-18</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos E2E <span class="pill e2e">camada E2E · automatizado</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Jornada</th><th>Valida</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">E2E-AG-01</td><td>Admin cria profissional → serviço → vincula os dois → define disponibilidade semanal → cliente agenda pelo app → admin aprova → conclui</td><td>O caminho feliz completo, atravessando os dois aplicativos e as duas audiências de token</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">E2E-AG-02</td><td>Serviço com <code>approval_mode: automatic</code>; cliente agenda</td><td>Nasce aprovado e aparece na agenda do admin sem nenhuma ação dele</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">E2E-AG-03</td><td>Admin cria bloqueio sobre um dia com agendamento marcado</td><td>O agendamento existente permanece e a agenda <b>destaca o conflito</b>; a janela deixa de aceitar novos</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">E2E-AG-04</td><td>Cliente tenta cancelar um agendamento a menos de 24 h</td><td>A interface <b>não chega a chamar a mutação</b> e explica o motivo — regra de UI exigida pela especificação</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">E2E-AG-05</td><td>Admin percorre as oito abas do módulo</td><td>Nenhuma aba quebra, a navegação preserva o contexto e os indicadores respeitam o add-on</td><td class="prio"><span class="pill info">P2</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout danger">
+    <h4>O que este módulo não cobre — e um alerta da própria especificação</h4>
+    <ul>
+      <li>O <b>roteiro de implementação da §11 da especificação manda cobrir apenas AG-01 a AG-18</b>. Isso deixa AG-19 a AG-25 — feriados e modos de seleção de profissional — <b>fora da instrução de cobertura</b>, embora sejam regras funcionais como as outras. Esta estratégia os inclui de propósito (<code>API-AG-12</code>, <code>-13</code>, <code>-26</code>, <code>-27</code>); a inconsistência precisa ser resolvida com o time.</li>
+      <li><b>A especificação lista <code>POST /public/me/appointments/:id/reschedule</code>, mas a rota não existe no controller.</b> Reagendar é operação exclusiva do admin hoje. <code>API-AG-22</code> registra o fato; a decisão de implementar ou de corrigir a documentação é do time.</li>
+      <li>Lista de espera e notificações por e-mail ou WhatsApp dependem de add-on e de um processador de <i>outbox</i> — não existem para testar.</li>
+      <li>Sem integração com Google Calendar ou Outlook, sem recorrência criada pelo cliente, sem agenda compartilhada entre tenants.</li>
+      <li><code>calendar_holidays</code> não é editável pelo Dashboard e cobre <b>só feriados nacionais</b>. Estadual e municipal estão fora de escopo — para não atender, o tenant cria um bloqueio.</li>
+      <li><code>API-AG-16</code> exige disparo concorrente real (<code>Promise.all</code> sobre duas requisições, repetido). Um teste sequencial passa sem provar nada sobre o advisory lock e dá falsa confiança.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="module risk-alto" id="m-formularios">
+  <div class="mhead"><h2>2. Formulários</h2><span class="pill fail">Risco alto</span><span class="pill info">Core · Risky · Config · Complex</span></div>
+  <dl class="modmeta">
+    <dt>Especificação</dt><dd><code>docs/dash/formularios/prd-adr-especificacao-formularios.md</code></dd>
+    <dt>API</dt><dd><code>/dashboard/forms/**</code> (18 rotas) e <code>/public/forms/**</code> · <code>apps/api/src/forms/</code></dd>
+    <dt>Front</dt><dd><code>create-form-wizard.tsx</code>, <code>form-wizard-{questions,publication-options,review}-step.tsx</code></dd>
+    <dt>QA na doc</dt><dd>F-01 … F-20</dd>
+  </dl>
+  <p class="note">Coleta de informação em oito tipos (avaliação, pesquisa, anamnese, cadastro, formação de grupos, quiz…). A pessoa responde pelo app autenticado; o Dashboard acompanha respostas, atribuições e indicadores. Formulários encerrados alimentam o módulo de Grupos.</p>
+
+  <h3>SFDPOT</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>O que existe aqui</th><th>Risco</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Structure</td><td>Wizard de quatro passos, cinco estados de formulário, seis tipos de pergunta ativos, atribuições únicas por <code>(tenant_id, form_id, person_id)</code>, submissões com <i>trigger</i> de validação no banco.</td><td>Regra duplicada entre aplicação e <i>trigger</i> pode divergir. Testar pelos dois caminhos.</td></tr>
+      <tr><td class="dim">Function</td><td>Publicar, despublicar, encerrar, arquivar, duplicar; quatro modos de público; <code>PUT</code> de perguntas que <b>substitui o conjunto inteiro</b>.</td><td>Substituição integral é destrutiva: um <code>PUT</code> com lista parcial apaga perguntas silenciosamente.</td></tr>
+      <tr><td class="dim">Data</td><td>Título ≤ 300 caracteres; escolha múltipla exige ≥ 2 opções; SCALE grava <code>number_value</code> e alimenta médias; CONSENT guarda texto + versão + aceite. <code>BOOLEAN</code>, <code>NUMBER</code> e <code>DATE</code> <b>existem no schema mas não no contrato</b>.</td><td>Tipo presente no banco e ausente no contrato é convite a dado órfão vindo por outro caminho.</td></tr>
+      <tr><td class="dim">Platform</td><td>Paginação só aqui (<code>page</code>/<code>pageSize</code>, padrão 25, máx. 100). Ordem de rotas: <code>/submissions</code> declarada antes de <code>/:id/...</code> para não colidir com o parâmetro.</td><td>Reordenar decoradores no controller quebra <code>/submissions</code> de forma sutil — passa a resolver como <code>:id</code>.</td></tr>
+      <tr><td class="dim">Operations</td><td><code>canViewSensitiveData</code> corta leitura, envio, atribuições e indicadores. Ler resposta sensível grava <code>sensitive_submission.viewed</code>.</td><td>Auditoria que não grava é pior que auditoria ausente: dá falsa sensação de rastreabilidade.</td></tr>
+      <tr><td class="dim">Time</td><td><code>closed_at</code> ao encerrar; ordem de submissão define a ordem-base na formação de grupos.</td><td>Sem expiração nem lembrete — um formulário publicado fica aberto para sempre.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>RCRCRC</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>Evidência</th><th>Peso</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Core</td><td>Junto com Clientes, é a razão de ser do produto: coletar informação de quem é atendido. 7 commits em <code>apps/api/src/forms</code>.</td><td><span class="pill fail">Alto</span></td></tr>
+      <tr><td class="dim">Risky</td><td>Marca dado sensível, e é o principal consumidor de <code>canViewSensitiveData</code>. <code>CLOSED</code> é irreversível.</td><td><span class="pill fail">Alto</span></td></tr>
+      <tr><td class="dim">Configuration-sensitive</td><td><code>audience_mode</code> (<code>SPECIFIC</code> ativo, <code>ALL_ACTIVE</code> reservado), <code>submission_mode</code> (três valores, um não configurável), <code>contains_sensitive_data</code>.</td><td><span class="pill warn">Médio</span></td></tr>
+      <tr><td class="dim">Complex</td><td>Wizard de quatro passos; ciclo de vida de cinco estados; público em fotografia, não dinâmico.</td><td><span class="pill warn">Médio</span></td></tr>
+      <tr><td class="dim">Recent</td><td>Especificação alterada duas vezes no histórico — o documento com mais revisões de <code>docs/dash/</code>.</td><td><span class="pill warn">Médio</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos unitários <span class="pill unit">camada UNIT · teste de método</span></h3>
+  <p class="note">A validação de resposta é a maior função pura do repositório e a que mais ramifica: seis tipos de pergunta × obrigatório/opcional × valor ausente, vazio ou inválido. Cobrir esse espaço por HTTP significaria dezenas de submissões reais; em teste de método são dezenas de asserções em um arquivo.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Alvo</th><th>O que prova</th><th>Relação</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">UNIT-F-01</td><td><code>hasAnswerValue(type, answer)</code> · <code>forms.service.ts:1143</code></td><td>Os seis tipos contra resposta ausente, vazia e preenchida. <code>CONSENT</code> só é preenchido com <code>true</code>; texto com apenas espaços conta como vazio; <code>SCALE</code> aceita o número 0 como preenchido. É este predicado que decide se uma obrigatória foi respondida.</td><td>API-F-17</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-F-02</td><td><code>normalizeAnswerRows(question, answer)</code> · <code>forms.service.ts:1153</code></td><td>Opção que não pertence à pergunta é rejeitada com mensagem citando o título; múltipla escolha vazia devolve <b>zero linhas sem erro</b>; escala fora de 1–5 é rejeitada; tipo desconhecido levanta exceção. Um caso por ramo.</td><td>API-F-17</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-F-03</td><td><code>normalizeAnswerRows</code> — ramo <code>CONSENT</code></td><td><code>consentText</code> e <code>consentVersion</code> caem para o título da pergunta e <code>'v1'</code> quando <code>settingsJson</code> não traz string. O consentimento gravado é prova jurídica: o valor de fallback precisa estar escrito em algum lugar que falhe se mudar.</td><td>API-F-17 · LGPD</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">UNIT-F-04</td><td><code>estimateMinutes(questionCount)</code> · <code>forms.service.ts:1095</code></td><td>Zero perguntas devolve 0; uma pergunta devolve 1 (o piso vence o arredondamento); cinco devolvem 4; seis devolvem 5. Três linhas de código, quatro asserções, nenhum banco.</td><td>—</td><td class="prio"><span class="pill info">P2</span></td></tr>
+      <tr><td class="id">UNIT-F-05</td><td><code>isFormActiveForResponses</code>, <code>isFormClosedForResponses</code> e <code>formStatusPresentation</code> · <code>forms-panel.tsx:228, 232, 317</code></td><td>Os cinco estados do formulário mapeados para rótulo e tom, sem renderizar componente. Estes três predicados decidem quais botões aparecem — testá-los aqui evita três testes de componente.</td><td>API-F-02</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">UNIT-F-06</td><td><code>formatDurationSeconds</code> e <code>renderStarRating</code> · <code>forms-panel.tsx:192, 199</code></td><td>Duração nula, menos de um minuto, exatamente 60 s e mais de uma hora. Nota nula não renderiza estrela nenhuma.</td><td>API-F-23</td><td class="prio"><span class="pill info">P2</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos de API <span class="pill api">camada API · funcional no endpoint</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Cenário</th><th>Pré-condição</th><th>Resultado esperado</th><th>Doc</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">API-F-01</td><td>Publicar sem pergunta</td><td>Formulário <code>DRAFT</code> vazio</td><td><code>400</code> — publicar exige ao menos uma pergunta</td><td>F-01</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-F-02</td><td>Ciclo completo de estados</td><td>Formulário com perguntas</td><td><code>DRAFT</code> → <code>PUBLISHED</code> → <code>UNPUBLISHED</code> → <code>PUBLISHED</code> → <code>CLOSED</code> → <code>ARCHIVED</code>, cada passo devolvendo o estado esperado</td><td>F-02</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-F-03</td><td><code>CLOSED</code> é definitivo</td><td>Formulário encerrado</td><td><code>POST .../publish</code> → <code>409</code>. A saída é <code>duplicate</code>, que gera um novo <code>DRAFT</code> com as perguntas copiadas e nenhuma submissão.</td><td>F-03</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-F-04</td><td>Encerrar só a partir de publicado</td><td>Formulário <code>DRAFT</code></td><td><code>400</code>; a partir de <code>PUBLISHED</code>, grava <code>closed_at</code></td><td>F-03</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-F-05</td><td>Escolha com menos de duas opções</td><td><code>PUT .../questions</code> com <code>SINGLE_CHOICE</code> de uma opção só</td><td><code>400</code></td><td>F-04</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-F-06</td><td>Título acima do limite</td><td>Pergunta com 301 caracteres</td><td><code>400</code>; com 300, aceita</td><td>F-05</td><td class="prio"><span class="pill info">P2</span></td></tr>
+      <tr><td class="id">API-F-07</td><td><code>PUT</code> de perguntas substitui tudo</td><td>Formulário com três perguntas; <code>PUT</code> com uma</td><td>Fica exatamente uma. As outras duas somem — comportamento esperado, e é por isso que precisa de teste explícito.</td><td>F-06</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-F-08</td><td><b>Perguntas travadas após resposta</b></td><td>Formulário com ao menos uma submissão</td><td><code>PUT .../questions</code> rejeitado. Sem isso, a resposta já dada passa a referenciar pergunta que não existe mais.</td><td>F-07</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-F-09</td><td>Publicar para todos os ativos</td><td>Cinco pessoas ativas</td><td><code>{ form, totalActivePeople: 5 }</code> e cinco atribuições criadas em uma operação atômica</td><td>F-08</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-F-10</td><td><b>"Todos os ativos" é fotografia</b></td><td>Publicado para todos; uma pessoa é ativada <i>depois</i></td><td>Ela <b>não</b> recebe o formulário. O público não é audiência dinâmica.</td><td>F-08</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-F-11</td><td>Atribuição reenviada</td><td>Pessoa já tem atribuição; novo envio a inclui de novo</td><td>Atualiza a existente, sem duplicar — a unicidade <code>(tenant, form, person)</code> é respeitada</td><td>F-09</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-F-12</td><td>Estado da atribuição</td><td>Pessoa que já respondeu vs. pessoa que não respondeu</td><td><code>COMPLETED</code> e <code>AVAILABLE</code> respectivamente</td><td>F-10</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-F-13</td><td>Pessoa inválida aborta o lote inteiro</td><td>Envio para cinco pessoas, uma delas de outro tenant</td><td><code>400</code> e <b>nenhuma</b> das cinco atribuições criada</td><td>F-11</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-F-14</td><td>Envio por grupo</td><td>Grupo ativo com integrantes</td><td>Uma atribuição por integrante, com <code>sourceType: GROUP</code> e <code>sourceLabel</code> preenchido</td><td>F-12</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-F-15</td><td>Submissão única repetida</td><td><code>ONCE_PER_PERSON</code>; a pessoa envia duas vezes</td><td>Segunda → <code>409</code>, barrada tanto pela aplicação quanto pelo <i>trigger</i> <code>form_submissions_validate_mode</code></td><td>F-13</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-F-16</td><td>Submissão múltipla permitida</td><td><code>MULTIPLE</code>; a pessoa envia duas vezes</td><td>Ambas registradas e visíveis na lista</td><td>F-13</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-F-17</td><td>Corpo de submissão inválido</td><td>Pergunta obrigatória omitida; e a mesma pergunta enviada duas vezes</td><td><code>400</code> nas duas variações</td><td>F-16</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-F-18</td><td><code>SPECIFIC</code> esconde de quem não tem atribuição</td><td>Formulário publicado sem envio; cliente consulta <code>/public/me/forms</code></td><td>Não aparece. Acesso direto por <code>GET /public/forms/:id</code> também é negado.</td><td>F-17</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-F-19</td><td>Sensível sem autorização</td><td>Admin sem <code>canViewSensitiveData</code></td><td><code>403</code> em <code>publish-to-all-active</code>, atribuições, lista, detalhe e indicadores — com a mensagem exata da especificação</td><td>F-14</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-F-20</td><td>Filtro sensível antes da contagem</td><td>Dez submissões, quatro sensíveis; admin sem autorização</td><td><code>total: 6</code>, não 10 com seis itens. O agregado também esconde.</td><td>F-14</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-F-21</td><td>Auditoria de leitura sensível</td><td>Admin autorizado abre <code>GET /dashboard/forms/submissions/:submissionId</code> sensível</td><td>Um registro <code>sensitive_submission.viewed</code> em <code>audit_logs</code>, com ator e alvo</td><td>F-15</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-F-22</td><td>Paginação</td><td>60 submissões</td><td><code>pageSize=25</code> → <code>totalPages: 3</code>; <code>pageSize=200</code> é limitado a 100; página fora do intervalo devolve lista vazia sem erro</td><td>F-18</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-F-23</td><td>Indicadores de escala</td><td>Perguntas SCALE com valores conhecidos</td><td>A média em <code>GET .../insights</code> confere com o cálculo manual</td><td>F-19</td><td class="prio"><span class="pill info">P2</span></td></tr>
+      <tr><td class="id">API-F-24</td><td>Colisão de rota</td><td><code>GET /dashboard/forms/submissions</code></td><td>Resolve para a lista de submissões, <b>não</b> para <code>:id = "submissions"</code></td><td>—<span class="pill info">novo</span></td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-F-XT</td><td>Isolamento entre tenants</td><td>Token do tenant A em formulário, submissão e atribuição do tenant B</td><td><code>404</code>/<code>403</code> sempre</td><td>F-20</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos E2E <span class="pill e2e">camada E2E · automatizado</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Jornada</th><th>Valida</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">E2E-F-01</td><td>Wizard de quatro passos → publicar para um grupo → cliente responde no app → a resposta aparece no Dashboard com indicadores</td><td>O ciclo completo de coleta, cruzando Dashboard, API e app do cliente</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">E2E-F-02</td><td>Publicar → coletar respostas → encerrar → usar o formulário encerrado como origem de um grupo</td><td>A integração Formulários → Grupos, que só funciona com status <code>CLOSED</code></td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">E2E-F-03</td><td>Admin sem autorização abre a seção Formulários</td><td>A interface <b>exibe a mensagem vinda da API</b>, não uma falha genérica — exigência literal da especificação de LGPD</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">E2E-F-04</td><td>Tentar editar as perguntas de um formulário que já tem respostas</td><td>O bloqueio chega ao usuário com explicação, e não como erro de servidor</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout danger">
+    <h4>O que este módulo não cobre</h4>
+    <ul>
+      <li><code>result_mode</code>, <code>show_result_to_person</code> e <code>completion_message</code> existem no modelo mas têm configuração apenas parcial — testar o que está exposto e registrar o resto como dívida.</li>
+      <li>Perguntas <code>BOOLEAN</code>, <code>NUMBER</code> e <code>DATE</code> estão no schema e fora do contrato do Dashboard. Vale um caso negativo: enviá-las deve ser rejeitado, não aceito pela porta dos fundos.</li>
+      <li><code>audience_mode: ALL_ACTIVE</code> está reservado e não é usado. Cobrir apenas <code>SPECIFIC</code>.</li>
+      <li>Sem exportação, sem filtros avançados, sem expiração, sem lembretes, sem pontuação automática.</li>
+      <li><b>Gap de numeração na especificação:</b> F-15 aparece entre F-07 e F-08 na tabela de QA. Não é erro de conteúdo, mas atrapalha a rastreabilidade — vale normalizar.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="module risk-alto" id="m-lgpd">
+  <div class="mhead"><h2>3. Privacidade e LGPD</h2><span class="pill fail">Risco alto</span><span class="pill info">Risky · Conformance</span></div>
+  <dl class="modmeta">
+    <dt>Especificação</dt><dd><code>docs/dash/lgpd/prd-adr-especificacao-acesso-dados-sensiveis.md</code></dd>
+    <dt>API</dt><dd><code>/dashboard/privacy/**</code> (5 rotas) · <code>apps/api/src/privacy/</code></dd>
+    <dt>Front</dt><dd><code>apps/dashboard/app/privacy-panel.tsx</code> <span class="pill warn">extraído nesta branch</span></dd>
+    <dt>QA na doc</dt><dd>10 critérios de aceite numerados (sem prefixo)</dd>
+  </dl>
+  <p class="note">Menor privilégio no acesso a formulários e respostas sensíveis. Cada tenant tem <b>um Administrador Principal</b>, com acesso permanente e exclusividade para conceder ou revogar o acesso dos demais. Inclui a política de retenção de respostas sensíveis, que funciona de forma independente da autorização.</p>
+
+  <h3>SFDPOT</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>O que existe aqui</th><th>Risco</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Structure</td><td>Duas colunas em <code>users</code> (<code>is_primary_admin</code>, <code>can_view_sensitive_data</code>), retenção em <code>brand</code>/configurações do tenant, eventos em <code>audit_logs</code>, migração <code>0037_primary_admin_sensitive_data.sql</code>.</td><td>Papel guardado em coluna booleana, sem tabela de papéis: promover ou transferir exige <code>UPDATE</code> manual.</td></tr>
+      <tr><td class="dim">Function</td><td>Conceder e revogar acesso de terceiros; rodar a retenção sob demanda; ler configurações.</td><td>Uma matriz de quatro perfis × três capacidades — doze combinações, e a especificação define todas.</td></tr>
+      <tr><td class="dim">Data</td><td><code>sensitive_data_retention_days</code> inteiro entre <b>1 e 3650</b>.</td><td>Fora do intervalo, ou zero, apagaria tudo imediatamente. Borda que precisa de teste dos dois lados.</td></tr>
+      <tr><td class="dim">Platform</td><td>A regra é aplicada em rotas de <b>outro</b> módulo (formulários), não só nas próprias.</td><td>Adicionar uma rota nova de submissão sem aplicar o guard abre o vazamento em silêncio.</td></tr>
+      <tr><td class="dim">Operations</td><td>O acesso do Principal é <b>irrevogável</b> — a linha dele não mostra botões. Autorização vale imediatamente, sem novo login.</td><td>Se a UI apenas esconder o botão sem a API recusar, um <code>PATCH</code> direto rebaixa o Principal e trava o tenant.</td></tr>
+      <tr><td class="dim">Time</td><td>Retenção expira respostas por dias; a autorização vale para operações futuras da sessão em curso.</td><td>Execução de retenção é destrutiva e irreversível. Errar o cálculo apaga o que deveria ficar.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>RCRCRC</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>Evidência</th><th>Peso</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Risky</td><td>É o controle de acesso a dado pessoal sensível. Falha aqui é incidente de privacidade, não bug.</td><td><span class="pill fail">Alto</span></td></tr>
+      <tr><td class="dim">Conformance</td><td>A especificação exige <b>mensagens literais</b> e códigos exatos: <code>403</code> para não-Principal, <code>404</code> para alvo inexistente ou de outro tenant, <code>409</code> ao tocar no Principal.</td><td><span class="pill fail">Alto</span></td></tr>
+      <tr><td class="dim">Recent</td><td>O painel foi <b>extraído do console nesta branch</b> (<code>bb3c3e4</code> + <code>c6c8579</code>) — é um dos quatro componentes recém-movidos.</td><td><span class="pill warn">Médio</span></td></tr>
+      <tr><td class="dim">Configuration-sensitive</td><td>Retenção de 1 a 3650 dias muda o comportamento de um <i>job</i> destrutivo.</td><td><span class="pill warn">Médio</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos unitários <span class="pill unit">camada UNIT · teste de método</span></h3>
+  <p class="note">O módulo inteiro gira em torno de um predicado de três linhas que existe <b>copiado em dois arquivos</b>. Enquanto ele não for uma função só, com um teste só, nada garante que as duas cópias concordem.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Alvo</th><th>O que prova</th><th>Relação</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">UNIT-LGPD-01</td><td>predicado <code>canViewSensitiveData</code> · <code>forms.service.ts:1191</code> <b>e</b> <code>dashboard.service.ts:54</code> <span class="pill warn">extrair</span></td><td><code>isPrimaryAdmin === true || canViewSensitiveData === true</code>; usuário inexistente devolve <code>false</code>; ambas as flags falsas devolvem <code>false</code>. <b>As duas cópias rodam contra a mesma tabela de casos</b> — é o teste que prova que Formulários e Home decidem igual. Depois de unificadas, sobra um teste só.</td><td>API-F-19, API-H-08</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-LGPD-02</td><td>guarda de retenção · <code>privacy.controller.ts:14</code> <span class="pill warn">extrair</span></td><td>0, 1, 3650, 3651, <code>3.5</code>, <code>'30'</code> e ausente. Seis dos sete são recusa; a regra cabe em uma linha e hoje só é exercitável subindo o Nest inteiro.</td><td>API-LGPD-10</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-LGPD-03</td><td>mensagem literal → extrair para constante exportada · repetida em <code>forms.service.ts:622, 685, 739, 906</code> <span class="pill warn">extrair</span></td><td><i>"Você não possui a permissão para visualizar respostas sensíveis."</i> está escrita <b>quatro vezes</b> no mesmo arquivo. Um teste de igualdade estrita sobre a constante única é o que impede que três delas mudem e a quarta não.</td><td>API-LGPD-04, -05</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos de API <span class="pill api">camada API · funcional no endpoint</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Cenário</th><th>Pré-condição</th><th>Resultado esperado</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">API-LGPD-01</td><td>Primeiro admin do tenant vira Principal</td><td>Tenant recém-criado</td><td><code>is_primary_admin = true</code> e <code>can_view_sensitive_data = true</code> no primeiro <code>tenant_admin</code></td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-LGPD-02</td><td>Principal legado sem a flag continua autorizado</td><td>Admin promovido pela migração com <code>can_view_sensitive_data = false</code></td><td>Lê dado sensível assim mesmo — ser Principal prevalece sobre a coluna</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-LGPD-03</td><td>Só o Principal concede acesso</td><td>Admin comum autorizado tenta <code>PATCH .../professionals/:userId/sensitive-data-access</code></td><td><code>403</code> — ter acesso não dá o direito de distribuí-lo</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-LGPD-04</td><td>Leitura sem autorização</td><td>Admin sem <code>canViewSensitiveData</code> em <code>GET /dashboard/forms/submissions/:submissionId</code> sensível</td><td><code>403</code> com o texto exato: <i>"Você não possui a permissão para visualizar respostas sensíveis."</i></td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-LGPD-05</td><td>Envio sem autorização</td><td>Mesmo admin tentando enviar formulário sensível</td><td><code>403</code> com o texto exato: <i>"Você não possui a permissão para enviar formulários sensíveis."</i></td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-LGPD-06</td><td><b>Acesso do Principal é irrevogável</b></td><td>Principal tenta revogar o próprio acesso, ou outro admin tenta revogá-lo</td><td><code>409</code> — a rota recusa, independentemente de a UI mostrar o botão</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-LGPD-07</td><td>Alvo inválido</td><td><code>userId</code> inexistente, de outro tenant, ou que não é admin</td><td><code>404</code> nas três variações — e não <code>403</code>, que revelaria a existência do registro</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-LGPD-08</td><td>Autorização vale imediatamente</td><td>Principal concede acesso; o admin usa o token que já tinha</td><td>A próxima requisição já enxerga o dado sensível, sem novo login</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-LGPD-09</td><td>Revogação vale imediatamente</td><td>Principal revoga; o admin usa o token que já tinha</td><td>A próxima requisição recebe <code>403</code></td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-LGPD-10</td><td>Limites da retenção</td><td><code>PATCH .../settings</code> com 0, 3651, −1 e valor não inteiro</td><td><code>400</code> em todos; 1 e 3650 aceitos</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-LGPD-11</td><td>Execução da retenção</td><td>Retenção de 30 dias; submissões sensíveis de 29 e de 31 dias atrás</td><td><code>POST .../retention/run</code> remove a de 31 e <b>preserva</b> a de 29; submissões não sensíveis ficam intactas</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-LGPD-12</td><td>Retenção independe da autorização</td><td>Admin sem <code>canViewSensitiveData</code> dispara a retenção</td><td>Executa normalmente — são controles independentes, como diz a especificação</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-LGPD-13</td><td>Auditoria da mudança de acesso</td><td>Principal concede e depois revoga</td><td>Dois eventos <code>sensitive_data_access.updated</code>, com ator, alvo e estado anterior</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-LGPD-XT</td><td>Isolamento entre tenants</td><td>Principal do tenant A listando e alterando profissionais do tenant B</td><td><code>GET .../professionals</code> traz só os do A; o <code>PATCH</code> cruzado devolve <code>404</code></td><td class="prio"><span class="pill fail">P0</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos E2E <span class="pill e2e">camada E2E · automatizado</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Jornada</th><th>Valida</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">E2E-LGPD-01</td><td>Principal concede acesso a um segundo admin → o segundo passa a ver as respostas sensíveis → Principal revoga → o segundo deixa de ver, na mesma sessão</td><td>O efeito imediato da autorização nas duas direções, do ponto de vista de quem usa</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">E2E-LGPD-02</td><td>Abrir a lista de profissionais como Principal</td><td>A linha do próprio Principal <b>não exibe botões de ação</b> — e o caso <code>API-LGPD-06</code> garante que esconder não é a única defesa</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout danger">
+    <h4>O que este módulo não cobre</h4>
+    <ul>
+      <li><b>Transferir o papel de Administrador Principal pela interface não existe.</b> Se o Principal sair da empresa, a troca é manual no banco. É a maior lacuna operacional do módulo e merece ser registrada como risco de produto, não só de teste.</li>
+      <li>Sem delegação temporária com expiração, sem dupla aprovação, sem exportação de dado sensível.</li>
+      <li>Bases legais, atendimento a solicitações de titulares e inventário LGPD completo estão fora de escopo — o módulo cobre controle de acesso e retenção, não conformidade jurídica inteira.</li>
+      <li><b>Bloqueio de execução:</b> sem a fábrica de tenant com dois papéis distintos descrita na seção 1.3, nenhum caso deste bloco roda.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="module risk-alto" id="m-clientes">
+  <div class="mhead"><h2>4. Clientes</h2><span class="pill fail">Risco alto</span><span class="pill info">Core · Risky</span></div>
+  <dl class="modmeta">
+    <dt>Especificação</dt><dd><code>docs/dash/clientes/prd-adr-especificacao-clientes.md</code></dd>
+    <dt>API</dt><dd><code>/dashboard/people/**</code> (8 rotas) · <code>apps/api/src/people/</code> — 11 commits, um dos módulos mais movimentados</dd>
+    <dt>Front</dt><dd><code>person-profile-panel.tsx</code>, <code>person-send-form-drawer.tsx</code></dd>
+    <dt>QA na doc</dt><dd>C-01 … C-14 <span class="pill warn">C-10 não existe</span></dd>
+  </dl>
+  <p class="note">A identidade da pessoa dentro do tenant: contato, acesso ao app, consentimento e vínculos operacionais. Regra central — <b>a pessoa pode existir sem acesso</b>; o acesso só nasce quando ela ativa um código válido no app.</p>
+
+  <h3>SFDPOT</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>O que existe aqui</th><th>Risco</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Structure</td><td><code>people</code>, <code>access_codes</code> (com <code>code_hash</code> Argon2id e <code>lookup_hash</code>) e <code>users</code> do tipo <code>end_user</code>. Vínculos por <code>person_id</code> em reservas, submissões, atribuições e grupos.</td><td>Pessoa é o nó central do grafo. Excluir em cascata destruiria histórico — daí não haver exclusão.</td></tr>
+      <tr><td class="dim">Function</td><td>Cadastrar, editar, enviar foto, gerar código, regenerar código, remover acesso, listar formulários atribuídos.</td><td>Três conceitos de estado que se parecem e não são a mesma coisa: <code>status</code> da pessoa, estado do código e <code>isActive</code> do usuário.</td></tr>
+      <tr><td class="dim">Data</td><td><code>name</code> obrigatório; e-mail normalizado para minúsculas; vazios viram <code>null</code>; <code>birth_date</code> em <code>YYYY-MM-DD</code>; <code>notes</code> ≤ 500; <code>document</code> ≤ 40; gênero em quatro valores fechados.</td><td>Normalizar e-mail é o que evita duplicata — se falhar, a mesma pessoa entra duas vezes.</td></tr>
+      <tr><td class="dim">Platform</td><td>Foto JPEG/PNG/WebP até 5 MB, guardada como <code>photo_key</code> e exposta como <code>photoUrl</code>, nunca base64. <code>GET /dashboard/people</code> <b>sem paginação</b>.</td><td>Um tenant com 5.000 clientes carrega a lista inteira a cada abertura da tela.</td></tr>
+      <tr><td class="dim">Operations</td><td>Um único código <code>active</code> por vez; o texto puro é exibido <b>uma única vez</b>; revogar desativa a conta <code>end_user</code>.</td><td>Se o código puder ser lido de novo, deixa de ser segredo de uso único.</td></tr>
+      <tr><td class="dim">Time</td><td><code>expires_at</code> <b>existe na tabela mas não é preenchido</b> pelo fluxo atual.</td><td>Código sem validade fica válido para sempre. Está documentado como limitação — o teste registra o comportamento real, não o desejado.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>RCRCRC</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>Evidência</th><th>Peso</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Core</td><td>Sem cliente cadastrado nada mais funciona: formulários, reservas, grupos e agendamentos todos apontam para <code>person_id</code>.</td><td><span class="pill fail">Alto</span></td></tr>
+      <tr><td class="dim">Risky</td><td>Emite credencial de acesso. Hash Argon2id, exibição única, revogação. <code>a5f9301 feat: decouple people access codes</code> mexeu exatamente aqui.</td><td><span class="pill fail">Alto</span></td></tr>
+      <tr><td class="dim">Recent</td><td>11 commits em <code>apps/api/src/people</code>, empatado com <code>auth</code> na liderança do histórico.</td><td><span class="pill warn">Médio</span></td></tr>
+      <tr><td class="dim">Complex</td><td>Três estados sobrepostos (pessoa, código, usuário) que a própria especificação precisa desambiguar.</td><td><span class="pill warn">Médio</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos unitários <span class="pill unit">camada UNIT · teste de método</span></h3>
+  <p class="note">Código de acesso, normalização de contato e a identidade visual de quem não tem foto. Nada disso precisa de banco, e o hash do avatar precisa de um teste justamente porque não pode mudar.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Alvo</th><th>O que prova</th><th>Relação</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">UNIT-C-01</td><td><code>generateCode()</code> · <code>people.service.ts:129</code></td><td>Comprimento estável, alfabeto base64url em maiúsculas (sem <code>+</code>, <code>/</code> ou <code>=</code>), e dez mil chamadas sem repetição. O código é a única credencial do cliente final.</td><td>API-C-05</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">UNIT-C-02</td><td><code>lookupHash(code)</code> · <code>people.service.ts:150</code></td><td>HMAC-SHA256 determinístico para a mesma entrada; sensível a maiúsculas; <b>lança quando <code>ACCESS_CODE_LOOKUP_SECRET</code> não está definido</b> — falha que hoje só apareceria em produção.</td><td>API-C-09, -10</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-C-03</td><td>normalização de e-mail de <code>assertEmailAvailable()</code> → extrair <code>normalizeEmail()</code> · <code>people.service.ts:136</code> <span class="pill warn">extrair</span></td><td><code>trim</code> + <code>toLowerCase</code>: espaço à esquerda, maiúsculas, string vazia e <code>null</code>. É esta normalização que define o que conta como e-mail duplicado dentro do tenant.</td><td>API-C-02</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-C-04</td><td><code>initials(name)</code> e <code>avatarColor(name)</code> · <code>console-utils.ts:14, 35</code></td><td>Nome de uma palavra, de três, com acento e com espaço duplo. Para a cor, <b>valores fixados no teste</b>: o próprio arquivo avisa que trocar a função trocaria a cor de todas as pessoas de uma vez. O teste é o que transforma esse aviso em trava.</td><td>E2E-C-03</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">UNIT-C-05</td><td><code>personCodeStatus</code>, <code>personCodeStatusLabel</code> e <code>personCodeStatusTone</code> · <code>people-panel.tsx:76, 80, 88</code></td><td>Os quatro estados (<code>none</code>, <code>active</code>, <code>used</code>, <code>revoked</code>) e o fallback de <code>accessCodeStatus</code> ausente, com rótulo e tom conferidos.</td><td>API-C-06, -08</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">UNIT-C-06</td><td><code>formatPersonPublicId</code> e <code>formatMaskedAccessCode</code> · <code>people-panel.tsx:64, 68</code></td><td>Remove hífens, corta em oito caracteres e minúsculo. A máscara é constante — e o teste é o que garante que ela nunca passe a receber o código real por parâmetro.</td><td>API-C-07</td><td class="prio"><span class="pill info">P2</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos de API <span class="pill api">camada API · funcional no endpoint</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Cenário</th><th>Pré-condição</th><th>Resultado esperado</th><th>Doc</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">API-C-01</td><td>Cadastro mínimo</td><td><code>POST</code> só com <code>name</code></td><td><code>201</code>, <code>status: active</code>, demais campos <code>null</code></td><td>C-01</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-C-02</td><td>Normalização de campos</td><td>E-mail em maiúsculas, telefone com string vazia</td><td>E-mail gravado em minúsculas; vazio vira <code>null</code>, não string vazia</td><td>C-02</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-C-03</td><td>Limites dos campos</td><td><code>notes</code> com 501 caracteres; <code>document</code> com 41; gênero fora da lista; <code>birth_date</code> em formato errado</td><td><code>400</code> em cada variação</td><td>C-03</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-C-04</td><td>Código exige um canal de contato</td><td>Pessoa sem e-mail e sem telefone</td><td><code>POST .../access-codes</code> recusado — o código precisa de um canal para chegar</td><td>C-04</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-C-05</td><td><b>Um único código ativo</b></td><td>Pessoa já tem código <code>active</code></td><td>Segundo <code>POST</code> → <code>409</code>. O caminho correto é <code>regenerate</code>.</td><td>C-05</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-C-06</td><td>Regenerar revoga o anterior</td><td>Pessoa com código <code>active</code></td><td>O antigo passa a revogado e deixa de ativar; só o novo funciona</td><td>C-06</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-C-07</td><td>Texto puro exibido uma vez</td><td>Código recém-criado</td><td>O texto puro vem <b>só</b> na resposta da criação. Nenhuma leitura posterior o devolve — o banco guarda apenas <code>code_hash</code> e <code>lookup_hash</code>.</td><td>C-07</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-C-08</td><td>Código para pessoa revogada</td><td><code>status: revoked</code></td><td>Emissão recusada</td><td>C-08</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-C-09</td><td>Ativação completa</td><td>Slug + código válido + PIN de 4 a 6 dígitos + consentimento</td><td><code>200</code>; o código vira <code>used</code>; nasce o <code>end_user</code></td><td>C-09</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-C-10</td><td>Ativação inválida</td><td>PIN de 3 dígitos; PIN de 7; PIN não numérico; consentimento <code>false</code>; código já <code>used</code></td><td><code>400</code> em todas as variações — nenhuma cria conta</td><td>C-09</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-C-11</td><td><code>social_name</code> não sobrescreve <code>name</code></td><td>Ativação informando nome social diferente do cadastro</td><td><code>people.name</code> intacto; o perfil no app mostra o <code>social_name</code>, com <i>fallback</i> para <code>name</code></td><td>C-11</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-C-12</td><td>Remover acesso</td><td>Pessoa com conta ativa</td><td><code>status: revoked</code>, conta <code>end_user</code> desativada, cadastro e histórico <b>preservados</b>. O login do cliente para de funcionar.</td><td>C-12</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-C-13</td><td>Foto — validações</td><td>PDF; imagem de 5 MB + 1 byte; JPEG de 4,9 MB</td><td>Os dois primeiros <code>400</code>; o terceiro <code>200</code> e devolve <code>photoUrl</code>, nunca base64</td><td>C-13</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-C-14</td><td>Remover foto</td><td><code>PATCH</code> com <code>photoKey: null</code></td><td><code>photoUrl</code> some e o objeto é apagado do armazenamento</td><td>C-13</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-C-15</td><td>Auditoria</td><td>Criar, editar, gerar código, regenerar e remover acesso</td><td>Um evento por ação: <code>person.created</code>, <code>person.updated</code>, <code>access_code.created</code>, <code>access_code.regenerated</code>, <code>access_code.revoked</code>, <code>person.access_removed</code></td><td>C-14</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-C-16</td><td>Volume sem paginação</td><td>500 pessoas cadastradas</td><td><code>GET /dashboard/people</code> devolve as 500 em uma resposta. Medir tamanho e latência — é a evidência para priorizar a paginação.</td><td>—<span class="pill info">novo</span></td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-C-XT</td><td>Isolamento entre tenants</td><td>Token do tenant A em pessoa, código e foto do tenant B</td><td><code>404</code>/<code>403</code>; a lista do A nunca traz pessoa do B</td><td>C-11</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos E2E <span class="pill e2e">camada E2E · automatizado</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Jornada</th><th>Valida</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">E2E-C-01</td><td>Criar cliente → gerar código (anotar o texto exibido) → recarregar a tela e confirmar que o código <b>não aparece mais</b> → ativar no app com PIN → fazer login como cliente</td><td>O ciclo de credencial inteiro, incluindo a garantia de exibição única</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">E2E-C-02</td><td>Remover acesso de um cliente logado; ele tenta usar o app</td><td>O acesso cai; o cadastro e o histórico continuam visíveis no Dashboard</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">E2E-C-03</td><td>Editar perfil, enviar foto, trocar a foto e removê-la</td><td>A prévia atualiza a cada passo e não fica servindo imagem em cache depois da remoção</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout danger">
+    <h4>O que este módulo não cobre</h4>
+    <ul>
+      <li><b>Não existe exclusão física nem anonimização</b> — remover em cascata destruiria reservas, respostas, atribuições, grupos e códigos. Ver o módulo 11.</li>
+      <li>Sem histórico de códigos emitidos, sem registro de último acesso, sem lista de dispositivos.</li>
+      <li><code>expires_at</code> não é preenchido: o teste registra que o código não expira, que é o comportamento real de hoje.</li>
+      <li><b>Gap na especificação:</b> a tabela de QA vai de C-01 a C-14 <b>pulando C-10</b> — provável resquício da remoção da anonimização. Vale confirmar com o time se havia um caso ali.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="module risk-medio" id="m-home">
+  <div class="mhead"><h2>5. Home ("Hoje")</h2><span class="pill warn">Risco médio</span><span class="pill info">Recent · Core · Time</span></div>
+  <dl class="modmeta">
+    <dt>Especificação</dt><dd><code>docs/dash/home/prd-adr-especificacao-home.md</code></dd>
+    <dt>API</dt><dd><code>GET /dashboard/home</code> e <code>GET /dashboard/session</code> · <code>apps/api/src/dashboard/</code></dd>
+    <dt>Front</dt><dd><code>apps/dashboard/app/home-panel.tsx</code> <span class="pill warn">extraído nesta branch</span></dd>
+    <dt>QA na doc</dt><dd>H-01 … H-10</dd>
+  </dl>
+  <p class="note">O ponto de entrada do console. Responde três perguntas: o que exige atenção hoje, qual foi o volume recente e para qual tela seguir. Consolida sinais de reservas, pedidos, pessoas e respostas em quatro cards, ações prioritárias e um feed de atividade — tudo derivado, nada persistido.</p>
+
+  <h3>SFDPOT</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>O que existe aqui</th><th>Risco</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Structure</td><td>Um único endpoint agregador que consulta quatro fontes em paralelo (<code>Promise.all</code>) e monta cards, ações, alertas e feed.</td><td>Uma consulta lenta segura a tela inteira; uma que falha não pode derrubar as outras nem vazar dado de outro tenant.</td></tr>
+      <tr><td class="dim">Function</td><td>Quatro métricas, no máximo quatro ações ordenadas por prioridade, dois alertas (<code>today</code> e <code>overdue</code>) e no máximo dez eventos no feed com <i>dedupe</i> por tipo + id + data.</td><td>Limites duros (4 e 10) são exatamente o tipo de constante que se perde numa refatoração.</td></tr>
+      <tr><td class="dim">Data</td><td>Janela recente de <b>24 h</b>; pessoas cadastradas nos <b>últimos 7 dias</b>; reservas contadas por <code>created_at</code> exceto canceladas; pedidos prontos são <code>status = confirmed</code>.</td><td>Trocar 24 h por "hoje" muda o número exibido sem quebrar nada visivelmente.</td></tr>
+      <tr><td class="dim">Platform</td><td><code>generatedAt</code> vem da API; o "há X minutos" é calculado no cliente.</td><td>Relógio do navegador adiantado faz o rótulo mostrar tempo negativo.</td></tr>
+      <tr><td class="dim">Operations</td><td>Atalhos levam à seção certa já com filtro aplicado. <b>Nunca exibir mocks</b> — sem dado, é estado vazio ou bloco oculto.</td><td>A especificação alerta em letras maiúsculas para não reaproveitar os mocks do protótipo. É um risco real e nomeado.</td></tr>
+      <tr><td class="dim">Time</td><td>Fuso do tenant com <i>fallback</i> <code>America/Sao_Paulo</code>; alerta <code>overdue</code> para <code>in_progress</code> parado há mais de 3 dias.</td><td>Comparar em UTC quebra a virada do dia para tenants fora de Brasília.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>RCRCRC</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>Evidência</th><th>Peso</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Recent</td><td>O painel foi <b>extraído e reestilizado nesta branch</b> (<code>df6558a</code> + <code>e8c16b7</code>). É a primeira tela que qualquer usuário vê depois do login.</td><td><span class="pill fail">Alto</span></td></tr>
+      <tr><td class="dim">Core</td><td>Toda sessão começa aqui. Se a Home quebra, o produto parece fora do ar mesmo com tudo funcionando.</td><td><span class="pill fail">Alto</span></td></tr>
+      <tr><td class="dim">Time</td><td>Duas janelas móveis e um alerta por idade — três cálculos de data em um endpoint só.</td><td><span class="pill warn">Médio</span></td></tr>
+      <tr><td class="dim">Risky</td><td>Agrega quatro fontes; o filtro de dado sensível precisa ser aplicado antes da contagem.</td><td><span class="pill warn">Médio</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos unitários <span class="pill unit">camada UNIT · teste de método</span></h3>
+  <p class="note">A Home é quatro subtrações de milissegundos e um corte de lista. Testar isso pela API exige semear registros em datas relativas e torcer para o relógio cooperar; com <i>fake timers</i> sobre a função extraída, o mesmo caso roda determinístico.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Alvo</th><th>O que prova</th><th>Relação</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">UNIT-H-01</td><td><code>localDateKey(date)</code> · <code>dashboard.service.ts:25</code></td><td>Fuso <code>America/Sao_Paulo</code> escrito no código, como em Agendamentos. Instante às 23:30 −03 e às 00:30 −03 caem em dias diferentes; o mesmo instante em UTC não muda a chave.</td><td>API-H-03</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-H-02</td><td>janelas de <code>home()</code> → extrair <code>homeWindows(now)</code> · <code>dashboard.service.ts:45-48</code> <span class="pill warn">extrair</span></td><td>As quatro janelas (24 h para reservas, 7 dias para pessoas, 3 dias de atraso, 48 h de pendência) derivadas de um único <code>now</code> injetado. Com o relógio congelado, cada borda vira uma asserção exata em vez de uma comparação aproximada.</td><td>API-H-01, -02, -09</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-H-03</td><td>montagem da lista de ações → extrair a partir de <code>home()</code> <span class="pill warn">extrair</span></td><td>Corte em quatro ações e <b>contagem zero não vira ação</b>. Cinco candidatas devolvem quatro; nenhuma candidata devolve lista vazia, não uma ação com "0".</td><td>API-H-04, -05</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">UNIT-H-04</td><td>montagem do feed → extrair a partir de <code>home()</code> <span class="pill warn">extrair</span></td><td>Dez itens no máximo, deduplicados, e <b>só metadados</b> — o teste confere que nenhuma chave de conteúdo de resposta atravessa o objeto montado.</td><td>API-H-06, -07</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">UNIT-H-05</td><td><code>formatActivityTime(date)</code> · <code>home-panel.tsx:533</code></td><td>Hoje devolve só a hora; ontem devolve <code>Ontem HH:MM</code>; anteontem devolve <code>dd/MM HH:MM</code>. As duas viradas conferidas com relógio fixo — inclusive a virada à meia-noite, que é onde a função erra se comparar instantes em vez de dias.</td><td>E2E-H-01</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos de API <span class="pill api">camada API · funcional no endpoint</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Cenário</th><th>Pré-condição</th><th>Resultado esperado</th><th>Doc</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">API-H-01</td><td>Janela de 24 h nas reservas</td><td>Reservas criadas há 23 h e há 25 h</td><td>Só a de 23 h conta. Reserva cancelada é excluída da métrica.</td><td>H-02</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-H-02</td><td>Janela de 7 dias nas pessoas</td><td>Cadastros há 6 e há 8 dias</td><td>Só o de 6 dias conta</td><td>H-02</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-H-03</td><td>Fuso do tenant na virada do dia</td><td>Tenant fora de <code>America/Sao_Paulo</code>; registro criado perto da meia-noite local</td><td>A contagem usa o fuso do tenant, não UTC nem o relógio do servidor</td><td>H-03</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-H-04</td><td>Limite de quatro ações</td><td>Dados suficientes para gerar seis ações</td><td>Exatamente quatro, na ordem: reservas <code>pending</code> de 24 h, reservas <code>confirmed</code>, <code>in_progress</code> parado &gt; 3 dias, submissões de 24 h</td><td>H-04</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-H-05</td><td>Contagem zero não vira ação</td><td>Nenhuma reserva pendente</td><td>A ação correspondente <b>não aparece</b> — não existe card com zero</td><td>H-05</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-H-06</td><td>Feed limitado e deduplicado</td><td>25 eventos, alguns com mesmo tipo + id + data</td><td>No máximo 10, em ordem decrescente, sem repetição</td><td>H-06</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-H-07</td><td>Feed só com metadados</td><td>Submissão de formulário no feed</td><td>Aparece o evento, <b>nunca o conteúdo da resposta</b></td><td>H-07</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-H-08</td><td>Filtro sensível antes da contagem</td><td>Admin sem <code>canViewSensitiveData</code>; submissões sensíveis nas últimas 24 h</td><td>A métrica de respostas <b>não as conta</b>, as ações não as citam e o feed não as lista</td><td>H-08</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-H-09</td><td>Alerta de atraso</td><td>Reservas <code>in_progress</code> paradas há 2 e há 4 dias</td><td>Só a de 4 dias entra em <code>alerts.overdue</code></td><td>H-09</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-H-10</td><td>Tenant vazio</td><td>Tenant recém-criado, sem nenhum dado</td><td>Métricas zeradas, <code>actions: []</code>, <code>activities: []</code> — e <b>nenhum dado de exemplo</b>. Este é o caso que pega mock esquecido.</td><td>H-10</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-H-XT</td><td>Isolamento entre tenants</td><td>Dois tenants com volumes bem diferentes</td><td>Cada um vê só o próprio número; nenhuma métrica soma dado do vizinho</td><td>H-01</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos E2E <span class="pill e2e">camada E2E · automatizado</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Jornada</th><th>Valida</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">E2E-H-01</td><td>Login → Home com dados semeados → conferir os quatro cards → clicar em cada atalho</td><td>Cada atalho leva à seção certa <b>com o filtro certo</b> (reservas em <code>pending</code>, pedidos em <code>confirmed</code>)</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">E2E-H-02</td><td>Login em tenant vazio</td><td>Estados vazios em todos os blocos, sem nenhum número ou nome inventado</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout">
+    <h4>O que este módulo não cobre</h4>
+    <ul>
+      <li>"Desde seu último acesso" depende de <code>users.last_login_at</code>, que <b>não existe</b> no schema.</li>
+      <li>"Respostas aguardando análise" depende de <code>form_submissions.analyzed_at/analyzed_by</code>, que também não existem. A especificação <b>proíbe</b> usar o rótulo "Formulários pendentes" no MVP justamente por isso.</li>
+      <li>Lembretes manuais exigiriam a tabela <code>dashboard_reminders</code>; alerta de estoque exigiria <code>products.stock_quantity</code>. Nenhuma das duas existe.</li>
+      <li>Métrica e ação podem nascer da mesma origem — isso é esperado, não duplicação. Não tratar como defeito.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="module risk-medio" id="m-grupos">
+  <div class="mhead"><h2>6. Grupos</h2><span class="pill warn">Risco médio</span><span class="pill info">Complex</span></div>
+  <dl class="modmeta">
+    <dt>Especificação</dt><dd><code>docs/dash/grupos/regras-de-negocio-criar-grupo.md</code></dd>
+    <dt>API</dt><dd><code>/dashboard/groups</code> (4 rotas) · <code>apps/api/src/groups/</code></dd>
+    <dt>Front</dt><dd><code>groups-panel.tsx</code>, <code>create-group-wizard.tsx</code>, <code>edit-group-panel.tsx</code>, <code>group-details-panel.tsx</code></dd>
+    <dt>QA na doc</dt><dd>G-01 … G-13</dd>
+  </dl>
+  <p class="note">Organiza pessoas para eventos, turmas e dinâmicas, e serve de destino para envio de formulários. Dois modos: criação manual de um grupo, ou divisão automática de uma população em até 50 grupos.</p>
+
+  <h3>SFDPOT</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>O que existe aqui</th><th>Risco</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Structure</td><td><code>team_groups</code> (única por <code>(tenant_id, id)</code>, RLS forçada) e <code>team_group_members</code> (única por <code>(group_id, person_id)</code>). Migrações 0030 a 0032.</td><td>A migração 0032 converteu <code>in_progress</code> em <code>active</code> — dado legado precisa continuar consistente.</td></tr>
+      <tr><td class="dim">Function</td><td>Modo manual (sempre um grupo) e modo divisão (origem <code>people</code> ou <code>form</code>). Edição substitui a composição inteira em transação.</td><td>Substituição integral sem reequilíbrio: editar um grupo pode deixar os outros desbalanceados sem aviso.</td></tr>
+      <tr><td class="dim">Data</td><td>Nome de 1 a 120 caracteres; descrição ≤ 200 na edição; ícone entre quatro valores na UI e 40 caracteres na API; <code>groupCount</code> de 2 a 50; <code>groupSize</code> de 1 a 100.</td><td>UI e API divergem no ícone — a API aceita o que a interface não oferece.</td></tr>
+      <tr><td class="dim">Platform</td><td>Sem paginação na listagem. <code>accentColor</code> <b>fixo em <code>#7C3AED</code></b> no código.</td><td>Cor fixa contradiz o módulo de Marca, que deixa o tenant escolher a paleta.</td></tr>
+      <tr><td class="dim">Operations</td><td>Origem formulário exige status <code>CLOSED</code>; integrantes ficam <b>imutáveis</b> depois disso. <code>createdBy</code> é o trecho do e-mail antes do <code>@</code>.</td><td><b>Não existe endpoint de exclusão</b> — grupo criado por engano fica para sempre.</td></tr>
+      <tr><td class="dim">Time</td><td>A ordem-base da divisão por formulário é a data de submissão.</td><td>Submissões com o mesmo instante tornam a ordem não determinística e o teste, instável.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>RCRCRC</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>Evidência</th><th>Peso</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Complex</td><td>Wizard de quatro passos, dois modos, duas origens, distribuição sequencial com descarte silencioso de excedente.</td><td><span class="pill fail">Alto</span></td></tr>
+      <tr><td class="dim">Conformance</td><td>Três estratégias (<code>random</code>, <code>similar</code>, <code>balanced</code>) são <b>apenas rótulos persistidos</b>: todas executam distribuição sequencial. A interface promete algo que o código não faz.</td><td><span class="pill warn">Médio</span></td></tr>
+      <tr><td class="dim">Core</td><td>É o destino de envio de formulários — se o grupo sai errado, o formulário vai para as pessoas erradas.</td><td><span class="pill warn">Médio</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos unitários <span class="pill unit">camada UNIT · teste de método</span></h3>
+  <p class="note">A distribuição de participantes está implementada <b>duas vezes</b>: uma no wizard, para mostrar a prévia, outra no serviço, para gravar. Se as duas divergirem, o cliente vê uma prévia que não é o que será criado — e nenhum teste de API pega isso, porque a API está certa.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Alvo</th><th>O que prova</th><th>Relação</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">UNIT-G-01</td><td><code>distributeGroupParticipants(total, groupCount, groupSize)</code> · <code>create-group-wizard.tsx:206</code></td><td>10 pessoas em 3 grupos de 3 devolve <code>[3,3,3]</code> e <b>descarta o décimo em silêncio</b>. <code>groupCount</code> 0 devolve lista vazia; total 0 devolve zeros. O descarte é a regra mais surpreendente do módulo e a mais fácil de provar aqui.</td><td>API-G-09</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-G-02</td><td>equivalência entre o wizard e o laço <code>sizes</code> de <code>create()</code> · <code>groups.service.ts:174</code> <span class="pill warn">extrair</span></td><td>A mesma tabela de entradas alimenta as duas implementações e as saídas têm de ser idênticas. É o único teste desta estratégia cujo objetivo é provar que <b>duas cópias concordam</b> — e o que autoriza apagar uma delas depois.</td><td>API-G-09 · E2E-G-02</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-G-03</td><td><code>validateStatusTransition(current, next, memberCount)</code> · <code>groups.service.ts:27</code></td><td>Para <code>active</code> ou <code>finalized</code> sem integrante, recusa; mesmo status não valida nada; e <b>qualquer outro par é permitido</b>, inclusive <code>finalized</code> → <code>draft</code>. O teste registra a permissividade atual — é a evidência que a decisão pendente de <code>API-G-14</code> precisa para ser tomada.</td><td>API-G-10, -14</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-G-04</td><td><code>strategyLabel(input)</code> · <code>groups.service.ts:34</code></td><td>Manual vence tudo; origem pessoas devolve "Divisão por pessoas"; senão, o rótulo da estratégia. Prova que a estratégia é <b>só rótulo</b> — não altera a composição.</td><td>API-G-08</td><td class="prio"><span class="pill info">P2</span></td></tr>
+      <tr><td class="id">UNIT-G-05</td><td><code>toRecord(group, members)</code> · <code>groups.service.ts:205</code></td><td><code>formId</code> cai para <code>manual-&lt;id&gt;</code> quando não há formulário de origem; <code>participantCount</code> bate com o tamanho da lista; datas saem em ISO. É o formato que o front consome inteiro.</td><td>API-G-01</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos de API <span class="pill api">camada API · funcional no endpoint</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Cenário</th><th>Pré-condição</th><th>Resultado esperado</th><th>Doc</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">API-G-01</td><td>Criação manual</td><td>Modo manual com três pessoas</td><td>Exatamente <b>um</b> grupo, com os três integrantes na ordem enviada, cada um com sua <code>position</code></td><td>G-01</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-G-02</td><td>Manual exige ao menos uma pessoa</td><td><code>personIds</code> vazio</td><td><code>400</code></td><td>G-02</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-G-03</td><td>Pessoa de outro tenant</td><td>Lista com um UUID do tenant B</td><td><code>400</code> e <b>nenhum</b> grupo criado</td><td>G-11</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-G-04</td><td>Origem formulário exige <code>CLOSED</code></td><td>Formulário em <code>PUBLISHED</code>, <code>DRAFT</code>, <code>UNPUBLISHED</code> e <code>ARCHIVED</code></td><td><code>400</code> nos quatro. Só <code>CLOSED</code> passa — e a API revalida, não confia no que a UI mandou.</td><td>G-03</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-G-05</td><td><i>Dedupe</i> por pessoa</td><td>Formulário em modo <code>MULTIPLE</code>, com uma pessoa que respondeu três vezes</td><td>Ela entra <b>uma vez só</b> na divisão</td><td>G-04</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-G-06</td><td>Formulário sem respondente elegível</td><td>Formulário encerrado sem submissão</td><td><code>400</code></td><td>G-05</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-G-07</td><td><b>Distribuição sequencial e descarte do excedente</b></td><td>25 pessoas, <code>groupCount: 4</code>, <code>groupSize: 12</code></td><td>Três grupos, com 12, 12 e 1. O quarto <b>não é criado</b> e as pessoas acima da capacidade total são <b>descartadas em silêncio</b>.</td><td>G-06</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-G-08</td><td>Estratégia é só rótulo</td><td>Mesma população dividida com <code>random</code>, <code>similar</code> e <code>balanced</code></td><td>Composição <b>idêntica</b> nas três. Confirma que o rótulo é persistido mas não muda o algoritmo — comportamento documentado que precisa ficar visível.</td><td>G-07</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-G-09</td><td>Limites da divisão</td><td><code>groupCount</code> 1 e 51; <code>groupSize</code> 0 e 101</td><td><code>400</code> em todos; 2/50 e 1/100 aceitos</td><td>G-08</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-G-10</td><td>Estados e integrantes</td><td>Grupo <code>draft</code> sem integrante</td><td>Não pode ir para <code>active</code> nem <code>finalized</code> — ambos exigem ao menos um integrante</td><td>G-09</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-G-11</td><td>Ativação dedicada</td><td><code>POST .../activate</code> em grupo já <code>active</code>, e em <code>draft</code> vazio</td><td>Recusado nos dois; aceito só em <code>draft</code> com integrantes</td><td>G-10</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-G-12</td><td>Grupo de formulário tem integrantes imutáveis</td><td><code>PATCH</code> enviando <code>personIds</code> em grupo de origem formulário</td><td><code>400</code>. Nome, descrição, ícone e status continuam editáveis.</td><td>G-12</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-G-13</td><td>Edição substitui a composição</td><td>Grupo manual de 5 pessoas; <code>PATCH</code> com 3</td><td>Fica com 3, em transação, e a ordem enviada vira a nova <code>position</code></td><td>G-13</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-G-14</td><td>Transição livre de status</td><td><code>PATCH</code> levando <code>finalized</code> direto para <code>draft</code></td><td>Hoje é <b>aceito</b> — não há máquina de estados restritiva no <code>PATCH</code>. Registrar o comportamento real e escalar como risco.</td><td>—<span class="pill info">novo</span></td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-G-XT</td><td>Isolamento entre tenants</td><td>Token do tenant A em grupo do tenant B</td><td><code>404</code> em leitura, edição e ativação</td><td>G-11</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos E2E <span class="pill e2e">camada E2E · automatizado</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Jornada</th><th>Valida</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">E2E-G-01</td><td>Wizard manual: buscar por nome, e-mail e telefone → montar o grupo → salvar → ativar</td><td>A busca funciona nos três campos e o grupo nasce utilizável</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">E2E-G-02</td><td>Wizard de divisão a partir de formulário encerrado, com excedente</td><td><b>A pré-visualização é estimativa</b> — comparar com o que a API criou de fato e verificar se a interface avisa sobre o descarte</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">E2E-G-03</td><td>Editar um grupo de origem formulário</td><td>Os integrantes aparecem bloqueados; nome, descrição, ícone e status continuam editáveis</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout danger">
+    <h4>O que este módulo não cobre</h4>
+    <ul>
+      <li><b>Não existe exclusão de grupo</b> — nenhum endpoint. Grupo criado por engano permanece.</li>
+      <li>Sem reequilíbrio automático depois de uma edição.</li>
+      <li>Sem máquina de transição no <code>PATCH</code>: qualquer status pode ser definido diretamente (<code>API-G-14</code> documenta isso).</li>
+      <li><code>accentColor</code> fixo em <code>#7C3AED</code> ignora a paleta do tenant definida em Marca.</li>
+      <li>O nome do arquivo de especificação foge do padrão <code>prd-adr-especificacao-{modulo}.md</code> — o README diz que renomear é opcional.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="module risk-medio" id="m-catalogo">
+  <div class="mhead"><h2>7. Catálogo</h2><span class="pill warn">Risco médio</span><span class="pill info">Core · Config</span></div>
+  <dl class="modmeta">
+    <dt>Especificação</dt><dd><code>docs/dash/catalago/prd-adr-especificacao-catalogo.md</code></dd>
+    <dt>API</dt><dd><code>/dashboard/{categories,products,reservations}</code> (11 rotas) e <code>/public/**</code> · <code>apps/api/src/catalog/</code></dd>
+    <dt>Front</dt><dd><code>apps/dashboard/app/shop-panel.tsx</code> <span class="pill warn">extraído nesta branch</span></dd>
+    <dt>QA na doc</dt><dd>8 critérios de aceite numerados</dd>
+  </dl>
+  <p class="note">Publica produtos no app, organiza em categorias e acompanha solicitações de reserva. <b>Não processa pagamento nem estoque</b> — uma reserva é uma solicitação de atendimento, não um pedido de e-commerce.</p>
+
+  <h3>SFDPOT</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>O que existe aqui</th><th>Risco</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Structure</td><td>Categorias, produtos e reservas; produto tem categoria opcional; a metade pública do mesmo controller serve o app.</td><td>Rotas administrativas e públicas no mesmo arquivo: é fácil deixar uma rota sem guard por descuido.</td></tr>
+      <tr><td class="dim">Function</td><td>CRUD dos dois primeiros e avanço de estado das reservas. Excluir categoria <b>não</b> exclui produtos: apenas zera <code>category_id</code>.</td><td>Excluir produto com reserva histórica <b>é permitido</b> e a cascata remove as referências — perda de histórico silenciosa.</td></tr>
+      <tr><td class="dim">Data</td><td>Nome de categoria ≤ 60 e <b>único por tenant</b>; descrições ≤ 150; ícone minúsculo com hífen ≤ 40, padrão <code>briefcase</code>; <b>preço em centavos</b>, inteiro ≥ 0; motivo de cancelamento ≤ 1000.</td><td>Preço em centavos tratado como reais mostra R$ 1.000 no lugar de R$ 10,00.</td></tr>
+      <tr><td class="dim">Platform</td><td>Upload de 5 MB no escopo <code>tenant/product</code>; e-mail de notificação por Resend, condicionado a três variáveis de ambiente.</td><td>Falha no e-mail <b>não pode</b> desfazer a reserva. Se desfizer, o cliente perde a solicitação por um problema de infraestrutura.</td></tr>
+      <tr><td class="dim">Operations</td><td>Cinco estados de reserva; o admin precisa informar motivo para cancelar; o cliente só cancela a própria e só enquanto <code>pending</code>.</td><td>Assimetria admin/cliente igual à de Agendamentos — mesmo risco de aplicar a regra ao lado errado.</td></tr>
+      <tr><td class="dim">Time</td><td>Ordem de criação define a posição da categoria.</td><td>Sem reordenação manual: a única forma de mudar a ordem é recriar.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>RCRCRC</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>Evidência</th><th>Peso</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Recent</td><td>O painel foi <b>extraído e reestilizado nesta branch</b> (<code>9e83fb8</code> + <code>6a943fb</code>) — a última das quatro extrações, e portanto a menos exercitada.</td><td><span class="pill fail">Alto</span></td></tr>
+      <tr><td class="dim">Core</td><td>Alimenta dois dos quatro cards da Home (novas reservas e pedidos prontos).</td><td><span class="pill warn">Médio</span></td></tr>
+      <tr><td class="dim">Configuration-sensitive</td><td>O e-mail de notificação depende de <code>contact_email</code> + <code>RESEND_API_KEY</code> + <code>EMAIL_FROM</code>: quatro combinações relevantes.</td><td><span class="pill warn">Médio</span></td></tr>
+      <tr><td class="dim">Risky</td><td>Preço em centavos e exclusão em cascata de produto com histórico.</td><td><span class="pill warn">Médio</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos unitários <span class="pill unit">camada UNIT · teste de método</span></h3>
+  <p class="note">Uma matriz de transição e uma conversão de dinheiro. Duas coisas que erram silenciosamente e que não precisam de banco para serem provadas.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Alvo</th><th>O que prova</th><th>Relação</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">UNIT-CAT-01</td><td><code>validateReservationTransition(current, next)</code> · <code>catalog.service.ts:29</code></td><td>A matriz completa, incluindo o que a tabela <i>não</i> lista: <code>completed</code> e <code>cancelled</code> são terminais, e qualquer saída deles cai no <code>?.</code> e é recusada. Mais a mensagem literal <i>"Essa alteração de status não é permitida."</i></td><td>API-CAT-11</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-CAT-02</td><td>conversão de preço — <code>formatPrice(priceCents)</code> · <code>shop-panel.tsx:991</code> e o parse do formulário <span class="pill warn">extrair</span></td><td>0, 1 centavo, 1999 e um valor com centavo quebrado; ida e volta reais ↔ centavos sem perda. Erro de fator 100 em dinheiro é o defeito clássico que passa por revisão e não passa por este teste.</td><td>API-CAT-06</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-CAT-03</td><td><code>formatReservationDate</code> e <code>statusChoice</code> · <code>shop-panel.tsx:995, 964</code></td><td>Formatação estável em <code>pt-BR</code> e o par rótulo/estado do seletor de disponibilidade.</td><td>E2E-CAT-01</td><td class="prio"><span class="pill info">P2</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos de API <span class="pill api">camada API · funcional no endpoint</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Cenário</th><th>Pré-condição</th><th>Resultado esperado</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">API-CAT-01</td><td>Nome de categoria único por tenant</td><td>Duas categorias com o mesmo nome no mesmo tenant</td><td>A segunda é recusada. O mesmo nome em outro tenant é aceito.</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-CAT-02</td><td>Limites da categoria</td><td>Nome com 61 caracteres; descrição com 151; ícone com maiúscula, com espaço, e com 41 caracteres</td><td><code>400</code> em todos; ícone omitido assume <code>briefcase</code></td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-CAT-03</td><td>Categoria inativa não aceita vínculo</td><td>Produto novo apontando para categoria inativa</td><td>Recusado — vale tanto na criação quanto na edição do produto</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-CAT-04</td><td>Excluir categoria preserva produtos</td><td>Categoria com três produtos</td><td>Os três continuam existindo com <code>category_id = null</code>. <b>Nenhum produto é apagado.</b></td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-CAT-05</td><td>Categoria de outro tenant</td><td>Produto apontando para <code>categoryId</code> do tenant B</td><td><code>400</code> ou <code>404</code> — nunca vínculo cruzado</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-CAT-06</td><td>Preço em centavos</td><td>Preço 1000; e depois −1 e 10.50</td><td>1000 é gravado como inteiro e o app mostra R$ 10,00. Negativo e fracionário → <code>400</code>. Preço ausente é válido.</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-CAT-07</td><td>Só produto ativo aparece e aceita reserva</td><td>Produto inativo</td><td>Some de <code>GET /public/tenants/:slug/products</code>; <code>POST /public/products/:id/reservations</code> é recusado</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-CAT-08</td><td>Upload de imagem</td><td>PDF; 5 MB + 1 byte; PNG válido</td><td><code>400</code>, <code>400</code>, <code>200</code> com <code>imageUrl</code> derivada de <code>image_key</code></td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-CAT-09</td><td>Excluir produto limpa o armazenamento</td><td>Produto com imagem</td><td>O objeto é removido do armazenamento junto com o registro</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-CAT-10</td><td><b>Excluir produto com reserva histórica</b></td><td>Produto com reservas concluídas</td><td>Hoje a API <b>permite</b> e a cascata remove as referências. Registrar o comportamento real e escalar: a recomendação da própria especificação é inativar, não excluir.</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-CAT-11</td><td>Máquina de estados da reserva</td><td>Reserva <code>pending</code></td><td>Avança <code>pending</code> → <code>in_progress</code> → <code>confirmed</code> → <code>completed</code>. <code>cancelled</code> é alcançável dos três primeiros. Voltar é recusado.</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-CAT-12</td><td>Cancelamento pelo admin exige motivo</td><td><code>PATCH</code> para <code>cancelled</code> sem <code>cancellationReason</code>; e com 1001 caracteres</td><td><code>400</code> nos dois. Com motivo válido, grava e marca <code>cancelled_by: admin</code>.</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-CAT-13</td><td>Cliente só cancela a própria, e só <code>pending</code></td><td>Cliente tenta cancelar reserva <code>in_progress</code>, e depois a reserva de outra pessoa</td><td>Recusado nos dois. Em <code>pending</code> própria, aceito e marca <code>cancelled_by: client</code>.</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-CAT-14</td><td>Falha de e-mail não desfaz a reserva</td><td><code>RESEND_API_KEY</code> inválida</td><td>A reserva é criada normalmente; a falha de envio fica só no log</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-CAT-15</td><td>E-mail só com configuração completa</td><td>Sem <code>contact_email</code>; sem <code>EMAIL_FROM</code>; configuração completa</td><td>Não envia nas duas primeiras; envia na terceira. Nenhuma delas afeta a criação da reserva.</td><td class="prio"><span class="pill info">P2</span></td></tr>
+      <tr><td class="id">API-CAT-XT</td><td>Isolamento entre tenants</td><td>Token do tenant A em produto, categoria e reserva do tenant B; e <code>/public/tenants/:slug/products</code> com o slug do B</td><td>Rotas administrativas <code>404</code>; a rota pública devolve só o catálogo do slug pedido, sem mistura</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos E2E <span class="pill e2e">camada E2E · automatizado</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Jornada</th><th>Valida</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">E2E-CAT-01</td><td>Criar categoria → criar produto com imagem e preço → conferir no app do cliente → cliente reserva → admin avança até concluir</td><td>O ciclo completo, com atenção ao preço exibido em reais no app</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">E2E-CAT-02</td><td>Admin cancela uma reserva</td><td>O motivo é <b>exigido pela interface</b>, não só pela API, e aparece no detalhe</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">E2E-CAT-03</td><td>Inativar uma categoria com produtos vinculados</td><td>Os produtos continuam listados no Dashboard e a categoria some das opções de novo vínculo</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout">
+    <h4>O que este módulo não cobre</h4>
+    <ul>
+      <li>Sem carrinho, pedido com vários itens, pagamento, nota fiscal, estoque, SKU, variação, cupom, frete ou entrega.</li>
+      <li>Sem reordenação manual de categorias e <b>sem paginação</b> nas listas administrativas.</li>
+      <li><b>Sem limite de reservas por produto ou por pessoa</b> nesta versão — uma pessoa pode reservar o mesmo produto indefinidamente.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="module risk-medio" id="m-marca">
+  <div class="mhead"><h2>8. Marca e aparência</h2><span class="pill warn">Risco médio</span><span class="pill info">Recent · Config</span></div>
+  <dl class="modmeta">
+    <dt>Especificação</dt><dd><code>docs/dash/marca/prd-adr-especificacao-marca.md</code></dd>
+    <dt>API</dt><dd><code>/dashboard/branding</code> (4 rotas) · <code>apps/api/src/branding/</code> — 8 commits</dd>
+    <dt>Front</dt><dd><code>apps/dashboard/app/branding-panel.tsx</code> <span class="pill warn">extraído nesta branch</span></dd>
+    <dt>QA na doc</dt><dd>8 critérios de aceite numerados</dd>
+  </dl>
+  <p class="note">A identidade visual do tenant dentro do app: nome exibido, slogan, descrição, logo, capa e paleta de três cores. Registro único por tenant — <code>tenant_id</code> é a chave primária e o <code>PUT</code> faz <i>upsert</i>.</p>
+
+  <h3>SFDPOT</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>O que existe aqui</th><th>Risco</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Structure</td><td><code>brand_settings</code> com <code>tenant_id</code> como chave primária. A mesma linha guarda as configurações do carrossel de Banners.</td><td><b>Acoplamento real:</b> Marca e Banners escrevem na mesma linha. Um <code>PUT</code> descuidado zera a configuração do outro módulo.</td></tr>
+      <tr><td class="dim">Function</td><td><i>Upsert</i> de marca, envio de ativo, presign de upload. A prévia é local; só o <code>PUT</code> bem-sucedido altera o app.</td><td>Prévia local convincente esconde falha de escrita — o usuário sai achando que salvou.</td></tr>
+      <tr><td class="dim">Data</td><td>Cores só em <code>#RRGGBB</code> de seis dígitos, normalizadas para maiúsculas. Padrões <code>#0B1F33</code>, <code>#111827</code>, <code>#F4F7FB</code>. Descrição limitada a 160 na UI, sem limite no banco.</td><td>Formato de três dígitos, <code>rgb()</code> ou nome de cor precisam ser rejeitados, não silenciosamente aceitos.</td></tr>
+      <tr><td class="dim">Platform</td><td>Logo e capa até 5 MB; chaves validadas no espaço do tenant. Ao substituir, <b>o arquivo anterior é removido — exceto chaves terminadas em <code>/current</code></b>.</td><td>Essa exceção é sutil e fácil de quebrar numa refatoração de armazenamento.</td></tr>
+      <tr><td class="dim">Operations</td><td>Nome exibido e as três cores são obrigatórios para salvar <b>mesmo quando a ação parte da aba Aparência</b>.</td><td>Quem está mexendo só em cor não espera ser barrado por nome vazio. Precisa de mensagem clara.</td></tr>
+      <tr><td class="dim">Time</td><td>A prévia anexa uma versão derivada de <code>updatedAt</code> à URL do ativo, para furar cache.</td><td>Sem isso, o usuário troca a logo e continua vendo a antiga — e reporta como bug de gravação.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>RCRCRC</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>Evidência</th><th>Peso</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Recent</td><td>Extraído e reestilizado nesta branch (<code>20b31c2</code> + <code>eee2cf1</code>); 8 commits no backend, um deles de correção.</td><td><span class="pill fail">Alto</span></td></tr>
+      <tr><td class="dim">Configuration-sensitive</td><td>Compartilha a linha <code>brand_settings</code> com o carrossel de Banners.</td><td><span class="pill warn">Médio</span></td></tr>
+      <tr><td class="dim">Conformance</td><td>Formato de cor estrito e validação de propriedade da chave de ativo.</td><td><span class="pill warn">Médio</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos unitários <span class="pill unit">camada UNIT · teste de método</span></h3>
+  <p class="note">Cor e URL derivada. A cor é o campo mais editado do módulo; a URL nunca é persistida, e é isso que o teste precisa fixar.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Alvo</th><th>O que prova</th><th>Relação</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">UNIT-MK-01</td><td>validação de cor hexadecimal — <code>branding.controller.ts</code> e o <code>toUpperCase</code> de <code>branding-panel.tsx:624</code> <span class="pill warn">extrair</span></td><td><code>#FFFFFF</code>, <code>#fff</code>, <code>fff</code> sem cerquilha, <code>#GGGGGG</code>, string vazia e valor com espaço. O front normaliza para maiúsculas antes de enviar — o teste confere que o backend aceita as duas caixas, ou recusa as duas.</td><td>API-MK-03</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-MK-02</td><td><code>publicUrl(key)</code> · <code>r2-storage.service.ts:40</code></td><td>Chave nula devolve <code>null</code>, não string vazia nem URL quebrada; chave válida devolve a URL do bucket sem barra dupla.</td><td>API-MK-09</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">UNIT-MK-03</td><td><code>withUrls(settings)</code> · <code>branding.service.ts:34</code></td><td>Deriva <code>logoUrl</code> e <code>coverUrl</code> a partir das chaves e <b>não</b> acrescenta URL ao que vai para o banco. O banco guarda <code>key</code>; a URL é sempre calculada.</td><td>API-MK-09</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos de API <span class="pill api">camada API · funcional no endpoint</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Cenário</th><th>Pré-condição</th><th>Resultado esperado</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">API-MK-01</td><td><i>Upsert</i> em registro único</td><td>Dois <code>PUT</code> seguidos no mesmo tenant</td><td>Uma única linha em <code>brand_settings</code>, com o conteúdo do segundo <code>PUT</code></td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-MK-02</td><td>Campos obrigatórios</td><td><code>PUT</code> sem nome exibido; e sem uma das três cores</td><td><code>400</code> nos dois. Slogan e descrição vazios são aceitos.</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-MK-03</td><td>Formato de cor</td><td><code>#FFF</code>, <code>rgb(0,0,0)</code>, <code>azul</code>, <code>#GGGGGG</code>, e <code>#0b1f33</code></td><td><code>400</code> nos quatro primeiros; o último é aceito e <b>normalizado para <code>#0B1F33</code></b></td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-MK-04</td><td>Substituição remove o ativo anterior</td><td>Logo existente; envio de uma nova</td><td>O objeto antigo some do armazenamento — exceto se a chave terminar em <code>/current</code>, que é preservada</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-MK-05</td><td>Remover ativo exige <code>null</code> explícito</td><td><code>PUT</code> com <code>logoKey: null</code>; e <code>PUT</code> omitindo o campo</td><td>O primeiro remove; o segundo <b>preserva</b> o ativo. Omitir não é remover.</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-MK-06</td><td>Chave de outro tenant</td><td><code>PUT</code> com <code>logoKey</code> apontando para o espaço do tenant B</td><td>Recusado — a chave é validada contra o espaço de nomes do tenant autenticado</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-MK-07</td><td>Upload — tipo e tamanho</td><td>SVG; 5 MB + 1 byte; WebP válido</td><td><code>400</code>, <code>400</code>, <code>200</code></td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-MK-08</td><td><b>Marca não zera o carrossel</b></td><td>Carrossel configurado; em seguida, um <code>PUT</code> de marca</td><td><code>interval</code>, <code>height</code> e <code>showIndicators</code> permanecem. Este é o caso que protege o acoplamento entre os dois módulos.</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-MK-09</td><td>Publicação no payload público</td><td>Marca salva</td><td><code>GET /public/tenants/:slug</code> reflete nome, cores e URLs de ativo</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-MK-XT</td><td>Isolamento entre tenants</td><td>Token do tenant A lendo e escrevendo a marca do tenant B</td><td>Sempre a própria linha; nunca a do vizinho</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos E2E <span class="pill e2e">camada E2E · automatizado</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Jornada</th><th>Valida</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">E2E-MK-01</td><td>Alterar as três cores e a logo → salvar → abrir o app do tenant em outra aba</td><td>O app reflete a mudança e a logo nova aparece — o <i>cache busting</i> funciona</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">E2E-MK-02</td><td>Editar na aba Aparência com o nome exibido vazio, e depois descartar as alterações</td><td>O bloqueio é explicado com clareza; descartar recarrega da API e a prévia volta ao estado salvo</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout">
+    <h4>O que este módulo não cobre</h4>
+    <ul>
+      <li>Sem múltiplos temas, sem agendamento de tema, sem tipografia customizada ou CSS livre.</li>
+      <li>Sem recorte ou edição de imagem, sem histórico ou biblioteca de logos.</li>
+      <li>A prévia do Dashboard é uma simulação — pode divergir do renderizador real do app. Divergência pequena não é defeito.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="module risk-baixo" id="m-banners">
+  <div class="mhead"><h2>9. Banners</h2><span class="pill info">Risco baixo</span><span class="pill info">Config · Conformance</span></div>
+  <dl class="modmeta">
+    <dt>Especificação</dt><dd><code>docs/dash/banners/prd-adr-especificacao-banners.md</code></dd>
+    <dt>API</dt><dd><code>/dashboard/banners</code> (7 rotas) · <code>apps/api/src/banners/</code></dd>
+    <dt>Front</dt><dd>subvisão <code>banners</code> dentro de <code>branding-panel.tsx</code></dd>
+    <dt>QA na doc</dt><dd>8 critérios de aceite numerados</dd>
+  </dl>
+  <p class="note">Destaques na tela inicial do app do tenant: imagem, título, subtítulo e link externo opcional, com controle de ordem e ativação. Limite duro de <b>três banners ativos por tenant</b>.</p>
+
+  <h3>SFDPOT</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>O que existe aqui</th><th>Risco</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Structure</td><td>Tabela própria de banners; as configurações do carrossel vivem em <code>brand_settings</code>, <b>fora</b> da tabela de banners.</td><td>Mesmo acoplamento visto em Marca, agora do outro lado.</td></tr>
+      <tr><td class="dim">Function</td><td>CRUD, reordenação em lote e configuração de carrossel. Banner inativo é preservado e reativável se houver vaga.</td><td>A reordenação exige o payload <b>completo</b>: lista parcial precisa ser rejeitada, não aplicada em parte.</td></tr>
+      <tr><td class="dim">Data</td><td>Título obrigatório (60 na UI); descrição ≤ 100 na UI; rótulo do botão ≤ 20 na API; link deve começar com <code>http://</code> ou <code>https://</code>; posição inteira a partir de zero.</td><td>UI e API divergem nos limites — testar pela API, que é a fronteira real.</td></tr>
+      <tr><td class="dim">Platform</td><td>Imagem obrigatória na criação, até 5 MB, recomendada 1200×600. <b>Ao substituir, a chave anterior NÃO é removida.</b></td><td>Ativo órfão acumula no armazenamento. Está documentado como melhoria futura — o teste registra o fato.</td></tr>
+      <tr><td class="dim">Operations</td><td>Máximo de três ativos, validado na API. A prévia do admin é simulação.</td><td>Se o limite valesse só na UI, o app renderizaria quatro banners.</td></tr>
+      <tr><td class="dim">Time</td><td>Intervalo do carrossel entre 3, 5, 7 e 10 segundos. Empate na listagem administrativa desempata pela criação mais recente.</td><td>Sem agendamento nem expiração: banner de campanha precisa ser desligado à mão.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>RCRCRC</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>Evidência</th><th>Peso</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Conformance</td><td>Regra de ordenação estrita: todos os IDs, exatamente uma vez, sem desconhecido e sem duplicata.</td><td><span class="pill warn">Médio</span></td></tr>
+      <tr><td class="dim">Configuration-sensitive</td><td>Carrossel com três parâmetros, guardados em outro módulo, e <b>sem interface para editá-los</b>.</td><td><span class="pill warn">Médio</span></td></tr>
+      <tr><td class="dim">Recent</td><td>Reside no painel de branding, extraído nesta branch. Só 2 commits no backend.</td><td><span class="pill info">Baixo</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos unitários <span class="pill unit">camada UNIT · teste de método</span></h3>
+  <p class="note">O guarda de upload é o mesmo objeto para quatro módulos. Testá-lo uma vez, aqui, cobre Clientes, Catálogo, Marca e Banners — e é o exemplo mais claro de caso que hoje seria escrito quatro vezes na camada de API.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Alvo</th><th>O que prova</th><th>Relação</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">UNIT-BN-01</td><td>guarda de <code>presignUpload()</code> e <code>upload()</code> · <code>r2-storage.service.ts:20, 29</code></td><td>Tipo fora de JPEG/PNG/WebP; <code>size</code> 0; <code>size</code> negativo; <code>NaN</code>; 5 MB exatos (aceita) e 5 MB + 1 byte (recusa); <i>buffer</i> vazio. Mesma mensagem nas duas funções. <b>Um arquivo de teste substitui a bateria de upload de quatro módulos.</b></td><td>API-BN-03, API-MK-07, API-C-13, API-CAT-08</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">UNIT-BN-02</td><td>validação do formato do link do banner <span class="pill warn">extrair</span></td><td>URL absoluta com <code>https</code>, com <code>http</code>, caminho relativo, string vazia e texto que não é URL.</td><td>API-BN-04</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">UNIT-BN-03</td><td><code>withUrl(banner)</code> · <code>banners.service.ts:19</code></td><td>Mesma derivação de <code>imageKey</code> para <code>imageUrl</code> que a Marca faz — e a diferença deliberada de que Banners <b>não</b> remove o ativo anterior fica visível ao comparar os dois testes lado a lado.</td><td>API-BN-01</td><td class="prio"><span class="pill info">P2</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos de API <span class="pill api">camada API · funcional no endpoint</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Cenário</th><th>Pré-condição</th><th>Resultado esperado</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">API-BN-01</td><td><b>Limite de três ativos</b></td><td>Três banners ativos; criar um quarto já ativo</td><td>Erro de validação. Criar inativo é aceito.</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-BN-02</td><td>Ativar com o limite cheio</td><td>Três ativos e um inativo; <code>PATCH</code> ativando o inativo</td><td>Recusado. Desativando um dos três primeiro, passa.</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-BN-03</td><td>Imagem obrigatória na criação</td><td><code>POST</code> sem imagem</td><td><code>400</code></td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-BN-04</td><td>Formato do link</td><td><code>ftp://x</code>, <code>www.exemplo.com</code>, <code>/interno</code>, e <code>https://exemplo.com</code></td><td><code>400</code> nos três primeiros; o último aceito. Link ausente é válido.</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-BN-05</td><td>Limites de texto</td><td>Rótulo do botão com 21 caracteres; título ausente</td><td><code>400</code> nos dois</td><td class="prio"><span class="pill info">P2</span></td></tr>
+      <tr><td class="id">API-BN-06</td><td><b>Reordenação exige o payload completo</b></td><td>Quatro banners; <code>PATCH /order</code> com três IDs; com um ID desconhecido; com um ID repetido</td><td>Rejeitado nas três variações, <b>sem aplicar nada parcialmente</b></td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-BN-07</td><td>Reordenação válida</td><td>Payload com todos os IDs em nova ordem</td><td>Todas as posições são regravadas na mesma operação e a listagem reflete a ordem pedida</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-BN-08</td><td>Configuração do carrossel</td><td><code>interval: 4</code>; <code>height: 'huge'</code>; <code>interval: 7</code> com <code>height: 'large'</code></td><td><code>400</code> nos dois primeiros; o terceiro é aceito. Omitir assume 5 s, <code>medium</code> e indicadores visíveis.</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-BN-09</td><td><b>Substituir imagem deixa órfão</b></td><td>Banner com imagem; enviar outra</td><td>A chave anterior <b>permanece</b> no armazenamento. Comportamento conhecido — o caso existe para que a divergência com Marca fique registrada e não seja "descoberta" de novo.</td><td class="prio"><span class="pill info">P2</span></td></tr>
+      <tr><td class="id">API-BN-10</td><td>Só banner ativo chega ao app</td><td>Dois ativos e um inativo</td><td>O payload público da organização traz apenas os dois ativos, na ordem definida</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-BN-XT</td><td>Isolamento entre tenants</td><td>Token do tenant A editando, excluindo e reordenando banners do tenant B</td><td><code>404</code>; e a reordenação nunca aceita ID de outro tenant</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos E2E <span class="pill e2e">camada E2E · automatizado</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Jornada</th><th>Valida</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">E2E-BN-01</td><td>Criar três banners → reordenar → conferir o carrossel no app do tenant</td><td>A ordem definida no Dashboard é a ordem exibida no app</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">E2E-BN-02</td><td>Tentar ativar um quarto banner</td><td>A interface explica o limite de três em vez de apenas falhar</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout">
+    <h4>O que este módulo não cobre</h4>
+    <ul>
+      <li>Sem agendamento ou expiração de banner, sem segmentação de público, sem métricas de exibição ou clique.</li>
+      <li>Sem link interno (só externo) e sem editor de imagem.</li>
+      <li><b>A API já suporta configurar o carrossel, mas o Dashboard não expõe a interface.</b> Os casos <code>API-BN-08</code> e <code>-10</code> só são executáveis por API — não há jornada E2E possível para eles hoje.</li>
+      <li>Não existe rota pública exclusiva de banners: eles viajam dentro do payload público da organização.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="module risk-baixo" id="m-menu">
+  <div class="mhead"><h2>10. Menu e navegação</h2><span class="pill info">Risco baixo</span><span class="pill info">Recent · Core</span></div>
+  <dl class="modmeta">
+    <dt>Especificação</dt><dd><code>docs/dash/menu/prd-adr-especificacao-menu-navegacao.md</code></dd>
+    <dt>API</dt><dd>Nenhuma exclusiva — consome sessão, <code>tenantSlug</code> e <code>GET /dashboard/home</code></dd>
+    <dt>Front</dt><dd><code>apps/dashboard/app/dashboard-console.tsx</code> (estado <code>section</code>, linha 357)</dd>
+    <dt>QA na doc</dt><dd>8 critérios de aceite numerados</dd>
+  </dl>
+  <p class="note">Barra lateral fixa em três grupos (Atendimento, Conteúdo, Configurações), breadcrumb contextual, atalhos vindos da Home e acesso ao app público do tenant. É quase todo comportamento de front — daí o peso maior em E2E do que em API, exceção neste documento.</p>
+
+  <h3>SFDPOT</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>O que existe aqui</th><th>Risco</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Structure</td><td>Uma rota só, navegação por <code>useState</code>. Banners e Marca <b>compartilham a mesma seção interna</b> <code>branding</code>, com subvisões.</td><td>Duas entradas de menu apontando para a mesma seção: a que estiver ativa precisa refletir a subvisão certa.</td></tr>
+      <tr><td class="dim">Function</td><td>Clicar define a seção e <b>restaura a visão inicial do módulo</b> — Clientes fecha rascunho de edição, Catálogo abre Produtos.</td><td>Rascunho não descartado ao trocar de seção reaparece depois e confunde quem edita.</td></tr>
+      <tr><td class="dim">Data</td><td>Seis destinos semânticos vindos da Home: <code>appointments</code>, <code>reservations</code> (filtro <code>pending</code>), <code>orders</code> (<code>confirmed</code>), <code>people</code>, <code>groups</code>, <code>responses</code>.</td><td><b>Destino ausente ou desconhecido cai em Respostas</b> — <i>fallback</i> especificado que precisa de teste, senão vira erro silencioso.</td></tr>
+      <tr><td class="dim">Platform</td><td>"Ver seu app" monta <code>{webAppUrl}/{tenantSlug}</code> e abre em nova aba com <code>noopener,noreferrer</code>.</td><td>Sem <code>noopener</code>, a aba aberta ganha referência à janela de origem — brecha clássica de <i>tabnabbing</i>.</td></tr>
+      <tr><td class="dim">Operations</td><td>Sair remove token e slug do <code>sessionStorage</code>; a expiração de sessão executa o mesmo encerramento.</td><td>Se os dois caminhos divergirem, a sessão expirada deixa resíduo e o próximo login herda estado.</td></tr>
+      <tr><td class="dim">Time</td><td>A sessão sempre inicia em "Hoje"; recarregar volta para a Home.</td><td>Isso é especificado, não defeito. O teste registra o comportamento correto.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>RCRCRC</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>Evidência</th><th>Peso</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Recent</td><td>Vive no arquivo mais alterado da branch. As quatro extrações mexeram diretamente na fiação entre seção e painel.</td><td><span class="pill fail">Alto</span></td></tr>
+      <tr><td class="dim">Core</td><td>É o que dá acesso a todo o resto. Um item quebrado esconde um módulo inteiro.</td><td><span class="pill warn">Médio</span></td></tr>
+      <tr><td class="dim">Conformance</td><td>ADR-004: visibilidade de menu <b>não é</b> controle de segurança.</td><td><span class="pill warn">Médio</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos unitários <span class="pill unit">camada UNIT · teste de método</span></h3>
+  <p class="note">O menu quase não tem lógica — e o pouco que tem monta uma URL que abre outra aplicação. Só dois casos, e é honesto que sejam só dois.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Alvo</th><th>O que prova</th><th>Relação</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">UNIT-MN-01</td><td><code>tenantAppUrl()</code> → extrair para função pura <code>(webAppUrl, slug)</code> · <code>dashboard-console.tsx:1958</code> <span class="pill warn">extrair</span></td><td>Slug ausente devolve <code>null</code> (e é isso que dispara a mensagem de erro, não uma URL quebrada); barra final da base é removida antes de concatenar; slug com espaço.</td><td>E2E-MN-04</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">UNIT-MN-02</td><td>derivação dos itens visíveis a partir da sessão e dos add-ons <span class="pill warn">extrair</span></td><td>Tenant sem <code>appointment_analytics</code> não recebe o item de indicadores; admin sem <code>canViewSensitiveData</code> continua recebendo os itens — <b>a interface não é fronteira de segurança</b>, e o teste registra que esconder item é decisão visual, não permissão.</td><td>API-MN-03</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos de API <span class="pill api">camada API · funcional no endpoint</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Cenário</th><th>Pré-condição</th><th>Resultado esperado</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">API-MN-01</td><td>Sessão</td><td>Token válido em <code>GET /dashboard/session</code></td><td>Devolve tenant, slug e permissões do admin — inclusive <code>canViewSensitiveData</code> e <code>isPrimaryAdmin</code>, que a interface usa para montar o menu</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-MN-02</td><td>Token inválido, expirado e de admin desativado</td><td>Três variações contra <code>GET /dashboard/session</code></td><td><code>401</code> nas três. O caso do admin desativado prova que <code>isActive</code> é reconferido a cada requisição, não só no login.</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-MN-03</td><td>Menu não é segurança</td><td>Admin sem <code>canViewSensitiveData</code> chamando direto as rotas que o menu esconderia</td><td><code>403</code> pela API — esconder o item nunca é a única defesa</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos E2E <span class="pill e2e">camada E2E · automatizado</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Jornada</th><th>Valida</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">E2E-MN-01</td><td>Percorrer todos os itens dos três grupos do menu</td><td>Cada item ativa a seção certa, marca o item como ativo e abre a <b>visão inicial</b> do módulo. Banners e Marca chegam à mesma seção com subvisões diferentes.</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">E2E-MN-02</td><td>Iniciar a edição de um cliente → sair para outra seção → voltar</td><td>O rascunho foi descartado, conforme a especificação — não reaparece meio preenchido</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">E2E-MN-03</td><td>Sair pelo botão; e provocar expiração de sessão</td><td>Os dois caminhos limpam <code>crosshub.tenantToken</code> e <code>crosshub.tenantSlug</code> e levam ao login</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">E2E-MN-04</td><td>"Ver seu app" com slug presente, e com slug ausente</td><td>Com slug, abre <code>{webAppUrl}/{slug}</code> em nova aba. Sem slug, <b>não abre</b> e informa o erro.</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout">
+    <h4>O que este módulo não cobre</h4>
+    <ul>
+      <li><b>Sem URL por módulo, sem deep link e sem botão voltar do navegador.</b> Recarregar retorna à Home e descarta a subvisão — comportamento correto, testado em <code>E2E-MN-01</code>.</li>
+      <li>Sem favoritos, recentes, menu recolhível, personalização ou visibilidade por plano.</li>
+      <li>Sem busca global ou paleta de comandos; sem página de perfil.</li>
+      <li><b>Recuperação de senha não existe</b> — a interface informa "futuramente".</li>
+      <li>Selecionar automaticamente um registro de agendamento por ID a partir de um atalho não está implementado.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="module risk-baixo" id="m-anonimizacao">
+  <div class="mhead"><h2>11. Anonimização</h2><span class="pill warn">Funcionalidade suspensa</span></div>
+  <dl class="modmeta">
+    <dt>Especificação</dt><dd><code>docs/dash/anonimizacao/prd-adr-especificacao-anonimizacao.md</code> e <code>implementacao-futura.md</code></dd>
+    <dt>API</dt><dd><b>Nenhuma rota existe</b></dd>
+    <dt>Front</dt><dd><b>Nenhuma ação existe</b></dd>
+    <dt>Estado</dt><dd>Suspensa por decisão de produto, aguardando definição de Jurídico e DPO</dd>
+  </dl>
+  <p class="note">Processo irreversível de remover a identificação de uma pessoa preservando o que tem fundamento legal de retenção. <b>Não há ação no Dashboard, endpoint ou <i>job</i>.</b> Não existe tabela de solicitação, aprovação ou histórico. A suspensão é deliberada: anonimizar errado causa perda irreversível, descaracteriza histórico, descumpre retenção obrigatória e quebra referências.</p>
+  <p class="note">O módulo entra nesta estratégia porque <b>a ausência também precisa ser testada</b>. O risco aqui não é a funcionalidade falhar — é ela aparecer parcialmente, por uma rota esquecida ou um botão reintroduzido numa refatoração, e alguém apagar dado achando que está fazendo o certo.</p>
+
+  <h3>SFDPOT — aplicado à ausência</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Dimensão</th><th>O que verificar hoje</th><th>Risco</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Structure</td><td>Nenhuma tabela <code>privacy_anonymization_requests</code> no schema.</td><td>Migração criada "por antecipação" abriria caminho para uso indevido.</td></tr>
+      <tr><td class="dim">Function</td><td>Nenhuma rota de anonimização ou exclusão física responde.</td><td>Rota reintroduzida sem o processo de aprovação seria destrutiva na primeira chamada.</td></tr>
+      <tr><td class="dim">Data</td><td>"Remover acesso" preserva cadastro, códigos e histórico.</td><td>Confundir os dois é o erro operacional mais provável.</td></tr>
+      <tr><td class="dim">Operations</td><td>O perfil do cliente não exibe ação de anonimizar.</td><td>Botão reintroduzido numa refatoração de UI.</td></tr>
+      <tr><td class="dim">Time</td><td>Dado sensível segue a retenção do módulo LGPD, de forma independente.</td><td>Tratar retenção como anonimização levaria a apagar o que deveria ser preservado.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos unitários <span class="pill unit">camada UNIT · teste de método</span></h3>
+  <p class="note">Nenhum. Não existe função de anonimização no repositório — não há método a testar, e inventar um teste unitário para código ausente seria fingir cobertura. A ausência é provada na camada de API, pelos casos abaixo.</p>
+
+  <h3>Casos de API — testes de ausência <span class="pill api">camada API</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Cenário</th><th>Resultado esperado</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">API-AN-01</td><td><code>POST /dashboard/privacy/people/:personId/anonymization-requests</code> e as demais rotas candidatas</td><td><code>404</code> — nenhuma delas existe. O caso guarda a decisão de produto contra reintrodução acidental.</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+      <tr><td class="id">API-AN-02</td><td>Qualquer rota de exclusão física de pessoa</td><td><code>404</code> ou <code>405</code>. Nenhum caminho apaga <code>people</code> definitivamente.</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AN-03</td><td><b>"Remover acesso" não é anonimizar</b></td><td>Depois de <code>POST .../remove-access</code>: <code>status: revoked</code> e conta desativada, mas nome, e-mail, telefone, códigos, reservas, submissões e vínculos de grupo <b>todos preservados</b> e legíveis</td><td class="prio"><span class="pill fail">P0</span></td></tr>
+      <tr><td class="id">API-AN-04</td><td>Auditoria não tem evento de anonimização</td><td>Nenhum registro do tipo em <code>audit_logs</code> depois de percorrer os fluxos de privacidade</td><td class="prio"><span class="pill info">P2</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Casos E2E <span class="pill e2e">camada E2E · automatizado</span></h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>ID</th><th>Jornada</th><th>Valida</th><th>Prio</th></tr></thead>
+    <tbody>
+      <tr><td class="id">E2E-AN-01</td><td>Abrir o perfil de um cliente e percorrer todas as ações disponíveis</td><td><b>Nenhuma ação de anonimizar ou excluir permanentemente</b> aparece na interface</td><td class="prio"><span class="pill warn">P1</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout danger">
+    <h4>Se a funcionalidade for retomada, sete pré-requisitos precedem qualquer código</h4>
+    <ol>
+      <li>Matriz de retenção validada por Produto e Jurídico, entidade por entidade.</li>
+      <li>Papéis de solicitante e aprovador definidos, com <b>proibição explícita de autoaprovação</b>.</li>
+      <li>Mapeamento de <b>todas</b> as referências a <code>person_id</code>, incluindo o que estiver fora do banco principal (arquivos, logs, metadados).</li>
+      <li>Mensagens ao usuário definidas, com confirmação em duas etapas e frase de confirmação digitada.</li>
+      <li>Estratégia de retomada e observabilidade para execução que falhar no meio.</li>
+      <li>Plano de teste próprio cobrindo RLS, autorização, <b>idempotência</b>, remoção de arquivos e revogação de sessão.</li>
+      <li>Auditoria final imutável.</li>
+    </ol>
+    <p>A permissão dedicada seria <code>privacy.manage_anonymization</code> — e a especificação é explícita: <b>ela não pode ser inferida de <code>can_view_sensitive_data</code></b>. Ler dado sensível e destruí-lo são autoridades diferentes.</p>
+  </div>
+</section>
+
+<section>
+  <h2 id="piramide">12. A pirâmide proposta</h2>
+  <p class="note">A distribuição reflete uma decisão consciente: <b>o peso vai para a camada de API</b> — mas não porque a base unitária seja dispensável, e sim porque hoje ela é <i>inalcançável</i>: a lógica pura está trancada dentro de métodos privados que recebem uma transação. Cada caso <code>UNIT-*</code> marcado com <span class="pill warn">extrair</span> é, na prática, um pedido de refatoração pequeno e localizado; enquanto ele não acontecer, aquele comportamento continua sendo provado — mais devagar e com menos precisão — pela camada de API. O Dashboard é uma página só, com toda a lógica de negócio no backend — testar pela interface o que a API decide sairia caro e frágil. O E2E fica reservado para o que só existe na integração: dois aplicativos, duas audiências de token, e o que a interface promete além do contrato.</p>
+  <pre class="ascii">
+                        ╱╲
+                       ╱  ╲          E2E · Playwright              ~30
+                      ╱____╲         jornadas entre Dashboard, API e app
+                     ╱      ╲
+                    ╱        ╲       Integração · Jest + supertest  ~155
+                   ╱__________╲      contrato das rotas /dashboard/**
+                  ╱            ╲
+                 ╱              ╲    Unitário · Vitest / Jest         46
+                ╱________________╲   UNIT-* deste documento: aritmética de
+                                     janelas, distribuição, validadores,
+                                     predicados de permissão, formatação
+  </pre>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Camada</th><th>Ferramenta</th><th>O que vive aqui</th><th>Onde ficam os arquivos</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="dim">Unitário</td><td>Jest (API) e Vitest (front)</td>
+        <td>Os 46 casos <code>UNIT-*</code> deste documento, um por função: grade de horários, sobreposição de bloqueio, saldo de crédito, distribuição sequencial de grupos, validação de resposta, predicado de dado sensível, guarda de upload, normalização de e-mail e cor, conversão de preço em centavos, cálculo do "há X minutos". Funções puras, sem banco e sem HTTP.</td>
+        <td><code>apps/api/src/**/*.spec.ts</code>, ao lado do arquivo que testam. No front, exige antes <b>extrair a lógica para <code>lib/</code></b>, como já foi feito no <code>apps/admin</code> — hoje <code>apps/dashboard</code> não tem esse diretório. <b>19 dos 46 casos dependem de extração prévia</b>, marcada caso a caso com <span class="pill warn">extrair</span>.</td>
+      </tr>
+      <tr>
+        <td class="dim">Integração / API</td><td>Jest + supertest + Postgres</td>
+        <td>Todos os casos <code>API-*</code> deste documento. É a camada que prova regra de negócio, permissão e isolamento de tenant — as três coisas que mais custam caro se falharem.</td>
+        <td><code>apps/api/test/dashboard-&lt;modulo&gt;.integration.spec.ts</code>, um por módulo, sobre o padrão de <code>admin-contract.integration.spec.ts</code>.</td>
+      </tr>
+      <tr>
+        <td class="dim">Componente</td><td>Vitest + RTL + MSW</td>
+        <td>Os quatro painéis extraídos nesta branch, com a API mockada. É a rede de proteção mais barata para a refatoração em curso — e a que falta hoje.</td>
+        <td><code>apps/dashboard/tests/*.test.tsx</code>, espelhando <code>apps/admin/vitest.config.mts</code>.</td>
+      </tr>
+      <tr>
+        <td class="dim">E2E</td><td>Playwright</td>
+        <td>Jornadas que atravessam Dashboard, API e app do cliente; comportamentos que a interface promete além do contrato (rascunho descartado, motivo exigido na tela, mensagem da API exibida em vez de erro genérico).</td>
+        <td><code>e2e/</code> na raiz, com <code>playwright.config.ts</code> — ambos a criar.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2 id="sequencia">13. Sequência de implantação</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Etapa</th><th>Entrega</th><th>Por que nesta ordem</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="dim">Semana 1<br><span class="pill fail">bloqueia o merge</span></td>
+        <td>Playwright instalado e configurado · fábrica de tenant de teste com os dois papéis · <code>E2E-REG-01</code> cobrindo os quatro painéis extraídos · testes de componente dos mesmos quatro painéis · os P0 de Agendamentos (<code>API-AG-01</code>, <code>-02</code>, <code>-07</code>, <code>-16</code>, <code>-22</code>) e de LGPD (<code>API-LGPD-04</code> a <code>-07</code>) · <b>os unitários que não dependem de extração</b> (<code>UNIT-AG-04</code> a <code>-08</code>, <code>UNIT-F-01</code> a <code>-04</code>, <code>UNIT-G-01</code>, <code>-03</code>, <code>UNIT-C-01</code>, <code>-02</code>, <code>UNIT-CAT-01</code>, <code>UNIT-BN-01</code>)</td>
+        <td>Os unitários listados são chamáveis <b>hoje</b>, sem tocar em código de produção — é a única cobertura que entra sem custo de refatoração e a primeira a rodar em cada <code>push</code>. A branch atual reorganizou milhares de linhas do console sem nenhuma proteção. Antes de qualquer cobertura nova, é preciso garantir que o que já existia continua funcionando. Em paralelo, os dois módulos de maior risco entram com o mínimo indispensável.</td>
+      </tr>
+      <tr>
+        <td class="dim">Semana 2</td>
+        <td>Suíte completa de Agendamentos e LGPD · P0 de Clientes, Formulários e Grupos · <code>E2E-CORE-01</code>, <code>E2E-C-01</code>, <code>E2E-F-01</code> · <b>as extrações que destravam os unitários P0</b>: <code>generateSlots</code>, <code>homeWindows</code>, o predicado único de <code>canViewSensitiveData</code> e a constante da mensagem literal</td>
+        <td>Fecha o núcleo do produto. Ao fim desta etapa, todo caminho crítico tem ao menos um teste.</td>
+      </tr>
+      <tr>
+        <td class="dim">Semana 3</td>
+        <td>Catálogo, Marca, Banners, Home, Menu e Anonimização · unitários P1 e P2 restantes, com as extrações que faltam · casos P1 e P2 pendentes · casos de volume (<code>API-C-16</code> e equivalentes) · integração ao CI</td>
+        <td>Completa a cobertura e transforma a suíte em portão automático de merge, em vez de exercício pontual.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="callout">
+    <h4>Quatro decisões que precisam do time antes da Semana 1</h4>
+    <ul>
+      <li><b>A inconsistência do roteiro de Agendamentos.</b> A §11 da especificação manda cobrir só AG-01 a AG-18, deixando feriados e modos de seleção de profissional (AG-19 a AG-25) fora. Esta estratégia os inclui. Confirmar se é omissão ou decisão.</li>
+      <li><b>Os gaps de numeração.</b> C-10 não existe na especificação de Clientes e F-15 está fora de ordem em Formulários. Confirmar se havia um caso ali antes de considerar a rastreabilidade fechada.</li>
+      <li><b>As três divergências que os testes de método expõem.</b> <code>at()</code> e <code>localDate()</code> em Agendamentos e <code>localDateKey()</code> na Home têm o fuso <b>escrito no código</b>, enquanto <code>appointmentSettings.timezone</code> existe e é editável; <code>holidays()</code> traz só os nove feriados fixos, sem os móveis que a especificação cita; e <code>canViewSensitiveData</code> está duplicado em dois serviços. Decidir, para cada um, se o teste fixa o comportamento atual ou se o comportamento é que muda — a escrita do caso depende dessa resposta.</li>
+      <li><b>O comportamento de <code>API-CAT-10</code> e <code>API-G-14</code>.</b> Excluir produto com histórico e mover um grupo <code>finalized</code> de volta para <code>draft</code> são hoje <i>permitidos</i>. Decidir se o teste registra o comportamento atual ou se o comportamento é que deve mudar — dos dois jeitos, o caso existe; muda só o resultado esperado.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2 id="saida">14. Critérios de saída</h2>
+  <p class="note">Condições para considerar o Dashboard homologado. Não são metas de cobertura percentual — são afirmações verificáveis.</p>
+  <ol>
+    <li><b><code>E2E-REG-01</code> verde antes do merge da branch atual.</b> Os quatro painéis extraídos renderizam com os tokens da biblioteca e sem propriedade quebrada. Este item é pré-condição, não critério final.</li>
+    <li><b>A camada unitária existe e roda sozinha.</b> Os 46 casos <code>UNIT-*</code> executam sem banco, sem rede e sem subir o Nest, em um comando separado do de integração. Uma suíte unitária que precisa de Postgres não é unitária — é integração com outro nome, e perde a única vantagem que justifica a camada.</li>
+    <li><b>100% dos casos P0 executados e verdes</b>, nas três camadas. Um P0 vermelho é bloqueio; não há exceção negociada por prazo.</li>
+    <li><b>Zero vazamento entre tenants.</b> O caso <code>API-&lt;MOD&gt;-XT</code> de cada um dos onze módulos passou, incluindo a variante que ignora a interface e chama a rota direto.</li>
+    <li><b>As mensagens literais conferidas caractere a caractere</b> — as duas de LGPD e as três de Agendamentos. A conferência acontece na camada unitária, sobre a constante exportada (<code>UNIT-LGPD-03</code>, <code>UNIT-CAT-01</code>); a de API confere que a mensagem chegou no corpo da resposta. Aproximação não conta em nenhuma das duas.</li>
+    <li><b>Concorrência provada de verdade.</b> <code>API-AG-16</code> executado com disparo simultâneo real, repetido ao menos 20 vezes, sem nenhuma dupla confirmação.</li>
+    <li><b>Nenhum dado de exemplo em produção.</b> <code>API-H-10</code> e <code>E2E-H-02</code> passaram em tenant vazio — a especificação da Home alerta explicitamente contra reaproveitar os mocks do protótipo.</li>
+    <li><b>Os fluxos destrutivos testados nos dois sentidos.</b> Retenção (<code>API-LGPD-11</code>) apaga o que deve e preserva o que deve; remover acesso (<code>API-AN-03</code>) não anonimiza.</li>
+    <li><b>Os limites duros confirmados.</b> Três banners ativos, quatro ações na Home, dez eventos no feed, cinquenta grupos, cem itens por página.</li>
+    <li><b>Os casos de volume executados com número registrado.</b> Não é aprovação ou reprovação — é a evidência que decide a prioridade da paginação.</li>
+    <li><b>As três decisões da seção 13 respondidas</b> e refletidas nos casos correspondentes.</li>
+  </ol>
+  <div class="callout danger">
+    <h4>O que <i>não</i> é critério de saída</h4>
+    <p>Cobertura percentual de linhas. Uma suíte com 80% de cobertura que não prova isolamento de tenant vale menos que quinze casos que provam. Os critérios acima são afirmações sobre comportamento, e é assim que devem ser reportados.</p>
+  </div>
+</section>
+
+<footer>
+  <p><i>Bach, J. — <b>Heuristic Test Strategy Model</b> (SFDPOT: Structure, Function, Data, Platform, Operations, Time), Satisfice Inc., 2005.</i></p>
+  <p><i>Bach, J. — <b>RCRCRC Regression Testing Heuristic</b> (Recent, Core, Risky, Configuration-sensitive, Conformance, Complex), Satisfice Inc.</i></p>
+  <p><i>Fontes primárias: <code>docs/dash/</code> (13 arquivos de especificação PRD/ADR) · controllers em <code>apps/api/src/</code> · <code>apps/dashboard/app/</code> · histórico de commits do repositório até <code>6a943fb</code>. Documento irmão: <code>docs/test-strategy/estrategia-testes-admin.md</code>.</i></p>
+</footer>
+
+</div>
