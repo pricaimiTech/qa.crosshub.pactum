@@ -1,0 +1,5363 @@
+{
+  "gerado": "2026-08-30",
+  "origem": "docs/test-strategy/02/estrategia-testes-dashboard.html",
+  "aviso": "Artefato de build. Editar o HTML e rodar build-strategy-json.mjs.",
+  "totais": {
+    "casos": 166,
+    "p0": 97,
+    "porModulo": {
+      "AG": 36,
+      "F": 25,
+      "LGPD": 14,
+      "C": 18,
+      "H": 12,
+      "G": 15,
+      "CAT": 16,
+      "MK": 12,
+      "BN": 11,
+      "MN": 3,
+      "AN": 4
+    }
+  },
+  "conferencia": {
+    "contrato": 137,
+    "comCaso": 88,
+    "semCaso": 49
+  },
+  "casos": [
+    {
+      "id": "API-AG-01",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Geração de janelas sem intervalo",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/appointments/availability"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/services"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/appointments/services/{id}/professionals"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/appointments/professionals/{id}/availability"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Serviço 60 min, intervalo 0, capacidade 5; disponibilidade 08:00–12:00",
+      "assercao": "Exatamente 4 janelas: 08:00, 09:00, 10:00, 11:00",
+      "literais": [],
+      "campos": [
+        "08:00, 09:00, 10:00, 11:00"
+      ],
+      "doc": "AG-01",
+      "novo": false
+    },
+    {
+      "id": "API-AG-02",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Geração de janelas com intervalo",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/appointments/availability"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/appointments/services/{id}/professionals"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/appointments/professionals/{id}/availability"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Serviço 60 min, intervalo 5, capacidade 1; disponibilidade 07:00–12:00",
+      "assercao": "Exatamente 07:00, 08:05, 09:10, 10:15 . A próxima (11:20) ultrapassaria 12:00 e não é criada",
+      "literais": [],
+      "campos": [
+        "07:00, 08:05, 09:10, 10:15"
+      ],
+      "doc": "AG-02",
+      "novo": false
+    },
+    {
+      "id": "API-AG-03",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Janela que não cabe no turno",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/appointments/availability"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/appointments/services/{id}/professionals"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/appointments/professionals/{id}/availability"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Serviço 90 min; turno 08:00–09:00",
+      "assercao": "slots: [] — fim <= fim do turno nunca é satisfeito",
+      "literais": [],
+      "campos": [
+        "slots: []",
+        "fim <= fim do turno"
+      ],
+      "doc": "AG-03",
+      "novo": false
+    },
+    {
+      "id": "API-AG-04",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Janelas já passadas são omitidas",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/appointments/availability"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Consulta do dia corrente às 14:00 no fuso do tenant",
+      "assercao": "Nenhum slot com startsAt anterior a 14:00; os futuros presentes",
+      "literais": [],
+      "campos": [
+        "startsAt"
+      ],
+      "doc": "AG-04",
+      "novo": false
+    },
+    {
+      "id": "API-AG-05",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Disponibilidade sobreposta é rejeitada",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PUT",
+          "caminho": "/dashboard/appointments/professionals/{id}/availability"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Duas regras no mesmo weekday com faixas que se cruzam",
+      "assercao": "400 e nada persistido: o GET seguinte devolve a grade anterior — a operação é atômica",
+      "literais": [],
+      "campos": [
+        "400",
+        "GET"
+      ],
+      "doc": "AG-05",
+      "novo": false
+    },
+    {
+      "id": "API-AG-06",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Validação de parâmetros do vínculo serviço–profissional",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PUT",
+          "caminho": "/dashboard/appointments/services/{id}/professionals"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Quatro variações, uma por campo: durationMinutes: 0 (mínimo 1), intervalMinutes: -1 (mínimo 0), capacity: 0 (mínimo 1) e unitPriceCents: -1 (mínimo 0)",
+      "assercao": "400 nas quatro, com \"Configuração de profissional inválida.\" em message . Os limites estão no schema ServiceProfessionalLinkDto do contrato",
+      "literais": [
+        "Configuração de profissional inválida."
+      ],
+      "campos": [
+        "400",
+        "message",
+        "ServiceProfessionalLinkDto"
+      ],
+      "doc": "AG-06",
+      "novo": false
+    },
+    {
+      "id": "API-AG-07",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Limite de um agendamento por dia — cliente",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/public/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/public/appointments"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        409
+      ],
+      "precondicao": "Cliente já tem um pending ou approved na data; tenta outro em serviço diferente",
+      "assercao": "\"Para realizar outro agendamento neste dia, entre em contato com a administração.\"",
+      "literais": [
+        "Para realizar outro agendamento neste dia, entre em contato com a administração."
+      ],
+      "campos": [],
+      "doc": "AG-07",
+      "novo": false
+    },
+    {
+      "id": "API-AG-08",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Cancelado não bloqueia novo agendamento",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/public/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/public/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/public/me/appointments/{id}/cancel"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Cliente cancelou o agendamento do dia e tenta novo",
+      "assercao": "201 — só pending e approved ocupam a cota diária",
+      "literais": [],
+      "campos": [
+        "201",
+        "pending",
+        "approved"
+      ],
+      "doc": "AG-07",
+      "novo": false
+    },
+    {
+      "id": "API-AG-09",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Admin não tem limite diário",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Admin cria o segundo agendamento para a mesma pessoa na mesma data",
+      "assercao": "Ambos criados — a regra de um por dia vale só para o cliente",
+      "literais": [],
+      "campos": [],
+      "doc": "AG-08",
+      "novo": false
+    },
+    {
+      "id": "API-AG-10",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "approvalMode: manual",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/public/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/services"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/public/appointments/availability"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Serviço com aprovação manual; cliente agenda",
+      "assercao": "status: \"pending\" e a janela já perde capacidade no GET seguinte (ADR-004)",
+      "literais": [
+        "pending"
+      ],
+      "campos": [
+        "status: \"pending\"",
+        "GET"
+      ],
+      "doc": "AG-09",
+      "novo": false
+    },
+    {
+      "id": "API-AG-11",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "approvalMode: automatic",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/public/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/services"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Serviço com aprovação automática; cliente agenda",
+      "assercao": "status: \"approved\" , sem passar por pending",
+      "literais": [
+        "approved"
+      ],
+      "campos": [
+        "status: \"approved\"",
+        "pending"
+      ],
+      "doc": "AG-09",
+      "novo": false
+    },
+    {
+      "id": "API-AG-12",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Seleção de profissional automatic",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/public/appointments"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Cliente envia professionalId em serviço com professionalSelectionMode: automatic",
+      "assercao": "400 — a API rejeita a escolha explícita",
+      "literais": [],
+      "campos": [
+        "400"
+      ],
+      "doc": "AG-23",
+      "novo": false
+    },
+    {
+      "id": "API-AG-13",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Seleção de profissional required",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/public/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/public/appointments/availability"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Cliente omite professionalId em serviço que exige escolha",
+      "assercao": "400 na criação; o mesmo vale na consulta de disponibilidade ( GET /public/appointments/availability )",
+      "literais": [],
+      "campos": [
+        "400",
+        "GET /public/appointments/availability"
+      ],
+      "doc": "AG-25",
+      "novo": false
+    },
+    {
+      "id": "API-AG-14",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Desempate da distribuição automática",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/public/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/appointments/services/{id}/professionals"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Dois profissionais elegíveis com a mesma ocupação na data",
+      "assercao": "professionalId é o de menor sortOrder ; empatando, o menor UUID. Mesmo valor em 5 execuções",
+      "literais": [],
+      "campos": [
+        "professionalId",
+        "sortOrder"
+      ],
+      "doc": "AG-10",
+      "novo": false
+    },
+    {
+      "id": "API-AG-15",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Distribuição respeita elegibilidade",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/public/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/appointments/services/{id}/professionals"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/appointments/professionals/{id}/availability"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Profissional vinculado ao serviço mas sem disponibilidade naquela janela",
+      "assercao": "professionalId nunca é o do profissional sem disponibilidade — o filtro é \"gera aquela janela\", não \"está vinculado\"",
+      "literais": [
+        "gera aquela janela",
+        "está vinculado"
+      ],
+      "campos": [
+        "professionalId"
+      ],
+      "doc": "AG-11",
+      "novo": false
+    },
+    {
+      "id": "API-AG-16",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Concorrência na última vaga",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/public/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/public/appointments/availability"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        201,
+        409
+      ],
+      "precondicao": "Janela com uma vaga restante; duas requisições simultâneas de clientes distintos",
+      "assercao": "Uma 201 , outra 409 \"Horário indisponível.\" . Nunca duas confirmadas. Repetir 20 vezes",
+      "literais": [
+        "Horário indisponível."
+      ],
+      "campos": [
+        "201",
+        "409 \"Horário indisponível.\""
+      ],
+      "doc": "AG-15",
+      "novo": false
+    },
+    {
+      "id": "API-AG-17",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Capacidade esgotada",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/public/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/public/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/public/appointments/availability"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        409
+      ],
+      "precondicao": "Serviço com capacity: 5 e cinco agendamentos ativos na janela",
+      "assercao": "409 na sexta tentativa; a janela some de slots ou vem com occupied == capacity",
+      "literais": [],
+      "campos": [
+        "409",
+        "slots",
+        "occupied == capacity"
+      ],
+      "doc": "AG-14",
+      "novo": false
+    },
+    {
+      "id": "API-AG-18",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Cancelamento libera vaga",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/public/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/public/me/appointments/{id}/cancel"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Capacidade esgotada; um agendamento é cancelado",
+      "assercao": "A janela volta a aceitar agendamento na chamada seguinte",
+      "literais": [],
+      "campos": [],
+      "doc": "AG-14",
+      "novo": false
+    },
+    {
+      "id": "API-AG-19",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Prazo de cancelamento — cliente",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/public/me/appointments/{id}/cancel"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/appointments/settings"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/public/appointments"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        409,
+        200
+      ],
+      "precondicao": "Com cancellationNoticeHours: 24 : cancelar a 23 h 59 min do início, no fuso do tenant",
+      "assercao": "409 com \"Para cancelar com menos de 24 horas de antecedência, entre em contato com a administração.\" — a mensagem interpola o valor configurado, não o literal 24. A 24 h 01 min, 200 . A comparação é < : 24 h 00 min também recusa",
+      "literais": [
+        "Para cancelar com menos de 24 horas de antecedência, entre em contato com a administração."
+      ],
+      "campos": [
+        "409",
+        "200",
+        "<"
+      ],
+      "doc": "AG-12",
+      "novo": false
+    },
+    {
+      "id": "API-AG-20",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Prazo de cancelamento não vale para o admin",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/appointments/{id}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/public/appointments"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Admin envia status: \"cancelled_by_admin\" com motivo, para um agendamento que começa em 1 hora",
+      "assercao": "200 — o prazo restringe só o cliente",
+      "literais": [],
+      "campos": [
+        "200"
+      ],
+      "doc": "AG-12",
+      "novo": false
+    },
+    {
+      "id": "API-AG-21",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Reagendamento encadeia os registros",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/{id}/reschedule"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/appointments/availability"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Admin envia startsAt novo e reason",
+      "assercao": "O original vira cancelado com rescheduled_to_id ; o novo traz rescheduled_from_id != null . A vaga antiga é liberada e a nova, ocupada",
+      "literais": [],
+      "campos": [
+        "rescheduled_to_id",
+        "rescheduled_from_id != null"
+      ],
+      "doc": "AG-13",
+      "novo": false
+    },
+    {
+      "id": "API-AG-21b",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Reagendamento exige horário e motivo",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/{id}/reschedule"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Uma variação sem startsAt e outra sem reason",
+      "assercao": "\"Informe novo horário e motivo da remarcação.\" nas duas",
+      "literais": [
+        "Informe novo horário e motivo da remarcação."
+      ],
+      "campos": [],
+      "doc": "AG-13",
+      "novo": false
+    },
+    {
+      "id": "API-AG-22",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Reagendamento pelo cliente não existe na API",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/public/me/appointments"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "A especificação documenta POST /public/me/appointments/{id}/reschedule , que o contrato não expõe",
+      "assercao": "A rota não consta do docs-json — chamá-la dá 404 . O cliente só cancela. Divergência entre especificação e código",
+      "literais": [],
+      "campos": [
+        "docs-json",
+        "404"
+      ],
+      "doc": "AG-13",
+      "novo": false
+    },
+    {
+      "id": "API-AG-23",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Transições de estado inválidas",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/appointments/{id}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/appointments/{id}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        409
+      ],
+      "precondicao": "completed → approved ; e aprovar um rejected",
+      "assercao": "\"Essa alteração de status não é permitida.\" . Os cinco estados finais ( rejected , cancelled_by_client , cancelled_by_admin , completed , no_show ) não voltam",
+      "literais": [
+        "Essa alteração de status não é permitida."
+      ],
+      "campos": [
+        "rejected",
+        "cancelled_by_client",
+        "cancelled_by_admin",
+        "completed",
+        "no_show"
+      ],
+      "doc": "AG-16",
+      "novo": false
+    },
+    {
+      "id": "API-AG-23b",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Status fora do enum e motivo obrigatório",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/appointments/{id}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "status: \"pending\" (não atribuível pelo admin); e cancelled_by_admin sem reason",
+      "assercao": "\"Status inválido.\" na primeira; \"Informe o motivo para registrar este status.\" na segunda",
+      "literais": [
+        "Status inválido.",
+        "Informe o motivo para registrar este status."
+      ],
+      "campos": [],
+      "doc": "AG-16",
+      "novo": false
+    },
+    {
+      "id": "API-AG-24",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Bloqueio impede criação mas preserva o passado",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/blocks"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/public/appointments"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Bloqueio criado sobre uma janela que já tem agendamento",
+      "assercao": "O agendamento existente não muda de status ; nova tentativa na janela dá 409",
+      "literais": [],
+      "campos": [
+        "409"
+      ],
+      "doc": "AG-17",
+      "novo": false
+    },
+    {
+      "id": "API-AG-25",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Bloqueio parcial não fecha a janela",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/public/appointments/availability"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/blocks"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Dois profissionais elegíveis; só um é bloqueado",
+      "assercao": "A janela continua em slots , com professionalId do não bloqueado",
+      "literais": [],
+      "campos": [
+        "slots",
+        "professionalId"
+      ],
+      "doc": "AG-17",
+      "novo": false
+    },
+    {
+      "id": "API-AG-26",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Bloqueio sem alvo",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/blocks"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Corpo sem professionalId e sem serviceId",
+      "assercao": "\"Selecione um profissional ou serviço para bloquear.\"",
+      "literais": [
+        "Selecione um profissional ou serviço para bloquear."
+      ],
+      "campos": [],
+      "doc": "AG-17",
+      "novo": false
+    },
+    {
+      "id": "API-AG-27",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Feriado é visual, não bloqueia",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/appointments/calendar"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/appointments/availability"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Data de feriado nacional sem bloqueio cadastrado",
+      "assercao": "O feriado aparece em holidays[] com name , e a disponibilidade da data segue normal",
+      "literais": [],
+      "campos": [
+        "holidays[]",
+        "name"
+      ],
+      "doc": "AG-19",
+      "novo": false
+    },
+    {
+      "id": "API-AG-28",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P2",
+      "cenario": "Feriado móvel",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/appointments/calendar"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Carnaval, Páscoa e Corpus Christi em dois anos distintos",
+      "assercao": "holidays[].date correto nos dois anos — a tabela não pode ter só data fixa",
+      "literais": [],
+      "campos": [
+        "holidays[].date"
+      ],
+      "doc": "AG-20",
+      "novo": false
+    },
+    {
+      "id": "API-AG-29",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Exclusão de profissional com histórico",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "DELETE",
+          "caminho": "/dashboard/appointments/professionals/{id}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        409
+      ],
+      "precondicao": "Profissional com agendamentos",
+      "assercao": "\"Este profissional possui agendamentos e não pode ser excluído. Inative-o para preservar o histórico.\" . Sem histórico, 200",
+      "literais": [
+        "Este profissional possui agendamentos e não pode ser excluído. Inative-o para preservar o histórico."
+      ],
+      "campos": [
+        "200"
+      ],
+      "doc": "AG-21",
+      "novo": false
+    },
+    {
+      "id": "API-AG-30",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Gate do add-on de indicadores",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/appointments/analytics"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/admin/add-ons/tenants/{tenantId}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Tenant sem appointment_analytics",
+      "assercao": "\"O add-on de indicadores de agendamento não está ativo para este tenant.\" . Com o add-on ligado, 200 com os agregados",
+      "literais": [
+        "O add-on de indicadores de agendamento não está ativo para este tenant."
+      ],
+      "campos": [
+        "200"
+      ],
+      "doc": "—",
+      "novo": true
+    },
+    {
+      "id": "API-AG-31",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Crédito de pacote — venda e consumo",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/appointments/package-contracts/{id}/ledger"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/packages"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/people/{personId}/packages"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Pacote vendido à pessoa; agendamento criado consumindo crédito",
+      "assercao": "grant com deltaCredits positivo e consume negativo; balance do último lançamento igual a totalCredits - consumidos",
+      "literais": [],
+      "campos": [
+        "grant",
+        "deltaCredits",
+        "consume",
+        "balance",
+        "totalCredits - consumidos"
+      ],
+      "doc": "—",
+      "novo": true
+    },
+    {
+      "id": "API-AG-31b",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Crédito de pacote — cancelamento e restauração excepcional",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/{id}/package-credit/exceptional-restore"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/appointments/settings"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/appointments/{id}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Agendamento pago por pacote foi cancelado sem devolver crédito (política desligada)",
+      "assercao": "Lançamento restore com reason prefixado por \"Devolução excepcional:\" ; o balance fecha. Sem reason , 409",
+      "literais": [
+        "Devolução excepcional:"
+      ],
+      "campos": [
+        "restore",
+        "reason",
+        "balance",
+        "409"
+      ],
+      "doc": "—",
+      "novo": true
+    },
+    {
+      "id": "API-AG-32",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Notas internas não vazam para o app",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/public/me/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/blocks"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Agendamento com notes preenchido e bloqueio com reason",
+      "assercao": "Nenhum item do payload traz notes do admin nem o motivo do bloqueio",
+      "literais": [],
+      "campos": [
+        "notes"
+      ],
+      "doc": "AG-18",
+      "novo": false
+    },
+    {
+      "id": "API-AG-XT",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Isolamento entre tenants",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/appointments"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Token do tenant A; serviço, profissional, bloqueio e agendamento criados no tenant B",
+      "assercao": "A listagem do A nunca traz registro do B; acesso direto por id do B dá 404",
+      "literais": [],
+      "campos": [
+        "404"
+      ],
+      "doc": "AG-18",
+      "novo": false
+    },
+    {
+      "id": "API-F-01",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Publicar sem pergunta",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms/{id}/publish"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Formulário em DRAFT sem nenhuma pergunta",
+      "assercao": "400 — publicar exige ao menos uma pergunta",
+      "literais": [],
+      "campos": [
+        "400"
+      ],
+      "doc": "F-01",
+      "novo": false
+    },
+    {
+      "id": "API-F-02",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Ciclo completo de estados",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms/{id}/publish"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/forms/{id}/questions"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms/{id}/unpublish"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms/{id}/close"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms/{id}/archive"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Formulário com perguntas",
+      "assercao": "DRAFT → PUBLISHED → UNPUBLISHED → PUBLISHED → CLOSED → ARCHIVED , cada passo devolvendo o status esperado",
+      "literais": [],
+      "campos": [
+        "DRAFT → PUBLISHED → UNPUBLISHED → PUBLISHED → CLOSED → ARCHIVED",
+        "status"
+      ],
+      "doc": "F-02",
+      "novo": false
+    },
+    {
+      "id": "API-F-03",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "CLOSED é definitivo",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms/{id}/publish"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms/{id}/close"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms/{id}/duplicate"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Formulário encerrado",
+      "assercao": "Republicar é recusado. A saída é POST .../duplicate , que gera novo DRAFT com as perguntas copiadas e responses: 0",
+      "literais": [],
+      "campos": [
+        "POST .../duplicate",
+        "DRAFT",
+        "responses: 0"
+      ],
+      "doc": "F-03",
+      "novo": false
+    },
+    {
+      "id": "API-F-04",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Encerrar só a partir de publicado",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms/{id}/close"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        401
+      ],
+      "precondicao": "Formulário em DRAFT",
+      "assercao": "Recusado em DRAFT ; a partir de PUBLISHED , 200 com closedAt != null",
+      "literais": [],
+      "campos": [
+        "DRAFT",
+        "PUBLISHED",
+        "200",
+        "closedAt != null"
+      ],
+      "doc": "F-03",
+      "novo": false
+    },
+    {
+      "id": "API-F-05",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Escolha com menos de duas opções",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PUT",
+          "caminho": "/dashboard/forms/{id}/questions"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "SINGLE_CHOICE com uma única entrada em options",
+      "assercao": "400 — o contrato declara minItems: 2 para perguntas de escolha",
+      "literais": [],
+      "campos": [
+        "400",
+        "minItems: 2"
+      ],
+      "doc": "F-04",
+      "novo": false
+    },
+    {
+      "id": "API-F-06",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P2",
+      "cenario": "Título de pergunta acima do limite",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PUT",
+          "caminho": "/dashboard/forms/{id}/questions"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "title com 301 caracteres",
+      "assercao": "400 ; com 300, 200 . O contrato declara maxLength: 300",
+      "literais": [],
+      "campos": [
+        "400",
+        "200",
+        "maxLength: 300"
+      ],
+      "doc": "F-05",
+      "novo": false
+    },
+    {
+      "id": "API-F-07",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "PUT de perguntas substitui tudo",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PUT",
+          "caminho": "/dashboard/forms/{id}/questions"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/forms/{id}/questions"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Formulário com três perguntas; PUT enviando uma",
+      "assercao": "GET .../questions devolve exatamente uma. As outras duas somem — é substituição, não merge",
+      "literais": [],
+      "campos": [
+        "GET .../questions"
+      ],
+      "doc": "F-06",
+      "novo": false
+    },
+    {
+      "id": "API-F-08",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Perguntas travadas após resposta",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PUT",
+          "caminho": "/dashboard/forms/{id}/questions"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/public/forms/{id}/submissions"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Formulário com ao menos uma submissão",
+      "assercao": "Recusado. Sem isso, a resposta já dada passaria a referenciar pergunta inexistente",
+      "literais": [],
+      "campos": [],
+      "doc": "F-07",
+      "novo": false
+    },
+    {
+      "id": "API-F-09",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Publicar para todos os ativos",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms/{id}/publish-to-all-active"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/forms/{id}/assignments"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Cinco pessoas com status: \"active\"",
+      "assercao": "totalActivePeople: 5 e cinco entradas em GET .../assignments , em uma operação atômica",
+      "literais": [],
+      "campos": [
+        "totalActivePeople: 5",
+        "GET .../assignments"
+      ],
+      "doc": "F-08",
+      "novo": false
+    },
+    {
+      "id": "API-F-10",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "\"Todos os ativos\" é fotografia",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/forms/{id}/assignments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms/{id}/publish-to-all-active"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/people"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Publicado para todos; uma pessoa é ativada depois",
+      "assercao": "Ela não aparece em assignments . O público não é audiência dinâmica",
+      "literais": [],
+      "campos": [
+        "assignments"
+      ],
+      "doc": "F-08",
+      "novo": false
+    },
+    {
+      "id": "API-F-11",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Atribuição reenviada",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms/{id}/assignments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms/{id}/assignments"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Pessoa já tem atribuição; novo envio a inclui de novo",
+      "assercao": "A lista não duplica: a unicidade (tenant, form, person) é respeitada e a existente é atualizada",
+      "literais": [],
+      "campos": [
+        "(tenant, form, person)"
+      ],
+      "doc": "F-09",
+      "novo": false
+    },
+    {
+      "id": "API-F-12",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Estado da atribuição",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/forms/{id}/assignments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms/{id}/assignments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/public/forms/{id}/submissions"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Uma pessoa respondeu, outra não",
+      "assercao": "status: \"COMPLETED\" e \"AVAILABLE\" respectivamente",
+      "literais": [
+        "COMPLETED",
+        "AVAILABLE"
+      ],
+      "campos": [
+        "status: \"COMPLETED\"",
+        "\"AVAILABLE\""
+      ],
+      "doc": "F-10",
+      "novo": false
+    },
+    {
+      "id": "API-F-13",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Pessoa inválida aborta o lote inteiro",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms/{id}/assignments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/forms/{id}/assignments"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "personIds com cinco pessoas, uma delas de outro tenant",
+      "assercao": "400 e nenhuma das cinco atribuições criada",
+      "literais": [],
+      "campos": [
+        "400"
+      ],
+      "doc": "F-11",
+      "novo": false
+    },
+    {
+      "id": "API-F-14",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Envio por grupo",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms/{id}/assignments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/groups"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/groups/{groupId}/activate"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "sourceType: \"GROUP\" com sourceLabel e os integrantes de um grupo ativo",
+      "assercao": "Uma atribuição por integrante, todas com sourceType: \"GROUP\" e sourceLabel preenchido",
+      "literais": [
+        "GROUP"
+      ],
+      "campos": [
+        "sourceType: \"GROUP\"",
+        "sourceLabel"
+      ],
+      "doc": "F-12",
+      "novo": false
+    },
+    {
+      "id": "API-F-15",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Submissão única repetida",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/public/forms/{id}/submissions"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/public/forms/{id}/submissions"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        409
+      ],
+      "precondicao": "Formulário ONCE_PER_PERSON ; a pessoa envia duas vezes",
+      "assercao": "Segunda recusada — barrada tanto pela aplicação quanto pelo trigger form_submissions_validate_mode",
+      "literais": [
+        "trigger"
+      ],
+      "campos": [
+        "form_submissions_validate_mode"
+      ],
+      "doc": "F-13",
+      "novo": false
+    },
+    {
+      "id": "API-F-16",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Submissão múltipla permitida",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/public/forms/{id}/submissions"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/public/forms/{id}/submissions"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/forms/submissions"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Formulário MULTIPLE ; a pessoa envia duas vezes",
+      "assercao": "Ambas registradas; total: 2 na lista de submissões",
+      "literais": [],
+      "campos": [
+        "total: 2"
+      ],
+      "doc": "F-13",
+      "novo": false
+    },
+    {
+      "id": "API-F-17",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Corpo de submissão inválido",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/public/forms/{id}/submissions"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Pergunta obrigatória omitida; e a mesma pergunta enviada duas vezes em answers",
+      "assercao": "400 nas duas variações",
+      "literais": [],
+      "campos": [
+        "400"
+      ],
+      "doc": "F-16",
+      "novo": false
+    },
+    {
+      "id": "API-F-18",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "SPECIFIC esconde de quem não tem atribuição",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/public/me/forms"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/public/forms/{id}"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Formulário publicado sem envio para a pessoa",
+      "assercao": "Não aparece em available nem em completed . Acesso direto por GET /public/forms/{id} devolve 403",
+      "literais": [],
+      "campos": [
+        "available",
+        "completed",
+        "GET /public/forms/{id}",
+        "403"
+      ],
+      "doc": "F-17",
+      "novo": false
+    },
+    {
+      "id": "API-F-19",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Sensível sem autorização",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/forms/{id}/submissions"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/privacy/professionals/{userId}/sensitive-data-access"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        403
+      ],
+      "precondicao": "Formulário com containsSensitiveData: true ; admin sem canViewSensitiveData",
+      "assercao": "\"Você não possui a permissão para visualizar respostas sensíveis.\" . Mesmo tratamento no detalhe, nas atribuições e nos indicadores",
+      "literais": [
+        "Você não possui a permissão para visualizar respostas sensíveis."
+      ],
+      "campos": [],
+      "doc": "F-14",
+      "novo": false
+    },
+    {
+      "id": "API-F-20",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Filtro sensível antes da contagem",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/forms/submissions"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Dez submissões, quatro em formulário sensível; admin sem autorização",
+      "assercao": "total: 6 — não 10 com seis itens. O agregado também esconde",
+      "literais": [],
+      "campos": [
+        "total: 6"
+      ],
+      "doc": "F-14",
+      "novo": false
+    },
+    {
+      "id": "API-F-21",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Auditoria de leitura sensível",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/forms/submissions/{submissionId}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Admin autorizado abre uma submissão sensível",
+      "assercao": "Um registro sensitive_submission.viewed em audit_logs , com ator e alvo",
+      "literais": [],
+      "campos": [
+        "sensitive_submission.viewed",
+        "audit_logs"
+      ],
+      "doc": "F-15",
+      "novo": false
+    },
+    {
+      "id": "API-F-22",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Paginação",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/forms/submissions"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "60 submissões",
+      "assercao": "pageSize=25 → totalPages: 3 ; pageSize=200 → 400 (o contrato declara maximum: 100 ); página além do fim devolve items: [] com total correto",
+      "literais": [],
+      "campos": [
+        "pageSize=25",
+        "totalPages: 3",
+        "pageSize=200",
+        "400",
+        "maximum: 100",
+        "items: []",
+        "total"
+      ],
+      "doc": "F-18",
+      "novo": false
+    },
+    {
+      "id": "API-F-23",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P2",
+      "cenario": "Indicadores de escala",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/forms/{id}/insights"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Perguntas SCALE com valores conhecidos",
+      "assercao": "totals.overallAverage confere com o cálculo manual; scaleQuestions[].distribution soma percent: 100",
+      "literais": [],
+      "campos": [
+        "totals.overallAverage",
+        "scaleQuestions[].distribution",
+        "percent: 100"
+      ],
+      "doc": "F-19",
+      "novo": false
+    },
+    {
+      "id": "API-F-24",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Colisão de rota",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/forms/submissions"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Caminho literal /dashboard/forms/submissions",
+      "assercao": "Resolve para a lista de submissões, não para GET /dashboard/forms/{id}/questions com id = \"submissions\"",
+      "literais": [
+        "submissions"
+      ],
+      "campos": [
+        "GET /dashboard/forms/{id}/questions",
+        "id = \"submissions\""
+      ],
+      "doc": "—",
+      "novo": true
+    },
+    {
+      "id": "API-F-XT",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Isolamento entre tenants",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/forms"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Token do tenant A; formulário e submissões criados no tenant B",
+      "assercao": "A listagem do A nunca traz formulário do B; acesso direto por id do B dá 404",
+      "literais": [],
+      "campos": [
+        "404"
+      ],
+      "doc": "F-14",
+      "novo": false
+    },
+    {
+      "id": "API-LGPD-01",
+      "modulo": "LGPD",
+      "moduloNome": "Privacidade e LGPD",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Primeiro admin do tenant vira Principal",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/admin/tenants/{id}/admins"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/admin/tenants"
+        }
+      ],
+      "token": "platformAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Tenant recém-criado, sem nenhum administrador",
+      "assercao": "isPrimaryAdmin: true e canViewSensitiveData: true no primeiro tenant_admin . O segundo nasce com ambos false",
+      "literais": [],
+      "campos": [
+        "isPrimaryAdmin: true",
+        "canViewSensitiveData: true",
+        "tenant_admin",
+        "false"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-LGPD-02",
+      "modulo": "LGPD",
+      "moduloNome": "Privacidade e LGPD",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Principal legado sem a flag continua autorizado",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/forms/submissions/{submissionId}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Principal promovido pela migração, com canViewSensitiveData: false",
+      "assercao": "Lê o dado sensível assim mesmo — ser Principal prevalece sobre a coluna",
+      "literais": [],
+      "campos": [],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-LGPD-03",
+      "modulo": "LGPD",
+      "moduloNome": "Privacidade e LGPD",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Só o Principal concede acesso",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/privacy/professionals/{userId}/sensitive-data-access"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        403
+      ],
+      "precondicao": "Admin comum, ele próprio autorizado, tenta conceder acesso a outro",
+      "assercao": "\"Apenas o Administrador Principal pode alterar o acesso a dados sensíveis.\" — ter acesso não dá o direito de distribuí-lo",
+      "literais": [
+        "Apenas o Administrador Principal pode alterar o acesso a dados sensíveis."
+      ],
+      "campos": [],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-LGPD-04",
+      "modulo": "LGPD",
+      "moduloNome": "Privacidade e LGPD",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Leitura sem autorização",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/forms/submissions/{submissionId}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        403
+      ],
+      "precondicao": "Admin sem canViewSensitiveData abre submissão de formulário sensível",
+      "assercao": "Texto exato: \"Você não possui a permissão para visualizar respostas sensíveis.\"",
+      "literais": [
+        "Você não possui a permissão para visualizar respostas sensíveis."
+      ],
+      "campos": [],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-LGPD-05",
+      "modulo": "LGPD",
+      "moduloNome": "Privacidade e LGPD",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Envio sem autorização",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms/{id}/assignments"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        403
+      ],
+      "precondicao": "Mesmo admin tentando atribuir formulário sensível",
+      "assercao": "403 com o texto exato da especificação",
+      "literais": [],
+      "campos": [
+        "403"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-LGPD-06",
+      "modulo": "LGPD",
+      "moduloNome": "Privacidade e LGPD",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Acesso do Principal é irrevogável",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/privacy/professionals/{userId}/sensitive-data-access"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        409
+      ],
+      "precondicao": "Principal tenta revogar o próprio acesso; e outro admin tenta revogá-lo",
+      "assercao": "\"O Administrador Principal possui acesso permanente a dados sensíveis.\" — a rota recusa, independentemente de a UI esconder o botão",
+      "literais": [
+        "O Administrador Principal possui acesso permanente a dados sensíveis."
+      ],
+      "campos": [],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-LGPD-07",
+      "modulo": "LGPD",
+      "moduloNome": "Privacidade e LGPD",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Alvo inválido",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/privacy/professionals/{userId}/sensitive-data-access"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        404
+      ],
+      "precondicao": "userId inexistente, de outro tenant, e de um usuário que não é tenant_admin",
+      "assercao": "\"Profissional não encontrado.\" nas três variações — e não 403 , que revelaria a existência do registro",
+      "literais": [
+        "Profissional não encontrado."
+      ],
+      "campos": [
+        "403"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-LGPD-08",
+      "modulo": "LGPD",
+      "moduloNome": "Privacidade e LGPD",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Autorização vale imediatamente",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/forms/submissions/{submissionId}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/privacy/professionals/{userId}/sensitive-data-access"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Principal concede acesso; o admin reusa o token que já tinha",
+      "assercao": "A requisição seguinte já enxerga o dado sensível, sem novo login — a checagem é por consulta, não por claim do token",
+      "literais": [],
+      "campos": [],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-LGPD-09",
+      "modulo": "LGPD",
+      "moduloNome": "Privacidade e LGPD",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Revogação vale imediatamente",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/forms/submissions/{submissionId}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/privacy/professionals/{userId}/sensitive-data-access"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        403
+      ],
+      "precondicao": "Principal revoga; o admin reusa o token que já tinha",
+      "assercao": "A requisição seguinte recebe 403",
+      "literais": [],
+      "campos": [
+        "403"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-LGPD-10",
+      "modulo": "LGPD",
+      "moduloNome": "Privacidade e LGPD",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Limites da retenção",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/privacy/settings"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "sensitiveDataRetentionDays em 0, 3651, −1 e 3.5",
+      "assercao": "\"A retenção deve ser um número inteiro entre 1 e 3650 dias.\" nas quatro; 1 e 3650 devolvem 200",
+      "literais": [
+        "A retenção deve ser um número inteiro entre 1 e 3650 dias."
+      ],
+      "campos": [
+        "200"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-LGPD-11",
+      "modulo": "LGPD",
+      "moduloNome": "Privacidade e LGPD",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Execução da retenção",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/privacy/retention/run"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/privacy/settings"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Retenção de 30 dias; submissões sensíveis de 29 e de 31 dias atrás, mais uma não sensível antiga",
+      "assercao": "deletedSubmissions: 1 — remove a de 31, preserva a de 29 e não toca na não sensível",
+      "literais": [],
+      "campos": [
+        "deletedSubmissions: 1"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-LGPD-12",
+      "modulo": "LGPD",
+      "moduloNome": "Privacidade e LGPD",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Retenção independe da autorização",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/privacy/retention/run"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Admin sem canViewSensitiveData dispara a retenção",
+      "assercao": "Executa normalmente — apagar e ler são controles independentes",
+      "literais": [],
+      "campos": [],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-LGPD-13",
+      "modulo": "LGPD",
+      "moduloNome": "Privacidade e LGPD",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Auditoria da mudança de acesso",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/privacy/professionals/{userId}/sensitive-data-access"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Principal concede e depois revoga",
+      "assercao": "Dois eventos sensitive_data_access.updated em audit_logs , com ator, alvo e o valor aplicado",
+      "literais": [],
+      "campos": [
+        "sensitive_data_access.updated",
+        "audit_logs"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-LGPD-XT",
+      "modulo": "LGPD",
+      "moduloNome": "Privacidade e LGPD",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Isolamento entre tenants",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/privacy/professionals"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/privacy/professionals/{userId}/sensitive-data-access"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Principal do tenant A listando e alterando profissionais do tenant B",
+      "assercao": "A listagem traz só admins do A; o PATCH cruzado devolve 404",
+      "literais": [],
+      "campos": [
+        "PATCH",
+        "404"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-C-01",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Cadastro mínimo",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/people"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Corpo apenas com name e email (o contrato exige os dois na criação)",
+      "assercao": "status: \"active\" ; phone , birthDate , document , gender e photoKey em null",
+      "literais": [
+        "active"
+      ],
+      "campos": [
+        "status: \"active\"",
+        "phone",
+        "birthDate",
+        "document",
+        "gender",
+        "photoKey",
+        "null"
+      ],
+      "doc": "C-01",
+      "novo": false
+    },
+    {
+      "id": "API-C-01b",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Cadastro sem e-mail é recusado",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/people"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Corpo apenas com name",
+      "assercao": "\"E-mail é obrigatório para cadastrar um cliente.\"",
+      "literais": [
+        "E-mail é obrigatório para cadastrar um cliente."
+      ],
+      "campos": [],
+      "doc": "C-01",
+      "novo": false
+    },
+    {
+      "id": "API-C-02",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Normalização de campos",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/people"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "email: \" Maria@Exemplo.COM \" e phone: \"\"",
+      "assercao": "email: \"maria@exemplo.com\" ; phone: null , não string vazia",
+      "literais": [
+        "maria@exemplo.com"
+      ],
+      "campos": [
+        "email: \"maria@exemplo.com\"",
+        "phone: null"
+      ],
+      "doc": "C-02",
+      "novo": false
+    },
+    {
+      "id": "API-C-03",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Limites dos campos",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/people"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Uma variação por campo: notes com 501 caracteres, document com 41, gender fora do enum, birthDate: \"20-05-1990\"",
+      "assercao": "Mensagem específica em cada uma: \"Observações devem ter no máximo 500 caracteres.\" , \"Documento deve ter no máximo 40 caracteres.\" , \"Gênero inválido.\" , \"Data de nascimento inválida.\"",
+      "literais": [
+        "Observações devem ter no máximo 500 caracteres.",
+        "Documento deve ter no máximo 40 caracteres.",
+        "Gênero inválido.",
+        "Data de nascimento inválida."
+      ],
+      "campos": [],
+      "doc": "C-03",
+      "novo": false
+    },
+    {
+      "id": "API-C-04",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Código exige um canal de contato",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/people/{personId}/access-codes"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        409
+      ],
+      "precondicao": "Pessoa sem e-mail e sem telefone",
+      "assercao": "Recusado — o código precisa de um canal para chegar",
+      "literais": [],
+      "campos": [],
+      "doc": "C-04",
+      "novo": false
+    },
+    {
+      "id": "API-C-05",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Um único código ativo",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/people/{personId}/access-codes"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/people/{personId}/access-codes"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        409
+      ],
+      "precondicao": "Pessoa já tem código active",
+      "assercao": "Segundo POST recusado. O caminho correto é .../regenerate",
+      "literais": [],
+      "campos": [
+        "POST",
+        ".../regenerate"
+      ],
+      "doc": "C-05",
+      "novo": false
+    },
+    {
+      "id": "API-C-06",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Regenerar revoga o anterior",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/people/{personId}/access-codes/regenerate"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/people/{personId}/access-codes"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/auth/platform/public/activate"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Pessoa com código active",
+      "assercao": "O antigo passa a revoked e deixa de ativar; só o novo funciona",
+      "literais": [],
+      "campos": [
+        "revoked"
+      ],
+      "doc": "C-06",
+      "novo": false
+    },
+    {
+      "id": "API-C-07",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Texto puro exibido uma vez",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/people/{personId}/access-codes"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Código recém-criado",
+      "assercao": "code em texto puro vem só nesta resposta. Nenhuma leitura posterior o devolve — o banco guarda code_hash e lookup_hash",
+      "literais": [],
+      "campos": [
+        "code",
+        "code_hash",
+        "lookup_hash"
+      ],
+      "doc": "C-07",
+      "novo": false
+    },
+    {
+      "id": "API-C-08",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Código para pessoa revogada",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/people/{personId}/access-codes"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/people/{personId}/remove-access"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        409
+      ],
+      "precondicao": "Pessoa com status: \"revoked\"",
+      "assercao": "Emissão recusada",
+      "literais": [],
+      "campos": [],
+      "doc": "C-08",
+      "novo": false
+    },
+    {
+      "id": "API-C-09",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Ativação completa",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/auth/platform/public/activate"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/people/{personId}/access-codes"
+        }
+      ],
+      "token": null,
+      "status": [
+        200
+      ],
+      "precondicao": "slug + código válido + PIN de 4 a 6 dígitos + consent: true",
+      "assercao": "Devolve accessToken ; o código vira used ; nasce o end_user",
+      "literais": [],
+      "campos": [
+        "accessToken",
+        "used",
+        "end_user"
+      ],
+      "doc": "C-09",
+      "novo": false
+    },
+    {
+      "id": "API-C-10",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Ativação inválida",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/auth/platform/public/activate"
+        }
+      ],
+      "token": null,
+      "status": [
+        400
+      ],
+      "precondicao": "PIN de 3 dígitos; de 7; não numérico; consent: false ; e código já used",
+      "assercao": "\"O PIN deve ter de 4 a 6 dígitos.\" nas três primeiras; \"Slug, código, senha e consentimento são obrigatórios.\" na quarta. Nenhuma cria conta",
+      "literais": [
+        "O PIN deve ter de 4 a 6 dígitos.",
+        "Slug, código, senha e consentimento são obrigatórios."
+      ],
+      "campos": [],
+      "doc": "C-09",
+      "novo": false
+    },
+    {
+      "id": "API-C-11",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "socialName não sobrescreve name",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/auth/platform/public/activate"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/auth/platform/public/session"
+        }
+      ],
+      "token": null,
+      "status": [
+        200
+      ],
+      "precondicao": "Ativação informando name diferente do cadastro",
+      "assercao": "people.name intacto; GET /auth/platform/public/session mostra o nome social, com fallback para name",
+      "literais": [
+        "fallback"
+      ],
+      "campos": [
+        "people.name",
+        "GET /auth/platform/public/session",
+        "name"
+      ],
+      "doc": "C-11",
+      "novo": false
+    },
+    {
+      "id": "API-C-12",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Remover acesso",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/people/{personId}/remove-access"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/auth/platform/public/login"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Pessoa com conta ativa",
+      "assercao": "status: \"revoked\" , conta end_user desativada, cadastro e histórico preservados . O login do cliente passa a devolver 401",
+      "literais": [
+        "revoked"
+      ],
+      "campos": [
+        "status: \"revoked\"",
+        "end_user",
+        "401"
+      ],
+      "doc": "C-12",
+      "novo": false
+    },
+    {
+      "id": "API-C-13",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Foto — validações",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/people/{personId}/photo"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "PDF; imagem de 5 MB + 1 byte; JPEG de 4,9 MB",
+      "assercao": "Os dois primeiros recusados com \"Envie JPEG, PNG ou WebP com até 5 MB.\" ; o terceiro devolve 201 com publicUrl , nunca base64",
+      "literais": [
+        "Envie JPEG, PNG ou WebP com até 5 MB."
+      ],
+      "campos": [
+        "201",
+        "publicUrl"
+      ],
+      "doc": "C-13",
+      "novo": false
+    },
+    {
+      "id": "API-C-14",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Remover foto",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/people/{personId}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/people/{personId}/photo"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "photoKey: null",
+      "assercao": "photoUrl: null na resposta e o objeto apagado do armazenamento",
+      "literais": [],
+      "campos": [
+        "photoUrl: null"
+      ],
+      "doc": "C-13",
+      "novo": false
+    },
+    {
+      "id": "API-C-15",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Auditoria",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/people"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/people/{personId}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/people/{personId}/access-codes"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/people/{personId}/access-codes/regenerate"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/people/{personId}/remove-access"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Criar, editar, gerar código, regenerar e remover acesso",
+      "assercao": "Um evento por ação em audit_logs : person.created , person.updated , access_code.created , access_code.regenerated , access_code.revoked , person.access_removed",
+      "literais": [],
+      "campos": [
+        "audit_logs",
+        "person.created",
+        "person.updated",
+        "access_code.created",
+        "access_code.regenerated",
+        "access_code.revoked",
+        "person.access_removed"
+      ],
+      "doc": "C-14",
+      "novo": false
+    },
+    {
+      "id": "API-C-16",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Volume sem paginação",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/people"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "500 pessoas cadastradas",
+      "assercao": "Devolve as 500 em uma resposta — a rota não tem page / pageSize no contrato. Medir tamanho e latência: é a evidência para priorizar paginação",
+      "literais": [],
+      "campos": [
+        "page",
+        "pageSize"
+      ],
+      "doc": "—",
+      "novo": true
+    },
+    {
+      "id": "API-C-XT",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Isolamento entre tenants",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/people"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/people/{personId}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Token do tenant A; pessoa, código e foto do tenant B",
+      "assercao": "A lista do A nunca traz pessoa do B; acesso direto por id do B dá 404",
+      "literais": [],
+      "campos": [
+        "404"
+      ],
+      "doc": "C-11",
+      "novo": false
+    },
+    {
+      "id": "API-H-01",
+      "modulo": "H",
+      "moduloNome": "Home",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Janela de 24 h nas reservas",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/home"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/public/products/{id}/reservations"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/reservations/{id}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Reservas criadas há 23 h e há 25 h, mais uma cancelada dentro da janela",
+      "assercao": "metrics.newReservations: 1 — só a de 23 h conta, e a cancelada é excluída",
+      "literais": [],
+      "campos": [
+        "metrics.newReservations: 1"
+      ],
+      "doc": "H-02",
+      "novo": false
+    },
+    {
+      "id": "API-H-02",
+      "modulo": "H",
+      "moduloNome": "Home",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Janela de 7 dias nas pessoas",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/home"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/people"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Cadastros há 6 e há 8 dias",
+      "assercao": "metrics.newPeopleLast7Days: 1",
+      "literais": [],
+      "campos": [
+        "metrics.newPeopleLast7Days: 1"
+      ],
+      "doc": "H-02",
+      "novo": false
+    },
+    {
+      "id": "API-H-03",
+      "modulo": "H",
+      "moduloNome": "Home",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Fuso do tenant na virada do dia",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/home"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/appointments/settings"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Tenant fora de America/Sao_Paulo ; registro criado perto da meia-noite local",
+      "assercao": "A contagem usa o fuso do tenant, não UTC nem o relógio do servidor. periods.recentSince confere com a janela local",
+      "literais": [],
+      "campos": [
+        "periods.recentSince"
+      ],
+      "doc": "H-03",
+      "novo": false
+    },
+    {
+      "id": "API-H-04",
+      "modulo": "H",
+      "moduloNome": "Home",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Limite de quatro ações",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/home"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Dados suficientes para gerar seis ações",
+      "assercao": "actions.length === 4 , na ordem: agendamentos pending , agenda do dia, bloqueios próximos, reservas novas",
+      "literais": [],
+      "campos": [
+        "actions.length === 4",
+        "pending"
+      ],
+      "doc": "H-04",
+      "novo": false
+    },
+    {
+      "id": "API-H-05",
+      "modulo": "H",
+      "moduloNome": "Home",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Contagem zero não vira ação",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/home"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Nenhuma reserva pendente",
+      "assercao": "Nenhum item de actions com count: 0 — não existe card zerado",
+      "literais": [],
+      "campos": [
+        "actions",
+        "count: 0"
+      ],
+      "doc": "H-05",
+      "novo": false
+    },
+    {
+      "id": "API-H-06",
+      "modulo": "H",
+      "moduloNome": "Home",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Feed limitado e deduplicado",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/home"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "25 eventos, alguns com mesmo tipo, id e data",
+      "assercao": "activities.length <= 10 , occurredAt em ordem decrescente e id sem repetição",
+      "literais": [],
+      "campos": [
+        "activities.length <= 10",
+        "occurredAt",
+        "id"
+      ],
+      "doc": "H-06",
+      "novo": false
+    },
+    {
+      "id": "API-H-07",
+      "modulo": "H",
+      "moduloNome": "Home",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Feed só com metadados",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/home"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/public/forms/{id}/submissions"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Submissão de formulário no feed",
+      "assercao": "O item traz title , description e destination ; nunca o conteúdo da resposta",
+      "literais": [],
+      "campos": [
+        "title",
+        "description",
+        "destination"
+      ],
+      "doc": "H-07",
+      "novo": false
+    },
+    {
+      "id": "API-H-08",
+      "modulo": "H",
+      "moduloNome": "Home",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Filtro sensível antes da contagem",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/home"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/privacy/professionals/{userId}/sensitive-data-access"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Admin sem canViewSensitiveData ; submissões sensíveis nas últimas 24 h",
+      "assercao": "metrics.newFormSubmissions não as conta, actions não as cita e activities não as lista",
+      "literais": [],
+      "campos": [
+        "metrics.newFormSubmissions",
+        "actions",
+        "activities"
+      ],
+      "doc": "H-08",
+      "novo": false
+    },
+    {
+      "id": "API-H-09",
+      "modulo": "H",
+      "moduloNome": "Home",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Alerta de atraso",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/home"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Reservas in_progress paradas há 2 e há 4 dias",
+      "assercao": "alerts.overdue traz só a de 4 dias",
+      "literais": [],
+      "campos": [
+        "alerts.overdue"
+      ],
+      "doc": "H-09",
+      "novo": false
+    },
+    {
+      "id": "API-H-10",
+      "modulo": "H",
+      "moduloNome": "Home",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Tenant vazio",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/home"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Tenant recém-criado, sem nenhum dado",
+      "assercao": "Métricas zeradas, actions: [] , activities: [] e alerts.items: [] — nenhum dado de exemplo . É o caso que pega mock esquecido",
+      "literais": [],
+      "campos": [
+        "actions: []",
+        "activities: []",
+        "alerts.items: []"
+      ],
+      "doc": "H-10",
+      "novo": false
+    },
+    {
+      "id": "API-H-11",
+      "modulo": "H",
+      "moduloNome": "Home",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Sessão do painel",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/session"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Token de administrador válido",
+      "assercao": "email , tenantId e role: \"tenant_admin\" do próprio token; name pode vir null",
+      "literais": [
+        "tenant_admin"
+      ],
+      "campos": [
+        "email",
+        "tenantId",
+        "role: \"tenant_admin\"",
+        "name",
+        "null"
+      ],
+      "doc": "H-01",
+      "novo": false
+    },
+    {
+      "id": "API-H-XT",
+      "modulo": "H",
+      "moduloNome": "Home",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Isolamento entre tenants",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/home"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Dois tenants com volumes bem diferentes",
+      "assercao": "Cada um vê só o próprio número; nenhuma métrica soma dado do vizinho",
+      "literais": [],
+      "campos": [],
+      "doc": "H-01",
+      "novo": false
+    },
+    {
+      "id": "API-G-01",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Criação manual",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/groups"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "origin: \"people\" , creationMode: \"manual\" , três personIds",
+      "assercao": "Exatamente um grupo, com participantCount: 3 e participantIds na ordem enviada",
+      "literais": [],
+      "campos": [
+        "participantCount: 3",
+        "participantIds"
+      ],
+      "doc": "G-01",
+      "novo": false
+    },
+    {
+      "id": "API-G-02",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Manual exige ao menos uma pessoa",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/groups"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "origin: \"people\" com personIds: []",
+      "assercao": "\"Selecione ao menos uma pessoa válida.\"",
+      "literais": [
+        "Selecione ao menos uma pessoa válida."
+      ],
+      "campos": [],
+      "doc": "G-02",
+      "novo": false
+    },
+    {
+      "id": "API-G-03",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Pessoa de outro tenant",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/groups"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/groups"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "personIds com um UUID do tenant B",
+      "assercao": "400 e nenhum grupo criado — verificar por GET /dashboard/groups",
+      "literais": [],
+      "campos": [
+        "400",
+        "GET /dashboard/groups"
+      ],
+      "doc": "G-11",
+      "novo": false
+    },
+    {
+      "id": "API-G-04",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Origem formulário exige CLOSED",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/groups"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "origin: \"form\" apontando para formulário em PUBLISHED , DRAFT , UNPUBLISHED e ARCHIVED",
+      "assercao": "400 nos quatro. Só CLOSED passa — a API revalida, não confia no que a UI mandou",
+      "literais": [],
+      "campos": [
+        "400",
+        "CLOSED"
+      ],
+      "doc": "G-03",
+      "novo": false
+    },
+    {
+      "id": "API-G-05",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Dedupe por pessoa",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/groups"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Formulário MULTIPLE encerrado, com uma pessoa que respondeu três vezes",
+      "assercao": "Ela entra uma vez só : participantIds não repete",
+      "literais": [],
+      "campos": [
+        "participantIds"
+      ],
+      "doc": "G-04",
+      "novo": false
+    },
+    {
+      "id": "API-G-06",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Formulário sem respondente elegível",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/groups"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Formulário encerrado sem nenhuma submissão",
+      "assercao": "400",
+      "literais": [],
+      "campos": [
+        "400"
+      ],
+      "doc": "G-05",
+      "novo": false
+    },
+    {
+      "id": "API-G-07",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Distribuição sequencial e descarte do excedente",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/groups"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "25 pessoas, creationMode: \"split\" , groupCount: 4 , groupSize: 12",
+      "assercao": "Três grupos com participantCount 12, 12 e 1. O quarto não é criado e as pessoas acima da capacidade total são descartadas em silêncio",
+      "literais": [],
+      "campos": [
+        "participantCount"
+      ],
+      "doc": "G-06",
+      "novo": false
+    },
+    {
+      "id": "API-G-08",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Estratégia é só rótulo",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/groups"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Mesma população dividida com random , similar e balanced",
+      "assercao": "participantIds idêntico nas três. O rótulo é persistido em strategyLabel mas não muda o algoritmo",
+      "literais": [],
+      "campos": [
+        "participantIds",
+        "strategyLabel"
+      ],
+      "doc": "G-07",
+      "novo": false
+    },
+    {
+      "id": "API-G-09",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Limites da divisão",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/groups"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "groupCount em 1 e 51; groupSize em 0 e 101",
+      "assercao": "\"A configuração de divisão é inválida.\" nas quatro; 2/50 e 1/100 devolvem 201",
+      "literais": [
+        "A configuração de divisão é inválida."
+      ],
+      "campos": [
+        "201"
+      ],
+      "doc": "G-08",
+      "novo": false
+    },
+    {
+      "id": "API-G-10",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Estados e integrantes",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/groups/{groupId}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Grupo draft sem nenhum integrante",
+      "assercao": "Não vai para active nem finalized — ambos exigem ao menos um integrante",
+      "literais": [],
+      "campos": [
+        "active",
+        "finalized"
+      ],
+      "doc": "G-09",
+      "novo": false
+    },
+    {
+      "id": "API-G-11",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Ativação dedicada",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/groups/{groupId}/activate"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Grupo já active ; e grupo draft sem integrantes",
+      "assercao": "\"Somente grupos em rascunho podem ser ativados.\" e \"Adicione participantes antes de ativar o grupo.\" . Em draft com integrantes, 200",
+      "literais": [
+        "Somente grupos em rascunho podem ser ativados.",
+        "Adicione participantes antes de ativar o grupo."
+      ],
+      "campos": [
+        "draft",
+        "200"
+      ],
+      "doc": "G-10",
+      "novo": false
+    },
+    {
+      "id": "API-G-12",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Grupo de formulário tem integrantes imutáveis",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/groups/{groupId}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "personIds enviado em grupo de origin: \"form\"",
+      "assercao": "400 . name , description , icon e status continuam editáveis",
+      "literais": [],
+      "campos": [
+        "400",
+        "name",
+        "description",
+        "icon",
+        "status"
+      ],
+      "doc": "G-12",
+      "novo": false
+    },
+    {
+      "id": "API-G-13",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Edição substitui a composição",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/groups/{groupId}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Grupo manual de 5 pessoas; PATCH com 3 personIds",
+      "assercao": "participantCount: 3 , em transação, e a ordem enviada vira a nova ordem de participantIds",
+      "literais": [],
+      "campos": [
+        "participantCount: 3",
+        "participantIds"
+      ],
+      "doc": "G-13",
+      "novo": false
+    },
+    {
+      "id": "API-G-14",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Transição livre de status",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/groups/{groupId}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "status indo de finalized direto para draft",
+      "assercao": "Hoje é aceito — não há máquina de estados no PATCH . Registrar o comportamento real e escalar como risco",
+      "literais": [],
+      "campos": [
+        "PATCH"
+      ],
+      "doc": "—",
+      "novo": true
+    },
+    {
+      "id": "API-G-XT",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Isolamento entre tenants",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/groups"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/groups/{groupId}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/groups/{groupId}/activate"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Token do tenant A; grupo criado no tenant B",
+      "assercao": "A listagem do A não traz o grupo do B; edição e ativação cruzadas dão 404",
+      "literais": [],
+      "campos": [
+        "404"
+      ],
+      "doc": "G-11",
+      "novo": false
+    },
+    {
+      "id": "API-CAT-01",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Nome de categoria único por tenant",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/categories"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/categories"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        409
+      ],
+      "precondicao": "Duas categorias com o mesmo name no mesmo tenant",
+      "assercao": "A segunda é recusada. O mesmo nome em outro tenant devolve 201",
+      "literais": [],
+      "campos": [
+        "201"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-CAT-02",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Limites da categoria",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/categories"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "name com 61 caracteres; description com 151; icon com maiúscula, com espaço e com 41 caracteres",
+      "assercao": "\"O nome deve ter no máximo 60 caracteres.\" , \"A descrição deve ter no máximo 150 caracteres.\" e \"Ícone inválido.\" . icon omitido assume \"briefcase\"",
+      "literais": [
+        "O nome deve ter no máximo 60 caracteres.",
+        "A descrição deve ter no máximo 150 caracteres.",
+        "Ícone inválido.",
+        "briefcase"
+      ],
+      "campos": [
+        "icon",
+        "\"briefcase\""
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-CAT-03",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Categoria inativa não aceita vínculo",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/products"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/categories"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/products/{id}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        409
+      ],
+      "precondicao": "categoryId de categoria com isActive: false",
+      "assercao": "\"Selecione uma categoria ativa para vincular o produto.\" — vale na criação e na edição",
+      "literais": [
+        "Selecione uma categoria ativa para vincular o produto."
+      ],
+      "campos": [],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-CAT-04",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Excluir categoria preserva produtos",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "DELETE",
+          "caminho": "/dashboard/categories/{id}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/products"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/products"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Categoria com três produtos vinculados",
+      "assercao": "Os três continuam em GET /dashboard/products com categoryId: null . Nenhum produto é apagado",
+      "literais": [],
+      "campos": [
+        "GET /dashboard/products",
+        "categoryId: null"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-CAT-05",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Categoria de outro tenant",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/products"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        404
+      ],
+      "precondicao": "categoryId pertencente ao tenant B",
+      "assercao": "\"Categoria não encontrada.\" — nunca vínculo cruzado",
+      "literais": [
+        "Categoria não encontrada."
+      ],
+      "campos": [],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-CAT-06",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Preço em centavos",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/products"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "priceCents em −1 e 10.5",
+      "assercao": "\"Preço inválido.\" nas duas. 1000 devolve 201 e é gravado como inteiro; ausente é válido e vira null",
+      "literais": [
+        "Preço inválido."
+      ],
+      "campos": [
+        "1000",
+        "201",
+        "null"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-CAT-07",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Só produto ativo aparece e aceita reserva",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/public/tenants/{slug}/products"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/products/{id}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/public/products/{id}/reservations"
+        }
+      ],
+      "token": null,
+      "status": [
+        200
+      ],
+      "precondicao": "Produto com isActive: false",
+      "assercao": "Some de items ; a reserva dele devolve \"Produto não encontrado.\"",
+      "literais": [
+        "Produto não encontrado."
+      ],
+      "campos": [
+        "items"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-CAT-08",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Upload de imagem",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/products/uploads"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "PDF; imagem de 5 MB + 1 byte; PNG válido",
+      "assercao": "Os dois primeiros com \"Envie JPEG, PNG ou WebP com até 5 MB.\" ; o terceiro 201 com key e publicUrl",
+      "literais": [
+        "Envie JPEG, PNG ou WebP com até 5 MB."
+      ],
+      "campos": [
+        "201",
+        "key",
+        "publicUrl"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-CAT-09",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Excluir produto limpa o armazenamento",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "DELETE",
+          "caminho": "/dashboard/products/{id}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/products/uploads"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Produto com imagem enviada",
+      "assercao": "O objeto some do armazenamento junto com o registro — GET na publicUrl passa a dar 404",
+      "literais": [],
+      "campos": [
+        "GET",
+        "publicUrl",
+        "404"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-CAT-10",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Excluir produto com reserva histórica",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "DELETE",
+          "caminho": "/dashboard/products/{id}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/public/products/{id}/reservations"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/reservations/{id}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Produto com reservas concluídas",
+      "assercao": "Hoje a API permite e a cascata remove as referências. Registrar o comportamento real e escalar: a especificação recomenda inativar",
+      "literais": [],
+      "campos": [],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-CAT-11",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Máquina de estados da reserva",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/reservations/{id}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/public/products/{id}/reservations"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Reserva em pending",
+      "assercao": "Avança pending → in_progress → confirmed → completed . cancelled é alcançável dos três primeiros; voltar dá 409 \"Essa alteração de status não é permitida.\"",
+      "literais": [
+        "Essa alteração de status não é permitida."
+      ],
+      "campos": [
+        "pending → in_progress → confirmed → completed",
+        "cancelled",
+        "409 \"Essa alteração de status não é permitida.\""
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-CAT-12",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Cancelamento pelo admin exige motivo",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/reservations/{id}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "status: \"cancelled\" sem cancellationReason ; e com 1001 caracteres",
+      "assercao": "\"Informe o motivo do cancelamento.\" e \"O motivo deve ter no máximo 1000 caracteres.\" . Com motivo válido, grava e marca cancelledBy: \"admin\"",
+      "literais": [
+        "Informe o motivo do cancelamento.",
+        "O motivo deve ter no máximo 1000 caracteres.",
+        "admin"
+      ],
+      "campos": [
+        "cancelledBy: \"admin\""
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-CAT-13",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Cliente só cancela a própria, e só em pending",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/public/me/reservations/{id}/cancel"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/public/products/{id}/reservations"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/reservations/{id}"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        409
+      ],
+      "precondicao": "Cliente tenta cancelar reserva já in_progress",
+      "assercao": "\"A reserva só pode ser cancelada enquanto estiver nova.\" . A reserva de outra pessoa dá 404 . Em pending própria, 200 com cancelledBy: \"client\"",
+      "literais": [
+        "A reserva só pode ser cancelada enquanto estiver nova.",
+        "client"
+      ],
+      "campos": [
+        "404",
+        "pending",
+        "200",
+        "cancelledBy: \"client\""
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-CAT-14",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Falha de e-mail não desfaz a reserva",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/public/products/{id}/reservations"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "RESEND_API_KEY inválida",
+      "assercao": "A reserva é criada normalmente; a falha de envio fica só no log",
+      "literais": [],
+      "campos": [],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-CAT-15",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "API",
+      "prioridade": "P2",
+      "cenario": "E-mail só com configuração completa",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/public/products/{id}/reservations"
+        }
+      ],
+      "token": "endUserAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Sem contactEmail no tenant; sem EMAIL_FROM ; e configuração completa",
+      "assercao": "Não envia nas duas primeiras; envia na terceira. Nenhuma delas afeta a criação da reserva",
+      "literais": [],
+      "campos": [],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-CAT-XT",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Isolamento entre tenants",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/products"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/products/{id}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/public/tenants/{slug}/products"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Token do tenant A; produto, categoria e reserva do tenant B; e a rota pública com o slug do B",
+      "assercao": "Rotas administrativas dão 404 ; a rota pública devolve só o catálogo do slug pedido, com tenant ecoado no corpo",
+      "literais": [],
+      "campos": [
+        "404",
+        "tenant"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-MK-01",
+      "modulo": "MK",
+      "moduloNome": "Marca e aparência",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Upsert em registro único",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PUT",
+          "caminho": "/dashboard/branding"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/branding"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Dois PUT seguidos no mesmo tenant",
+      "assercao": "Uma única linha em brand_settings , com o conteúdo do segundo PUT",
+      "literais": [],
+      "campos": [
+        "brand_settings",
+        "PUT"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-MK-02",
+      "modulo": "MK",
+      "moduloNome": "Marca e aparência",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Campos obrigatórios",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PUT",
+          "caminho": "/dashboard/branding"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "PUT sem displayName ; sem accentColor ; sem themeMode",
+      "assercao": "\"O nome é obrigatório.\" , a mensagem de cor e \"O tema deve ser \\\"dark\\\" ou \\\"light\\\".\" . slogan e description vazios são aceitos, mas precisam estar presentes",
+      "literais": [
+        "O nome é obrigatório.",
+        "O tema deve ser \\\"dark\\\" ou \\\"light\\\".",
+        "O tema deve ser \\",
+        " ou \\"
+      ],
+      "campos": [
+        "slogan",
+        "description"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-MK-03",
+      "modulo": "MK",
+      "moduloNome": "Marca e aparência",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Formato da cor de destaque",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PUT",
+          "caminho": "/dashboard/branding"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "#FFF , rgb(0,0,0) , azul , #GGGGGG e #0b1f33",
+      "assercao": "\"Informe a cor de destaque em hexadecimal, no formato #RRGGBB.\" nos quatro primeiros; o último é aceito e normalizado para #0B1F33",
+      "literais": [
+        "Informe a cor de destaque em hexadecimal, no formato #RRGGBB."
+      ],
+      "campos": [
+        "#0B1F33"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-MK-03b",
+      "modulo": "MK",
+      "moduloNome": "Marca e aparência",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Tema derivado acompanha a resposta",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PUT",
+          "caminho": "/dashboard/branding"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "accentColor e themeMode válidos (ADR-004: uma semente, não três cores)",
+      "assercao": "theme.seed ecoa a semente, theme.neutral e theme.accent vêm preenchidos e theme.tokens traz os nomes CSS. O cliente não recalcula a rampa",
+      "literais": [],
+      "campos": [
+        "theme.seed",
+        "theme.neutral",
+        "theme.accent",
+        "theme.tokens"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-MK-04",
+      "modulo": "MK",
+      "moduloNome": "Marca e aparência",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Substituição remove o ativo anterior",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/branding/uploads"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Logo existente; envio de uma nova",
+      "assercao": "O objeto antigo some do armazenamento — exceto se a chave terminar em /current , que é preservada",
+      "literais": [],
+      "campos": [
+        "/current"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-MK-05",
+      "modulo": "MK",
+      "moduloNome": "Marca e aparência",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Remover ativo exige null explícito",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PUT",
+          "caminho": "/dashboard/branding"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "PUT com logoKey: null ; e PUT omitindo o campo",
+      "assercao": "O primeiro zera logoUrl ; o segundo preserva o ativo. Omitir não é remover",
+      "literais": [],
+      "campos": [
+        "logoUrl"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-MK-06",
+      "modulo": "MK",
+      "moduloNome": "Marca e aparência",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Chave de outro tenant",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PUT",
+          "caminho": "/dashboard/branding"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "logoKey apontando para o espaço de nomes do tenant B",
+      "assercao": "Recusado — a chave é validada contra o espaço do tenant autenticado",
+      "literais": [],
+      "campos": [],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-MK-07",
+      "modulo": "MK",
+      "moduloNome": "Marca e aparência",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Upload — tipo e tamanho",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/branding/uploads"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "SVG; 5 MB + 1 byte; WebP válido",
+      "assercao": "Os dois primeiros com \"Envie JPEG, PNG ou WebP com até 5 MB.\" ; o terceiro 201 com key e publicUrl",
+      "literais": [
+        "Envie JPEG, PNG ou WebP com até 5 MB."
+      ],
+      "campos": [
+        "201",
+        "key",
+        "publicUrl"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-MK-07b",
+      "modulo": "MK",
+      "moduloNome": "Marca e aparência",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Upload assinado devolve URL temporária",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PUT",
+          "caminho": "/dashboard/branding/uploads/presign"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "kind: \"logo\" , contentType: \"image/webp\" , size dentro do limite",
+      "assercao": "uploadUrl assinada e expiresIn: 300 . size acima de 5 MB ou kind fora do enum dão 400",
+      "literais": [],
+      "campos": [
+        "uploadUrl",
+        "expiresIn: 300",
+        "size",
+        "kind",
+        "400"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-MK-08",
+      "modulo": "MK",
+      "moduloNome": "Marca e aparência",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Marca não zera o carrossel",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PUT",
+          "caminho": "/dashboard/branding"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/banners/settings"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/branding"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Carrossel configurado; em seguida, um PUT de marca",
+      "assercao": "carouselInterval , carouselHeight e carouselShowIndicators permanecem. É o caso que protege o acoplamento entre os dois módulos",
+      "literais": [],
+      "campos": [
+        "carouselInterval",
+        "carouselHeight",
+        "carouselShowIndicators"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-MK-09",
+      "modulo": "MK",
+      "moduloNome": "Marca e aparência",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Publicação no payload público",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/public/tenants/{slug}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/branding"
+        }
+      ],
+      "token": null,
+      "status": [
+        200
+      ],
+      "precondicao": "Marca salva",
+      "assercao": "name , accentColor , themeMode , theme , logoUrl e coverUrl refletem o que foi salvo",
+      "literais": [],
+      "campos": [
+        "name",
+        "accentColor",
+        "themeMode",
+        "theme",
+        "logoUrl",
+        "coverUrl"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-MK-XT",
+      "modulo": "MK",
+      "moduloNome": "Marca e aparência",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Isolamento entre tenants",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/branding"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/branding"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Token do tenant A lendo e escrevendo a marca do tenant B",
+      "assercao": "Sempre a própria linha; nunca a do vizinho",
+      "literais": [],
+      "campos": [],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-BN-01",
+      "modulo": "BN",
+      "moduloNome": "Banners",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Limite de três ativos",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/banners"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/banners"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Três banners ativos; criar um quarto com isActive: true",
+      "assercao": "\"Máximo de 3 banners ativos.\" . Criar com isActive: false devolve 201",
+      "literais": [
+        "Máximo de 3 banners ativos."
+      ],
+      "campos": [
+        "isActive: false",
+        "201"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-BN-02",
+      "modulo": "BN",
+      "moduloNome": "Banners",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Ativar com o limite cheio",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/banners/{id}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Três ativos e um inativo; PATCH ativando o inativo",
+      "assercao": "Recusado com a mesma mensagem. Desativando um dos três antes, 200",
+      "literais": [],
+      "campos": [
+        "200"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-BN-03",
+      "modulo": "BN",
+      "moduloNome": "Banners",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Imagem obrigatória na criação",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/banners"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "POST sem imageKey",
+      "assercao": "\"Título e imagem são obrigatórios.\"",
+      "literais": [
+        "Título e imagem são obrigatórios."
+      ],
+      "campos": [],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-BN-04",
+      "modulo": "BN",
+      "moduloNome": "Banners",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Formato do link",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/banners"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "ftp://x , www.exemplo.com , /interno e https://exemplo.com",
+      "assercao": "\"Link inválido.\" nos três primeiros; o último aceito. actionLink ausente é válido",
+      "literais": [
+        "Link inválido."
+      ],
+      "campos": [
+        "actionLink"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-BN-05",
+      "modulo": "BN",
+      "moduloNome": "Banners",
+      "camada": "API",
+      "prioridade": "P2",
+      "cenario": "Limites de texto",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/banners"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "actionLabel com 21 caracteres; e title ausente",
+      "assercao": "\"Texto do botão inválido.\" e \"Título e imagem são obrigatórios.\"",
+      "literais": [
+        "Texto do botão inválido.",
+        "Título e imagem são obrigatórios."
+      ],
+      "campos": [],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-BN-06",
+      "modulo": "BN",
+      "moduloNome": "Banners",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Reordenação exige o payload completo",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/banners/order"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/banners"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Quatro banners; ids com três; com um id desconhecido; com um id repetido",
+      "assercao": "\"A lista de banners não confere.\" nas três, sem aplicar nada parcialmente — conferir a ordem por GET /dashboard/banners",
+      "literais": [
+        "A lista de banners não confere."
+      ],
+      "campos": [
+        "GET /dashboard/banners"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-BN-07",
+      "modulo": "BN",
+      "moduloNome": "Banners",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Reordenação válida",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/banners/order"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/banners"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "ids com todos os banners em nova ordem",
+      "assercao": "Devolve os ids aplicados e a listagem reflete a ordem pedida em position",
+      "literais": [],
+      "campos": [
+        "ids",
+        "position"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-BN-08",
+      "modulo": "BN",
+      "moduloNome": "Banners",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Configuração do carrossel",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/banners/settings"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "interval: 4 ; height: \"huge\" ; e interval: 7 com height: \"large\"",
+      "assercao": "\"Configurações do carrossel inválidas.\" nos dois primeiros; o terceiro 200 . O contrato declara interval no enum [3,5,7,10]",
+      "literais": [
+        "Configurações do carrossel inválidas."
+      ],
+      "campos": [
+        "200",
+        "interval",
+        "[3,5,7,10]"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-BN-09",
+      "modulo": "BN",
+      "moduloNome": "Banners",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Substituir imagem deixa órfão",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/banners/{id}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/banners/uploads"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Banner com imagem; enviar outra",
+      "assercao": "A chave anterior permanece no armazenamento. Comportamento conhecido — o caso existe para a divergência com Marca (API-MK-04) ficar registrada",
+      "literais": [],
+      "campos": [],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-BN-10",
+      "modulo": "BN",
+      "moduloNome": "Banners",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Só banner ativo chega ao app",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/public/tenants/{slug}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/banners"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/banners/order"
+        }
+      ],
+      "token": null,
+      "status": [
+        200
+      ],
+      "precondicao": "Dois banners ativos e um inativo",
+      "assercao": "banners traz apenas os dois ativos, na ordem definida",
+      "literais": [],
+      "campos": [
+        "banners"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-BN-XT",
+      "modulo": "BN",
+      "moduloNome": "Banners",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Isolamento entre tenants",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/banners"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/banners/{id}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "DELETE",
+          "caminho": "/dashboard/banners/{id}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/banners/order"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Token do tenant A editando, excluindo e reordenando banners do tenant B",
+      "assercao": "Edição e exclusão cruzadas dão 404 ; a reordenação nunca aceita id de outro tenant",
+      "literais": [],
+      "campos": [
+        "404"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-MN-01",
+      "modulo": "MN",
+      "moduloNome": "Menu e navegação",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Sessão",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/session"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/privacy/professionals"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Token de administrador válido",
+      "assercao": "Devolve email , tenantId , role e name . Não devolve canViewSensitiveData nem isPrimaryAdmin : quem monta o menu com essas flags precisa de GET /dashboard/privacy/professionals",
+      "literais": [],
+      "campos": [
+        "email",
+        "tenantId",
+        "role",
+        "name",
+        "canViewSensitiveData",
+        "isPrimaryAdmin",
+        "GET /dashboard/privacy/professionals"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-MN-02",
+      "modulo": "MN",
+      "moduloNome": "Menu e navegação",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Token inválido, expirado e de admin desativado",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/session"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/admin/tenants/{id}/admins/{userId}/status"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        401
+      ],
+      "precondicao": "Três variações: token adulterado, token expirado e token de admin com isActive: false",
+      "assercao": "401 nas três. A terceira prova que isActive é reconferido a cada requisição, não só no login",
+      "literais": [],
+      "campos": [
+        "401",
+        "isActive"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-MN-03",
+      "modulo": "MN",
+      "moduloNome": "Menu e navegação",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Menu não é segurança",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/forms/submissions"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        403
+      ],
+      "precondicao": "Admin sem canViewSensitiveData chamando direto as rotas que o menu esconderia",
+      "assercao": "403 pela API — esconder o item nunca é a única defesa",
+      "literais": [],
+      "campos": [
+        "403"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-AN-01",
+      "modulo": "AN",
+      "moduloNome": "Anonimização",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Rota de anonimização não existe",
+      "rotas": [
+        {
+          "papel": "inexistente",
+          "metodo": "POST",
+          "caminho": "/dashboard/privacy/people/{personId}/anonymization-requests"
+        }
+      ],
+      "token": null,
+      "status": [
+        404
+      ],
+      "precondicao": "Esta e as demais rotas candidatas de anonimização",
+      "assercao": "Nenhuma consta do docs-json — chamá-las dá 404 . O caso guarda a decisão de produto contra reintrodução acidental",
+      "literais": [],
+      "campos": [
+        "docs-json",
+        "404"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-AN-02",
+      "modulo": "AN",
+      "moduloNome": "Anonimização",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Exclusão física de pessoa não existe",
+      "rotas": [
+        {
+          "papel": "inexistente",
+          "metodo": "DELETE",
+          "caminho": "/dashboard/people/{personId}"
+        }
+      ],
+      "token": null,
+      "status": [
+        404
+      ],
+      "precondicao": "Qualquer caminho que apagasse people definitivamente",
+      "assercao": "404 ou 405 . O contrato não expõe DELETE em /dashboard/people",
+      "literais": [],
+      "campos": [
+        "404",
+        "405",
+        "DELETE",
+        "/dashboard/people"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-AN-03",
+      "modulo": "AN",
+      "moduloNome": "Anonimização",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "\"Remover acesso\" não é anonimizar",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/people/{personId}/remove-access"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/people"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/people/{personId}/form-assignments"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Pessoa com cadastro completo, códigos, reservas, submissões e vínculo de grupo",
+      "assercao": "status: \"revoked\" e conta desativada, mas name , email , phone , códigos, reservas, submissões e grupos todos preservados — verificáveis nas listagens seguintes",
+      "literais": [
+        "revoked"
+      ],
+      "campos": [
+        "status: \"revoked\"",
+        "name",
+        "email",
+        "phone"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-AN-04",
+      "modulo": "AN",
+      "moduloNome": "Anonimização",
+      "camada": "API",
+      "prioridade": "P2",
+      "cenario": "Auditoria não tem evento de anonimização",
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/people"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/privacy/retention/run"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Percorrer os fluxos de privacidade de ponta a ponta",
+      "assercao": "Nenhum registro do tipo em audit_logs — só os eventos de acesso e retenção já previstos",
+      "literais": [],
+      "campos": [
+        "audit_logs"
+      ],
+      "doc": null,
+      "novo": false
+    }
+  ]
+}
