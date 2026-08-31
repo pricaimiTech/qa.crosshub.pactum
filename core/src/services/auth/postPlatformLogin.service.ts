@@ -7,6 +7,7 @@ import type { IParamsDefault } from "../../interface/global.interface"
  * @param email - E-mail do super admin
  * @param password - Senha do super admin
  * @param paramsDefault - Parâmetros padrão da requisição
+ * @rota POST /auth/platform/login
  * @returns Resposta com o accessToken da plataforma
  */
 export default async function postPlatformLogin(
@@ -24,9 +25,5 @@ export default async function postPlatformLogin(
 			paramsDefault.statusCode,
 			`O status code da requisição ${apiName.authPlatform}/login não é o esperado.`,
 		)
-		.retry({
-			count: paramsDefault.retry.count,
-			delay: paramsDefault.retry.delay,
-			strategy: ({ res }) => res.statusCode === paramsDefault.statusCode,
-		})
+
 }

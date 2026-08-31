@@ -8,6 +8,7 @@ import type { IParamsDefault } from "../../interface/global.interface"
  * @param email - E-mail do administrador
  * @param password - Senha do administrador
  * @param paramsDefault - Parâmetros padrão da requisição
+ * @rota POST /auth/platform/tenant/login
  * @returns Resposta com o accessToken do tenant
  */
 export default async function postTenantLogin(
@@ -27,9 +28,5 @@ export default async function postTenantLogin(
 			paramsDefault.statusCode,
 			`O status code da requisição ${apiName.authPlatform}/tenant/login não é o esperado.`,
 		)
-		.retry({
-			count: paramsDefault.retry.count,
-			delay: paramsDefault.retry.delay,
-			strategy: ({ res }) => res.statusCode === paramsDefault.statusCode,
-		})
+
 }
