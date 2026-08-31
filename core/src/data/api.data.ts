@@ -18,13 +18,20 @@ export const apiName = {
 	dashboardAppointments: "/dashboard/appointments",
 	dashboardBanners: "/dashboard/banners",
 	dashboardBranding: "/dashboard/branding",
+	dashboardCategories: "/dashboard/categories",
 	dashboardForms: "/dashboard/forms",
 	dashboardGroups: "/dashboard/groups",
 	dashboardPeople: "/dashboard/people",
 	dashboardPrivacy: "/dashboard/privacy",
+	dashboardProducts: "/dashboard/products",
+	dashboardReservations: "/dashboard/reservations",
 
 	// Área pública / usuário final
 	public: "/public",
+	publicAppointments: "/public/appointments",
+	publicForms: "/public/forms",
+	publicMe: "/public/me",
+	publicProducts: "/public/products",
 	publicTenants: "/public/tenants",
 
 	// Infra

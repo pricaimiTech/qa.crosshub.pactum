@@ -144,3 +144,8 @@ vite.config.ts.timestamp-*
 
 # Relatório de testes
 xunit.xml
+preSetup/.endUsers.json
+preSetup/.tenants.json
+preSetup/.admins.json
+preSetup/.emptyTenant.json
+preSetup/.caseTenants.json
