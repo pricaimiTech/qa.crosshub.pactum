@@ -48,6 +48,44 @@ const NAO_VERIFICAVEL = {
 	"API-LGPD-13": ["sem rota de leitura de trilha no contrato", 98],
 	"API-C-15": ["sem rota de leitura de trilha no contrato", 98],
 	"API-AN-04": ["sem rota de leitura de trilha no contrato", 98],
+
+	/*
+	 * O `LGPD-02` pede um Principal com `canViewSensitiveData: false` — estado
+	 * que só a migração de dados legada produz. Pela API ele é **inalcançável
+	 * por construção**, e é o `LGPD-06` que prova: o Principal não consegue
+	 * revogar o próprio acesso, e a API responde com texto próprio para isso.
+	 *
+	 * Ou seja: a guarda que torna o caso impossível de montar já está testada.
+	 */
+	"API-LGPD-02": ["precondição inalcançável pela API — ver LGPD-06", 123],
+
+	/*
+	 * Os três da Home dependem de massa com data retroativa: reservas de 23 h e
+	 * 25 h, cadastros de 6 e 8 dias, reservas paradas há 2 e 4 dias. A API grava
+	 * com `now()` e a suíte só fala HTTP — não há como envelhecer o dado.
+	 */
+	"API-H-01": ["exige massa com data retroativa", 123],
+	"API-H-02": ["exige massa com data retroativa", 123],
+	"API-H-09": ["exige massa com data retroativa", 123],
+
+	/*
+	 * O `CAT-15` compara três configurações de e-mail, e duas delas exigem subir
+	 * a API sem `EMAIL_FROM` — variável de ambiente do processo, não estado que
+	 * um teste possa arranjar.
+	 */
+	"API-CAT-15": ["exige subir a API com outra env", 123],
+}
+
+/**
+ * Caso cuja verificação vive no arquivo de OUTRO caso.
+ *
+ * O `AN-01` percorre as três rotas ausentes de uma vez — incluindo o
+ * `DELETE /dashboard/people/{personId}` que o `AN-02` descreve — e falha se
+ * qualquer uma passar a existir. Um arquivo próprio para o `AN-02` repetiria a
+ * mesma chamada com a mesma asserção.
+ */
+const COBERTO_POR = {
+	"API-AN-02": "API-AN-01",
 }
 
 /** Onde o arquivo de teste de um caso deve estar. */
@@ -68,6 +106,9 @@ const semTeste = []
 function celulaTeste(testCase, domain) {
 	const rel = caminhoTeste(testCase, domain)
 	if (existsSync(resolve(ROOT, rel))) return `\`${rel.split("/").pop()}\``
+
+	const cobertoPor = COBERTO_POR[testCase.id]
+	if (cobertoPor) return `coberto por \`${cobertoPor}\``
 
 	const naoVerificavel = NAO_VERIFICAVEL[testCase.id]
 	if (naoVerificavel) {
