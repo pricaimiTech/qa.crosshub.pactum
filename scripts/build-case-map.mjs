@@ -13,7 +13,7 @@
  * Uso: node scripts/build-case-map.mjs
  */
 
-import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs"
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs"
 import { resolve } from "node:path"
 
 const ROOT = resolve(import.meta.dirname, "..")
@@ -32,6 +32,52 @@ const DOMAIN_BY_MODULE = {
 	BN: "banners",
 	MN: "dashboard",
 	AN: "privacy",
+}
+
+/**
+ * Casos que a estratégia descreve e que **não são escrevíveis contra o contrato
+ * atual**, com o motivo e a issue que registra a lacuna.
+ *
+ * Sem esta lista, um caso sem teste é indistinguível de um caso esquecido — e
+ * era exatamente o que acontecia: o mapa derivava o nome do arquivo do ID e o
+ * imprimia existisse ele ou não, então 11 casos apareciam cobertos sem ter uma
+ * linha escrita.
+ */
+const NAO_VERIFICAVEL = {
+	"API-F-21": ["sem rota de leitura de trilha no contrato", 96],
+	"API-LGPD-13": ["sem rota de leitura de trilha no contrato", 98],
+	"API-C-15": ["sem rota de leitura de trilha no contrato", 98],
+	"API-AN-04": ["sem rota de leitura de trilha no contrato", 98],
+}
+
+/** Onde o arquivo de teste de um caso deve estar. */
+function caminhoTeste(testCase, domain) {
+	return `${domain}/tests/functional/${testCase.id.replace(/^API-/, "")}-F.test.ts`
+}
+
+/** Casos sem arquivo no disco, acumulados durante a montagem da tabela. */
+const semTeste = []
+
+/**
+ * A célula "Teste" — conferida contra o disco, não derivada do ID.
+ *
+ * O que ela dizia antes era só o nome que o arquivo *teria*, montado a partir do
+ * ID. Todo caso aparecia coberto, e o mapa afirmava 166 de 166 enquanto havia
+ * 156 arquivos.
+ */
+function celulaTeste(testCase, domain) {
+	const rel = caminhoTeste(testCase, domain)
+	if (existsSync(resolve(ROOT, rel))) return `\`${rel.split("/").pop()}\``
+
+	const naoVerificavel = NAO_VERIFICAVEL[testCase.id]
+	if (naoVerificavel) {
+		const [motivo, issue] = naoVerificavel
+		semTeste.push({ ...testCase, domain, motivo, issue })
+		return `**não verificável** — ${motivo} ([#${issue}](https://github.com/pricaimiTech/dev.CrossHub/issues/${issue}))`
+	}
+
+	semTeste.push({ ...testCase, domain })
+	return "**ausente**"
 }
 
 /** Audiência do JWT -> business/login que o teste usa no `before`. */
@@ -186,7 +232,7 @@ for (const [module, domain] of Object.entries(DOMAIN_BY_MODULE)) {
 				action.map(link).join("<br>") || "—",
 				setup.map(link).join("<br>") || "—",
 				literals || "—",
-				`\`${testCase.id.replace(/^API-/, "")}-F.test.ts\``,
+				celulaTeste(testCase, domain),
 				bugByCase.has(testCase.id)
 					? `[#${bugByCase.get(testCase.id).number}](${bugByCase.get(testCase.id).url})`
 					: "—",
@@ -220,6 +266,95 @@ lines.push(
 			`- \`${caso}\` → [#${bug.number}](${bug.url}) — o teste segue falhando até a correção`,
 	),
 	"",
+	"## Casos sem teste",
+	"",
+)
+
+if (semTeste.length === 0) {
+	lines.push("Nenhum. Todo caso da estratégia tem arquivo no disco.", "")
+} else {
+	const ausentes = semTeste.filter((c) => !c.motivo)
+	const naoVerificaveis = semTeste.filter((c) => c.motivo)
+
+	lines.push(
+		`**${semTeste.length} de ${cases.length}** casos da estratégia não têm arquivo de teste: ` +
+			`${ausentes.length} ausente(s) e ${naoVerificaveis.length} não verificável(is) ` +
+			"contra o contrato atual.",
+		"",
+	)
+
+	if (ausentes.length) {
+		const p0 = ausentes.filter((c) => c.prioridade === "P0")
+		lines.push(
+			`### Ausentes (${ausentes.length}${p0.length ? `, sendo ${p0.length} P0` : ""})`,
+			"",
+			"| Caso | Prio | Cenário | Onde o arquivo deve ficar |",
+			"|---|---|---|---|",
+			...ausentes.map(
+				(c) =>
+					`| \`${c.id}\` | ${c.prioridade} | ${c.cenario.replace(/\|/g, "\\|")} | ` +
+					`\`${caminhoTeste(c, c.domain)}\` |`,
+			),
+			"",
+		)
+	}
+
+	if (naoVerificaveis.length) {
+		lines.push(
+			`### Não verificáveis contra o contrato (${naoVerificaveis.length})`,
+			"",
+			"Descritos na estratégia e sem rota que os torne observáveis. Saem daqui quando a",
+			"issue correspondente for resolvida — não antes, e não por serem esquecidos.",
+			"",
+			"| Caso | Prio | Cenário | Motivo |",
+			"|---|---|---|---|",
+			...naoVerificaveis.map(
+				(c) =>
+					`| \`${c.id}\` | ${c.prioridade} | ${c.cenario.replace(/\|/g, "\\|")} | ` +
+					`${c.motivo} ([#${c.issue}](https://github.com/pricaimiTech/dev.CrossHub/issues/${c.issue})) |`,
+			),
+			"",
+		)
+	}
+}
+
+/*
+ * O outro sentido da conferência: arquivo no disco que a estratégia não conhece.
+ *
+ * `G-08b` nasceu de um bug (a formação por similaridade ignorava as respostas) e
+ * nunca entrou na estratégia. Um teste fora do mapa não é erro — é caso que a
+ * automação descobriu — mas precisa aparecer, senão some da rastreabilidade.
+ */
+const idsDaEstrategia = new Set(cases.map((c) => c.id.replace(/^API-/, "")))
+const forasDoMapa = []
+for (const domain of new Set(Object.values(DOMAIN_BY_MODULE))) {
+	const dir = resolve(ROOT, `${domain}/tests/functional`)
+	if (!existsSync(dir)) continue
+	for (const file of readdirSync(dir)) {
+		if (!file.endsWith("-F.test.ts")) continue
+		const id = file.replace(/-F\.test\.ts$/, "")
+		if (!idsDaEstrategia.has(id))
+			forasDoMapa.push({ id, path: `${domain}/tests/functional/${file}` })
+	}
+}
+
+lines.push("## Testes fora da estratégia", "")
+if (forasDoMapa.length === 0) {
+	lines.push("Nenhum. Todo arquivo no disco corresponde a um caso da estratégia.", "")
+} else {
+	lines.push(
+		`${forasDoMapa.length} arquivo(s) no disco sem caso correspondente. Normalmente é caso que`,
+		"a automação descobriu depois de a estratégia ser escrita — vale registrar lá para não sumir",
+		"da rastreabilidade.",
+		"",
+		"| Teste | Arquivo |",
+		"|---|---|",
+		...forasDoMapa.map((f) => `| \`${f.id}\` | \`${f.path}\` |`),
+		"",
+	)
+}
+
+lines.push(
 	"## Cobertura do contrato",
 	"",
 	`Rotas citadas por algum caso: **${usedRoutes.size}** de ${serviceByRoute.size} do contrato.`,
@@ -238,9 +373,34 @@ lines.push("")
 mkdirSync(resolve(ROOT, "docs/plans"), { recursive: true })
 writeFileSync(resolve(ROOT, "docs/plans/mapa-casos-api.md"), lines.join("\n"))
 
+const ausentes = semTeste.filter((c) => !c.motivo)
+const ausentesP0 = ausentes.filter((c) => c.prioridade === "P0")
+
 console.log(
-	`${cases.length} casos · ${usedRoutes.size} rotas cobertas · ` +
-		`${uncovered.length} rotas /dashboard sem caso · ${problems.length} divergências`,
+	`${cases.length} casos · ${cases.length - semTeste.length} com teste · ` +
+		`${ausentes.length} ausente(s) · ${semTeste.length - ausentes.length} não verificável(is) · ` +
+		`${usedRoutes.size} rotas cobertas · ${uncovered.length} rotas /dashboard sem caso · ` +
+		`${forasDoMapa.length} fora da estratégia · ` +
+		`${problems.length} divergências`,
 )
+
+/*
+ * Caso P0 sem teste reprova o gerador.
+ *
+ * A coluna "Teste" era derivada do ID e imprimia o nome que o arquivo *teria*:
+ * todo caso aparecia coberto, e o mapa afirmava 166 de 166 com 156 arquivos no
+ * disco. Três dos que faltavam eram P0. Contagem que ninguém confere apodrece,
+ * e esta agora falha em vez de mentir.
+ *
+ * P1 e P2 ausentes aparecem na tabela sem reprovar: são fila de trabalho, não
+ * lacuna crítica.
+ */
+if (ausentesP0.length) {
+	console.error(
+		`\n${ausentesP0.length} caso(s) P0 sem teste: ` +
+			ausentesP0.map((c) => c.id).join(", "),
+	)
+	process.exitCode = 1
+}
 
 if (problems.length) process.exitCode = 1
