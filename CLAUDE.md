@@ -81,12 +81,37 @@ Services e interfaces **não são escritos à mão** — são gerados do contrat
 npm run generate:api            # regenera interfaces + services (preserva o que já existe)
 node scripts/generate-from-openapi.mjs --force   # sobrescreve tudo que é gerado
 node scripts/generate-from-openapi.mjs --dry     # só mostra o que mudaria
-npm run generate:map            # reconstrói docs/plans/mapa-casos-api.md
+npm run generate:map            # a cadeia inteira: estratégia -> carimbo -> mapa
+npm run generate:strategy       # só o JSON, a partir do HTML da estratégia
+npm run stamp:strategy          # só o carimbo de automação no HTML
 ```
 
-`generate:map` também **valida** a estratégia contra o contrato: sai com erro se algum caso
-apontar para uma rota sem service, ou se uma rota marcada como `inexistente` na estratégia
-passar a existir no `openapi.json`. Rodar depois de todo `generate:api`.
+`generate:map` roda os três em ordem, porque um depende do outro: o JSON sai do HTML, o
+carimbo lê o disco, e o mapa lê o JSON.
+
+Ele também **valida**, e sai com erro quando:
+
+- um caso aponta para rota sem service, ou uma rota marcada como `inexistente` na estratégia
+  passa a existir no `openapi.json`;
+- **um caso P0 fica sem teste.** A coluna "Teste" confere o disco — ela já foi derivada do ID,
+  e o mapa afirmava 166 de 166 com 156 arquivos.
+
+### O estado de automação aparece na estratégia
+
+`stamp:strategy` carimba a célula do ID de cada caso no HTML, logo abaixo do próprio ID, com
+um de quatro selos:
+
+| selo | significa |
+|---|---|
+| `automatizado` | existe arquivo de teste, e o nome dele aparece embaixo |
+| `coberto por X` | a verificação vive no arquivo de outro caso |
+| `não verificável` | descrito na estratégia e impossível contra o contrato atual |
+| `pendente` | falta escrever |
+
+É região gerada — o próximo carimbo sobrescreve. Um caso **não verificável** declara o motivo
+no próprio HTML, com `<span class="nao-verificavel" data-issue="N">`, e o build emite
+`naoVerificavel: { motivo, issue }`. O motivo mora na estratégia de propósito: quem escreve o
+caso é quem sabe por que ele não é escrevível.
 
 - **Interfaces**: um arquivo por domínio, `core/src/interface/<dominio>/I<Dominio>.interface.ts`. Schemas usados por mais de um domínio vão para `core/src/interface/shared/IShared.interface.ts`. `ApiErrorResponse` do contrato é mapeado para o `IApiError` já existente em `global.interface.ts`.
 - **Services**: um arquivo por operação, `core/src/services/<dominio>/<nome>.service.ts`. Assinatura: `(path params..., query?, payload?, paramsDefault)`.

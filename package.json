@@ -15,7 +15,9 @@
   "scripts": {
     "localTest": "cross-env LOG=false npx ts-mocha ./**/tests/**/**/**/**/**/**/**.test.ts",
     "generate:api": "node scripts/generate-from-openapi.mjs",
-    "generate:map": "node scripts/build-case-map.mjs",
+    "generate:map": "npm run generate:strategy && npm run stamp:strategy && node scripts/build-case-map.mjs",
+    "generate:strategy": "node .doc/dashboard/build-strategy-json.mjs openapi.json",
+    "stamp:strategy": "node scripts/stamp-strategy.mjs",
     "pre-setup": "cross-env LOG=false npx ts-mocha ./preSetup/**/*.ts",
     "all-addons": "cross-env LOG=false npx ts-mocha ./addons/tests/**/**/**/**/**/**/**.test.ts",
     "all-appointments": "cross-env LOG=false npx ts-mocha ./appointments/tests/**/**/**/**/**/**/**.test.ts",

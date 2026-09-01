@@ -110,7 +110,16 @@ const casos = [];
 for (const linha of html.matchAll(/<tr>(.*?)<\/tr>/gs)) {
   const celulas = [...linha[1].matchAll(/<td([^>]*)>(.*?)<\/td>/gs)]
     .map((m) => ({ classe: (m[1].match(/class="([^"]+)"/) || [, ''])[1], html: m[2] }));
-  const id = celulas[0] && texto(celulas[0].html);
+  /*
+   * O ID ignora o selo de automação.
+   *
+   * A célula leva `API-H-01` mais um `<span class="auto">` carimbado pelo
+   * projeto de automação. Sem descartar o selo aqui, o ID viraria
+   * "API-H-01 automatizado" e nada casaria — foi o que aconteceu na primeira
+   * tentativa de pôr o estado embaixo do ID.
+   */
+  const id =
+    celulas[0] && texto(celulas[0].html.replace(/<span class="auto">[\s\S]*$/, ''));
   if (!id || !/^API-[A-Z]+-/.test(id)) continue;
 
   const por = (classe) => celulas.find((c) => c.classe === classe);
