@@ -64,6 +64,7 @@ export const tenantAllocation: Record<string, string> = {
 	"MK-02": "Campos obrigatórios do upsert de marca",
 	"MK-03": "Formato da cor de destaque",
 	"MK-03b": "Tema derivado na resposta",
+	"MK-04": "Substituição de logo remove o ativo anterior",
 	"MK-05": "Remoção de ativo com null explícito",
 	"MK-08": "Marca não zera o carrossel",
 	"MK-09": "Publicação da marca no payload público",

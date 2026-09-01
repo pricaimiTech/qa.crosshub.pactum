@@ -65,6 +65,29 @@ export const brandingMK05 = {
 	logoBytes: 64 * 1024,
 }
 
+/**
+ * `API-MK-04` — substituir a logo apaga o objeto anterior do armazenamento.
+ *
+ * Não basta a marca passar a apontar para a nova: o arquivo antigo tem de sumir.
+ * Ativo órfão em bucket é custo que ninguém revisa e, em imagem de cliente, é
+ * dado pessoal sobrevivendo à substituição.
+ *
+ * A exceção que a especificação abre — chave terminada em `/current` — é
+ * preservada de propósito: é o apelido estável que o app usa, e apagá-lo
+ * quebraria o link enquanto o novo sobe.
+ */
+export const brandingMK04 = {
+	...brandingDefaults,
+	casePrefix: "[MK-04]",
+	caseId: "MK-04",
+	kind: "logo" as const,
+	/** Tamanhos diferentes para as duas: chave igual esconderia a substituição. */
+	primeiraLogoBytes: 48 * 1024,
+	segundaLogoBytes: 72 * 1024,
+	paramsDefault404: (token?: string) =>
+		preSetup.preSetupParamsDefault(404, 5, 500, token),
+}
+
 /** `API-MK-06` — chave de outro tenant é recusada. */
 export const brandingMK06 = {
 	...brandingDefaults,
