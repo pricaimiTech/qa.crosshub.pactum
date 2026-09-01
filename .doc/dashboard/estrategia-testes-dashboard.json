@@ -1,9 +1,9 @@
 {
-  "gerado": "2026-08-30",
+  "gerado": "2026-09-01",
   "origem": "docs/test-strategy/02/estrategia-testes-dashboard.html",
   "aviso": "Artefato de build. Editar o HTML e rodar build-strategy-json.mjs.",
   "totais": {
-    "casos": 166,
+    "casos": 167,
     "p0": 97,
     "porModulo": {
       "AG": 36,
@@ -11,7 +11,7 @@
       "LGPD": 14,
       "C": 18,
       "H": 12,
-      "G": 15,
+      "G": 16,
       "CAT": 16,
       "MK": 12,
       "BN": 11,
@@ -32,6 +32,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Geração de janelas sem intervalo",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -74,6 +75,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Geração de janelas com intervalo",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -111,6 +113,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Janela que não cabe no turno",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -149,6 +152,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Janelas já passadas são omitidas",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -176,6 +180,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Disponibilidade sobreposta é rejeitada",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -204,6 +209,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Validação de parâmetros do vínculo serviço–profissional",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -235,6 +241,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Limite de um agendamento por dia — cliente",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -267,6 +274,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Cancelado não bloqueia novo agendamento",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -306,6 +314,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Admin não tem limite diário",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -336,6 +345,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "approvalMode: manual",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -376,6 +386,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "approvalMode: automatic",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -411,6 +422,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Seleção de profissional automatic",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -438,6 +450,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Seleção de profissional required",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -471,6 +484,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Desempate da distribuição automática",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -504,6 +518,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Distribuição respeita elegibilidade",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -544,6 +559,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Concorrência na última vaga",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -580,6 +596,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Capacidade esgotada",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -619,6 +636,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Cancelamento libera vaga",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -649,6 +667,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Prazo de cancelamento — cliente",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -691,6 +710,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Prazo de cancelamento não vale para o admin",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -723,6 +743,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Reagendamento encadeia os registros",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -761,6 +782,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Reagendamento exige horário e motivo",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -788,6 +810,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Reagendamento pelo cliente não existe na API",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -816,6 +839,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Transições de estado inválidas",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -854,6 +878,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Status fora do enum e motivo obrigatório",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -882,6 +907,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Bloqueio impede criação mas preserva o passado",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -919,6 +945,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Bloqueio parcial não fecha a janela",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -952,6 +979,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Bloqueio sem alvo",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -979,6 +1007,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Feriado é visual, não bloqueia",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1012,6 +1041,7 @@
       "camada": "API",
       "prioridade": "P2",
       "cenario": "Feriado móvel",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1039,6 +1069,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Exclusão de profissional com histórico",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1073,6 +1104,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Gate do add-on de indicadores",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1107,6 +1139,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Crédito de pacote — venda e consumo",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1153,6 +1186,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Crédito de pacote — cancelamento e restauração excepcional",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1195,6 +1229,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Notas internas não vazam para o app",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1232,6 +1267,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Isolamento entre tenants",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1259,6 +1295,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Publicar sem pergunta",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1291,6 +1328,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Ciclo completo de estados",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1339,6 +1377,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "CLOSED é definitivo",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1378,6 +1417,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Encerrar só a partir de publicado",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1408,6 +1448,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Escolha com menos de duas opções",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1436,6 +1477,7 @@
       "camada": "API",
       "prioridade": "P2",
       "cenario": "Título de pergunta acima do limite",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1465,6 +1507,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "PUT de perguntas substitui tudo",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1497,6 +1540,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Perguntas travadas após resposta",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1527,6 +1571,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Publicar para todos os ativos",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1560,6 +1605,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "\"Todos os ativos\" é fotografia",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1597,6 +1643,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Atribuição reenviada",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1629,6 +1676,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Estado da atribuição",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1670,6 +1718,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Pessoa inválida aborta o lote inteiro",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1702,6 +1751,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Envio por grupo",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1742,6 +1792,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Submissão única repetida",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1776,6 +1827,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Submissão múltipla permitida",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1813,6 +1865,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Corpo de submissão inválido",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1840,6 +1893,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "SPECIFIC esconde de quem não tem atribuição",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1875,6 +1929,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Sensível sem autorização",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1907,6 +1962,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Filtro sensível antes da contagem",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1934,6 +1990,10 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Auditoria de leitura sensível",
+      "naoVerificavel": {
+        "motivo": "o contrato não expõe leitura de trilha de auditoria",
+        "issue": 96
+      },
       "rotas": [
         {
           "papel": "acao",
@@ -1962,6 +2022,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Paginação",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -1995,6 +2056,7 @@
       "camada": "API",
       "prioridade": "P2",
       "cenario": "Indicadores de escala",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2024,6 +2086,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Colisão de rota",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2054,6 +2117,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Isolamento entre tenants",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2081,6 +2145,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Primeiro admin do tenant vira Principal",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2116,6 +2181,10 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Principal legado sem a flag continua autorizado",
+      "naoVerificavel": {
+        "motivo": "o API-LGPD-06 prova que o Principal não consegue revogar o próprio acesso — a precondição é inalcançável pela API",
+        "issue": 123
+      },
       "rotas": [
         {
           "papel": "acao",
@@ -2141,6 +2210,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Só o Principal concede acesso",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2168,6 +2238,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Leitura sem autorização",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2195,6 +2266,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Envio sem autorização",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2222,6 +2294,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Acesso do Principal é irrevogável",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2249,6 +2322,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Alvo inválido",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2278,6 +2352,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Autorização vale imediatamente",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2308,6 +2383,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Revogação vale imediatamente",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2340,6 +2416,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Limites da retenção",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2369,6 +2446,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Execução da retenção",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2401,6 +2479,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Retenção independe da autorização",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2426,6 +2505,10 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Auditoria da mudança de acesso",
+      "naoVerificavel": {
+        "motivo": "o contrato não expõe leitura de trilha de auditoria",
+        "issue": 98
+      },
       "rotas": [
         {
           "papel": "acao",
@@ -2454,6 +2537,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Isolamento entre tenants",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2487,6 +2571,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Cadastro mínimo",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2522,6 +2607,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Cadastro sem e-mail é recusado",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2549,6 +2635,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Normalização de campos",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2579,6 +2666,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Limites dos campos",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2609,6 +2697,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Código exige um canal de contato",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2634,6 +2723,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Um único código ativo",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2667,6 +2757,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Regenerar revoga o anterior",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2704,6 +2795,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Texto puro exibido uma vez",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2733,6 +2825,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Código para pessoa revogada",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2763,6 +2856,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Ativação completa",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2797,6 +2891,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Ativação inválida",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2825,6 +2920,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "socialName não sobrescreve name",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2861,6 +2957,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Remover acesso",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2897,6 +2994,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Foto — validações",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2927,6 +3025,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Remover foto",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -2959,6 +3058,10 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Auditoria",
+      "naoVerificavel": {
+        "motivo": "o contrato não expõe leitura de trilha de auditoria",
+        "issue": 98
+      },
       "rotas": [
         {
           "papel": "acao",
@@ -3012,6 +3115,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Volume sem paginação",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3040,6 +3144,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Isolamento entre tenants",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3072,6 +3177,10 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Janela de 24 h nas reservas",
+      "naoVerificavel": {
+        "motivo": "a API grava com now() e a suíte só fala HTTP",
+        "issue": 123
+      },
       "rotas": [
         {
           "papel": "acao",
@@ -3109,6 +3218,10 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Janela de 7 dias nas pessoas",
+      "naoVerificavel": {
+        "motivo": "a API grava com now() e a suíte só fala HTTP",
+        "issue": 123
+      },
       "rotas": [
         {
           "papel": "acao",
@@ -3141,6 +3254,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Fuso do tenant na virada do dia",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3173,6 +3287,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Limite de quatro ações",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3201,6 +3316,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Contagem zero não vira ação",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3229,6 +3345,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Feed limitado e deduplicado",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3258,6 +3375,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Feed só com metadados",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3292,6 +3410,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Filtro sensível antes da contagem",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3326,6 +3445,10 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Alerta de atraso",
+      "naoVerificavel": {
+        "motivo": "a API grava com now() e a suíte só fala HTTP",
+        "issue": 123
+      },
       "rotas": [
         {
           "papel": "acao",
@@ -3353,6 +3476,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Tenant vazio",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3382,6 +3506,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Sessão do painel",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3415,6 +3540,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Isolamento entre tenants",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3440,6 +3566,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Criação manual",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3468,6 +3595,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Manual exige ao menos uma pessoa",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3495,6 +3623,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Pessoa de outro tenant",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3528,6 +3657,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Origem formulário exige CLOSED",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3556,6 +3686,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Dedupe por pessoa",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3583,6 +3714,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Formulário sem respondente elegível",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3610,6 +3742,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Distribuição sequencial e descarte do excedente",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3637,6 +3770,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Estratégia é só rótulo",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3659,12 +3793,41 @@
       "novo": false
     },
     {
+      "id": "API-G-08b",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Estratégia deixa de ser só rótulo quando há formulário",
+      "naoVerificavel": null,
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/groups"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Formulário TEAM_FORMATION respondido com valores alternados nos extremos da escala, dividido com similar",
+      "assercao": "Os grupos separam quem respondeu igual — não quem respondeu antes. Sem formulário o API-G-08 vale e as três estratégias coincidem; com formulário, coincidir é o defeito. Caso nascido da automação, #106",
+      "literais": [],
+      "campos": [
+        "API-G-08"
+      ],
+      "doc": "G-07",
+      "novo": false
+    },
+    {
       "id": "API-G-09",
       "modulo": "G",
       "moduloNome": "Grupos",
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Limites da divisão",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3694,6 +3857,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Estados e integrantes",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3722,6 +3886,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Ativação dedicada",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3753,6 +3918,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Grupo de formulário tem integrantes imutáveis",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3784,6 +3950,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Edição substitui a composição",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3812,6 +3979,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Transição livre de status",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3839,6 +4007,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Isolamento entre tenants",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3876,6 +4045,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Nome de categoria único por tenant",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3908,6 +4078,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Limites da categoria",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3941,6 +4112,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Categoria inativa não aceita vínculo",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3978,6 +4150,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Excluir categoria preserva produtos",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4016,6 +4189,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Categoria de outro tenant",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4043,6 +4217,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Preço em centavos",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4074,6 +4249,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Só produto ativo aparece e aceita reserva",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4113,6 +4289,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Upload de imagem",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4144,6 +4321,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Excluir produto limpa o armazenamento",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4178,6 +4356,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Excluir produto com reserva histórica",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4213,6 +4392,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Máquina de estados da reserva",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4249,6 +4429,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Cancelamento pelo admin exige motivo",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4280,6 +4461,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Cliente só cancela a própria, e só em pending",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4323,6 +4505,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Falha de e-mail não desfaz a reserva",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4348,6 +4531,10 @@
       "camada": "API",
       "prioridade": "P2",
       "cenario": "E-mail só com configuração completa",
+      "naoVerificavel": {
+        "motivo": "exige a API no ar sem EMAIL_FROM , que é estado do processo",
+        "issue": 123
+      },
       "rotas": [
         {
           "papel": "acao",
@@ -4373,6 +4560,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Isolamento entre tenants",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4411,6 +4599,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Upsert em registro único",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4444,6 +4633,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Campos obrigatórios",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4477,6 +4667,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Formato da cor de destaque",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4506,6 +4697,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Tema derivado acompanha a resposta",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4536,6 +4728,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Substituição remove o ativo anterior",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4563,6 +4756,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Remover ativo exige null explícito",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4590,6 +4784,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Chave de outro tenant",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4615,6 +4810,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Upload — tipo e tamanho",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4646,6 +4842,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Upload assinado devolve URL temporária",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4677,6 +4874,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Marca não zera o carrossel",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4716,6 +4914,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Publicação no payload público",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4753,6 +4952,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Isolamento entre tenants",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4783,6 +4983,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Limite de três ativos",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4818,6 +5019,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Ativar com o limite cheio",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4845,6 +5047,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Imagem obrigatória na criação",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4872,6 +5075,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Formato do link",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4901,6 +5105,7 @@
       "camada": "API",
       "prioridade": "P2",
       "cenario": "Limites de texto",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4929,6 +5134,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Reordenação exige o payload completo",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4963,6 +5169,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Reordenação válida",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -4996,6 +5203,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Configuração do carrossel",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -5027,6 +5235,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Substituir imagem deixa órfão",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -5057,6 +5266,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Só banner ativo chega ao app",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -5094,6 +5304,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Isolamento entre tenants",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -5136,6 +5347,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Sessão",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -5174,6 +5386,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Token inválido, expirado e de admin desativado",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -5207,6 +5420,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Menu não é segurança",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -5234,6 +5448,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Rota de anonimização não existe",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "inexistente",
@@ -5262,6 +5477,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Exclusão física de pessoa não existe",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "inexistente",
@@ -5292,6 +5508,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "\"Remover acesso\" não é anonimizar",
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -5334,6 +5551,10 @@
       "camada": "API",
       "prioridade": "P2",
       "cenario": "Auditoria não tem evento de anonimização",
+      "naoVerificavel": {
+        "motivo": "o contrato não expõe leitura de trilha de auditoria",
+        "issue": 98
+      },
       "rotas": [
         {
           "papel": "acao",

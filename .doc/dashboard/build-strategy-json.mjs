@@ -74,6 +74,38 @@ function rotas(celulaHtml) {
   return lista;
 }
 
+/**
+ * O selo de caso não verificável, extraído como campo em vez de virar prosa.
+ *
+ * O caso é descrito aqui — cenário, rota, asserção — e mesmo assim não é
+ * escrevível contra o contrato atual: falta rota, a precondição é inalcançável,
+ * ou a massa exigiria data retroativa. É diferente de caso esquecido, e o
+ * consumidor precisa saber a diferença.
+ *
+ * Marcação no HTML, dentro da célula de cenário:
+ *
+ *   <span class="nao-verificavel" data-issue="123">motivo curto</span>
+ *
+ * Sai do texto do cenário na extração — senão o motivo apareceria colado no
+ * título do caso em toda tabela que consome o JSON.
+ */
+const RE_NAO_VERIFICAVEL =
+  /<span class="nao-verificavel" data-issue="(\d+)">(.*?)<\/span>/s;
+
+function naoVerificavel(htmlCenario) {
+  const m = htmlCenario.match(RE_NAO_VERIFICAVEL);
+  if (!m) return { cenario: htmlCenario, marca: null };
+  return {
+    cenario: htmlCenario.replace(RE_NAO_VERIFICAVEL, ''),
+    // O link visível fica no HTML, para quem lê a estratégia; o JSON leva só o
+    // número, e quem consome monta a URL. Repetir os dois duplicaria a fonte.
+    marca: {
+      motivo: texto(m[2]).replace(/\s*\(\s*#\d+\s*\)\s*$/, ''),
+      issue: Number(m[1]),
+    },
+  };
+}
+
 const casos = [];
 for (const linha of html.matchAll(/<tr>(.*?)<\/tr>/gs)) {
   const celulas = [...linha[1].matchAll(/<td([^>]*)>(.*?)<\/td>/gs)]
@@ -90,13 +122,16 @@ for (const linha of html.matchAll(/<tr>(.*?)<\/tr>/gs)) {
   const cauda = celulas.slice(5, -1).map((c) => c.html);
   const [precondicao, assercao, doc] = cauda;
 
+  const cenario = naoVerificavel(celulas[1].html);
+
   casos.push({
     id,
     modulo: id.split('-')[1],
     moduloNome: MODULOS[id.split('-')[1]] ?? null,
     camada: 'API',
     prioridade: texto(celulas[celulas.length - 1].html),
-    cenario: texto(celulas[1].html),
+    cenario: texto(cenario.cenario),
+    naoVerificavel: cenario.marca,
     rotas: rotas(rota.html),
     // `null` para rota aberta ou sem audiência aplicável (caso de rota inexistente).
     token: ((t) => (t && t !== 'aberta' && t !== 'n/a' ? t : null))(texto(por('tok').html)),
