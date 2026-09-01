@@ -132,20 +132,45 @@ casamento por sufixo, que é justamente onde os 124 casos se perdem.
 
 ---
 
-## 3. Correções pontuais no conteúdo
+## 3. Correções pontuais no conteúdo — **os três atendidos**
 
-1. **Contagem divergente.** O painel do topo diz **159 casos de API**; as tabelas por módulo
-   somam **150** (AG 32 · F 24 · C 16 · CAT 15 · G 14 · LGPD 13 · H 10 · BN 10 · MK 9 · AN 4 · MN 3).
-   Conferir se 9 casos ficaram de fora das tabelas ou se o número do painel está desatualizado.
+1. ~~**Contagem divergente.**~~ Resolvida. O painel e as tabelas somam o mesmo, e o build
+   emite o total a partir das tabelas em vez de repetir um número escrito à mão. Hoje são
+   **167 casos**.
 
-2. **Módulo sem endpoint.** O projeto de automação tem a pasta `audit/` e os scripts npm
-   correspondentes, mas o contrato atual não expõe **nenhuma rota de auditoria**. Confirmar se
-   o módulo saiu do escopo ou se o `openapi.json` está incompleto.
+2. ~~**Módulo sem endpoint.**~~ Confirmado: o contrato não expõe nenhuma rota de auditoria, e
+   os quatro casos que dependem dela (`F-21`, `LGPD-13`, `C-15`, `AN-04`) estão marcados como
+   **não verificáveis** na estratégia, ligados às issues #96 e #98. A pasta `audit/` do projeto
+   de automação está vazia — ver a pendência abaixo.
 
-3. **Divergência já registrada em `API-AG-22`.** O caso documenta que
-   `POST /public/me/appointments/{id}/reschedule` existe na especificação mas não no controller.
-   Vale marcar explicitamente qual dos dois é a fonte de verdade — o teste hoje assertaria `404`,
-   o que congela o comportamento atual como se fosse o desejado.
+3. ~~**Divergência em `API-AG-22`.**~~ O caso continua documentando que
+   `POST /public/me/appointments/{id}/reschedule` existe na especificação e não no contrato, e a
+   asserção diz isso com todas as letras: *"Divergência entre especificação e código"*. Está na
+   issue **#86**, junto com as outras divergências de contrato. O teste asserta o comportamento
+   atual **de propósito** e com a divergência registrada — é diferente de congelá-la em silêncio.
+
+---
+
+## 5. O que a triagem de 01/09/2026 encontrou
+
+O mapa afirmava **166 de 166 casos com teste** enquanto havia 156 arquivos: a coluna era
+derivada do ID do caso, não conferida contra o disco. Três dos casos sem teste eram P0.
+
+O que mudou de contrato entre a estratégia e a automação:
+
+- A estratégia passa a marcar caso **não verificável** com
+  `<span class="nao-verificavel" data-issue="N">motivo</span>` dentro da célula de cenário, e o
+  build emite `naoVerificavel: { motivo, issue }`. O motivo mora aqui, não no gerador do mapa:
+  quem escreve o caso é quem sabe por que ele não é escrevível.
+- `npm run generate:map` **reprova** quando um caso P0 fica sem teste, e confere nos dois
+  sentidos — inclusive arquivo no disco sem caso na estratégia, que foi como o `G-08b` apareceu.
+
+### Pendência aberta deste lado
+
+A pasta `audit/` do projeto de automação está **vazia** e tem três scripts npm
+(`all-audit`, `e2e-audit`, `functional-audit`) que não executam nada. Ou o módulo volta quando a
+issue #98 for resolvida, ou a pasta e os scripts saem. Não decidi por conta própria porque
+apagar a pasta é sinalizar que auditoria saiu do escopo, e ela não saiu — está bloqueada.
 
 ---
 

@@ -43,38 +43,16 @@ const DOMAIN_BY_MODULE = {
  * imprimia existisse ele ou não, então 11 casos apareciam cobertos sem ter uma
  * linha escrita.
  */
-const NAO_VERIFICAVEL = {
-	"API-F-21": ["sem rota de leitura de trilha no contrato", 96],
-	"API-LGPD-13": ["sem rota de leitura de trilha no contrato", 98],
-	"API-C-15": ["sem rota de leitura de trilha no contrato", 98],
-	"API-AN-04": ["sem rota de leitura de trilha no contrato", 98],
-
-	/*
-	 * O `LGPD-02` pede um Principal com `canViewSensitiveData: false` — estado
-	 * que só a migração de dados legada produz. Pela API ele é **inalcançável
-	 * por construção**, e é o `LGPD-06` que prova: o Principal não consegue
-	 * revogar o próprio acesso, e a API responde com texto próprio para isso.
-	 *
-	 * Ou seja: a guarda que torna o caso impossível de montar já está testada.
-	 */
-	"API-LGPD-02": ["precondição inalcançável pela API — ver LGPD-06", 123],
-
-	/*
-	 * Os três da Home dependem de massa com data retroativa: reservas de 23 h e
-	 * 25 h, cadastros de 6 e 8 dias, reservas paradas há 2 e 4 dias. A API grava
-	 * com `now()` e a suíte só fala HTTP — não há como envelhecer o dado.
-	 */
-	"API-H-01": ["exige massa com data retroativa", 123],
-	"API-H-02": ["exige massa com data retroativa", 123],
-	"API-H-09": ["exige massa com data retroativa", 123],
-
-	/*
-	 * O `CAT-15` compara três configurações de e-mail, e duas delas exigem subir
-	 * a API sem `EMAIL_FROM` — variável de ambiente do processo, não estado que
-	 * um teste possa arranjar.
-	 */
-	"API-CAT-15": ["exige subir a API com outra env", 123],
-}
+/*
+ * O motivo de um caso não ser verificável mora na ESTRATÉGIA, não aqui.
+ *
+ * Esta lista já foi um objeto neste arquivo, e estava no lugar errado: quem
+ * escreve o caso é quem sabe por que ele não é escrevível, e manter a razão a
+ * dois arquivos de distância garante que uma das duas pontas envelheça. O HTML
+ * marca com `<span class="nao-verificavel" data-issue="...">` e o build emite
+ * `naoVerificavel: { motivo, issue }` em cada caso.
+ */
+const naoVerificavelDe = (testCase) => testCase.naoVerificavel ?? null
 
 /**
  * Caso cuja verificação vive no arquivo de OUTRO caso.
@@ -110,9 +88,9 @@ function celulaTeste(testCase, domain) {
 	const cobertoPor = COBERTO_POR[testCase.id]
 	if (cobertoPor) return `coberto por \`${cobertoPor}\``
 
-	const naoVerificavel = NAO_VERIFICAVEL[testCase.id]
+	const naoVerificavel = naoVerificavelDe(testCase)
 	if (naoVerificavel) {
-		const [motivo, issue] = naoVerificavel
+		const { motivo, issue } = naoVerificavel
 		semTeste.push({ ...testCase, domain, motivo, issue })
 		return `**não verificável** — ${motivo} ([#${issue}](https://github.com/pricaimiTech/dev.CrossHub/issues/${issue}))`
 	}
