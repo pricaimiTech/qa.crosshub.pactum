@@ -80,7 +80,7 @@ Domínio: `forms/` · casos: 25 (P0: 13)
 | `API-F-18` | P0 | SPECIFIC esconde de quem não tem atribuição | `endUserAuth` | 200 | `getPublicMyForms` | `getPublicForm` | — | `F-18-F.test.ts` | [#95](https://github.com/pricaimiTech/dev.CrossHub/issues/95) |
 | `API-F-19` | P0 | Sensível sem autorização | `tenantAuth` | 403 | `getListFormSubmissions` | `patchSensitiveDataAccess` | `Você não possui a permissão para visualizar respostas sensíveis.` | `F-19-F.test.ts` | — |
 | `API-F-20` | P0 | Filtro sensível antes da contagem | `tenantAuth` | 200 | `getListAllSubmissions` | — | — | `F-20-F.test.ts` | — |
-| `API-F-21` | P1 | Auditoria de leitura sensível | `tenantAuth` | 200 | `getSubmission` | — | — | `F-21-F.test.ts` | — |
+| `API-F-21` | P1 | Auditoria de leitura sensível | `tenantAuth` | 200 | `getSubmission` | — | — | **não verificável** — sem rota de leitura de trilha no contrato ([#96](https://github.com/pricaimiTech/dev.CrossHub/issues/96)) | — |
 | `API-F-22` | P1 | Paginação | `tenantAuth` | 200 | `getListAllSubmissions` | — | — | `F-22-F.test.ts` | — |
 | `API-F-23` | P2 | Indicadores de escala | `tenantAuth` | 200 | `getFormInsights` | — | — | `F-23-F.test.ts` | [#97](https://github.com/pricaimiTech/dev.CrossHub/issues/97) |
 | `API-F-24` | P1 | Colisão de rota | `tenantAuth` | 200 | `getListAllSubmissions` | — | `submissions` | `F-24-F.test.ts` | — |
@@ -93,7 +93,7 @@ Domínio: `privacy/` · casos: 14 (P0: 11)
 | Caso | Prio | Cenário | Token | Status | Service (ação) | Services (arranjo) | Asserção literal | Teste | Bug |
 |---|---|---|---|---|---|---|---|---|---|
 | `API-LGPD-01` | P0 | Primeiro admin do tenant vira Principal | `platformAuth` | 201 | `postCreateAdmin` | `postCreateTenant` | — | `LGPD-01-F.test.ts` | — |
-| `API-LGPD-02` | P0 | Principal legado sem a flag continua autorizado | `tenantAuth` | 200 | `getSubmission` | — | — | `LGPD-02-F.test.ts` | — |
+| `API-LGPD-02` | P0 | Principal legado sem a flag continua autorizado | `tenantAuth` | 200 | `getSubmission` | — | — | **ausente** | — |
 | `API-LGPD-03` | P0 | Só o Principal concede acesso | `tenantAuth` | 403 | `patchSensitiveDataAccess` | — | `Apenas o Administrador Principal pode alterar o acesso a dados sensíveis.` | `LGPD-03-F.test.ts` | — |
 | `API-LGPD-04` | P0 | Leitura sem autorização | `tenantAuth` | 403 | `getSubmission` | — | `Você não possui a permissão para visualizar respostas sensíveis.` | `LGPD-04-F.test.ts` | — |
 | `API-LGPD-05` | P0 | Envio sem autorização | `tenantAuth` | 403 | `postAssignForm` | — | — | `LGPD-05-F.test.ts` | — |
@@ -104,7 +104,7 @@ Domínio: `privacy/` · casos: 14 (P0: 11)
 | `API-LGPD-10` | P0 | Limites da retenção | `tenantAuth` | 400 | `patchUpdateSettings` | — | `A retenção deve ser um número inteiro entre 1 e 3650 dias.` | `LGPD-10-F.test.ts` | — |
 | `API-LGPD-11` | P0 | Execução da retenção | `tenantAuth` | 200 | `postRunRetention` | `patchUpdateSettings` | — | `LGPD-11-F.test.ts` | — |
 | `API-LGPD-12` | P1 | Retenção independe da autorização | `tenantAuth` | 200 | `postRunRetention` | — | — | `LGPD-12-F.test.ts` | — |
-| `API-LGPD-13` | P1 | Auditoria da mudança de acesso | `tenantAuth` | 200 | `patchSensitiveDataAccess` | — | — | `LGPD-13-F.test.ts` | — |
+| `API-LGPD-13` | P1 | Auditoria da mudança de acesso | `tenantAuth` | 200 | `patchSensitiveDataAccess` | — | — | **não verificável** — sem rota de leitura de trilha no contrato ([#98](https://github.com/pricaimiTech/dev.CrossHub/issues/98)) | — |
 | `API-LGPD-XT` | P0 | Isolamento entre tenants | `tenantAuth` | 200 | `getProfessionals` | `patchSensitiveDataAccess` | — | `LGPD-XT-F.test.ts` | — |
 
 ## Clientes (`C`)
@@ -128,7 +128,7 @@ Domínio: `people/` · casos: 18 (P0: 10)
 | `API-C-12` | P0 | Remover acesso | `tenantAuth` | 200 | `postRemoveAccess` | `postPublicLogin` | `revoked` | `C-12-F.test.ts` | — |
 | `API-C-13` | P1 | Foto — validações | `tenantAuth` | 400 | `postUploadPhoto` | — | `Envie JPEG, PNG ou WebP com até 5 MB.` | `C-13-F.test.ts` | — |
 | `API-C-14` | P1 | Remover foto | `tenantAuth` | 200 | `patchUpdatePerson` | `postUploadPhoto` | — | `C-14-F.test.ts` | — |
-| `API-C-15` | P1 | Auditoria | `tenantAuth` | 201 | `postCreatePerson` | `patchUpdatePerson`<br>`postCreateCode`<br>`postRegenerateCode`<br>`postRemoveAccess` | — | `C-15-F.test.ts` | — |
+| `API-C-15` | P1 | Auditoria | `tenantAuth` | 201 | `postCreatePerson` | `patchUpdatePerson`<br>`postCreateCode`<br>`postRegenerateCode`<br>`postRemoveAccess` | — | **não verificável** — sem rota de leitura de trilha no contrato ([#98](https://github.com/pricaimiTech/dev.CrossHub/issues/98)) | — |
 | `API-C-16` | P1 | Volume sem paginação | `tenantAuth` | 200 | `getListPeople` | — | — | `C-16-F.test.ts` | [#101](https://github.com/pricaimiTech/dev.CrossHub/issues/101) |
 | `API-C-XT` | P0 | Isolamento entre tenants | `tenantAuth` | 200 | `getListPeople` | `patchUpdatePerson` | — | `C-XT-F.test.ts` | — |
 
@@ -138,15 +138,15 @@ Domínio: `dashboard/` · casos: 12 (P0: 7)
 
 | Caso | Prio | Cenário | Token | Status | Service (ação) | Services (arranjo) | Asserção literal | Teste | Bug |
 |---|---|---|---|---|---|---|---|---|---|
-| `API-H-01` | P0 | Janela de 24 h nas reservas | `tenantAuth` | 200 | `getHome` | `postPublicReserveProduct`<br>`patchUpdateReservation` | — | `H-01-F.test.ts` | — |
-| `API-H-02` | P1 | Janela de 7 dias nas pessoas | `tenantAuth` | 200 | `getHome` | `postCreatePerson` | — | `H-02-F.test.ts` | — |
+| `API-H-01` | P0 | Janela de 24 h nas reservas | `tenantAuth` | 200 | `getHome` | `postPublicReserveProduct`<br>`patchUpdateReservation` | — | **ausente** | — |
+| `API-H-02` | P1 | Janela de 7 dias nas pessoas | `tenantAuth` | 200 | `getHome` | `postCreatePerson` | — | **ausente** | — |
 | `API-H-03` | P0 | Fuso do tenant na virada do dia | `tenantAuth` | 200 | `getHome` | `putSaveSettings` | — | `H-03-F.test.ts` | — |
 | `API-H-04` | P0 | Limite de quatro ações | `tenantAuth` | 200 | `getHome` | — | — | `H-04-F.test.ts` | [#109](https://github.com/pricaimiTech/dev.CrossHub/issues/109) |
 | `API-H-05` | P1 | Contagem zero não vira ação | `tenantAuth` | 200 | `getHome` | — | — | `H-05-F.test.ts` | — |
 | `API-H-06` | P1 | Feed limitado e deduplicado | `tenantAuth` | 200 | `getHome` | — | — | `H-06-F.test.ts` | — |
 | `API-H-07` | P0 | Feed só com metadados | `tenantAuth` | 200 | `getHome` | `postPublicSubmitForm` | — | `H-07-F.test.ts` | — |
 | `API-H-08` | P0 | Filtro sensível antes da contagem | `tenantAuth` | 200 | `getHome` | `patchSensitiveDataAccess` | — | `H-08-F.test.ts` | — |
-| `API-H-09` | P1 | Alerta de atraso | `tenantAuth` | 200 | `getHome` | — | — | `H-09-F.test.ts` | — |
+| `API-H-09` | P1 | Alerta de atraso | `tenantAuth` | 200 | `getHome` | — | — | **ausente** | — |
 | `API-H-10` | P0 | Tenant vazio | `tenantAuth` | 200 | `getHome` | — | — | `H-10-F.test.ts` | — |
 | `API-H-11` | P1 | Sessão do painel | `tenantAuth` | 200 | `getSession` | — | `tenant_admin` | `H-11-F.test.ts` | — |
 | `API-H-XT` | P0 | Isolamento entre tenants | `tenantAuth` | 200 | `getHome` | — | — | `H-XT-F.test.ts` | — |
@@ -193,7 +193,7 @@ Domínio: `catalog/` · casos: 16 (P0: 12)
 | `API-CAT-12` | P0 | Cancelamento pelo admin exige motivo | `tenantAuth` | 400 | `patchUpdateReservation` | — | `Informe o motivo do cancelamento.`<br>`O motivo deve ter no máximo 1000 caracteres.`<br>`admin` | `CAT-12-F.test.ts` | — |
 | `API-CAT-13` | P0 | Cliente só cancela a própria, e só em pending | `endUserAuth` | 409 | `patchPublicCancelReservation` | `postPublicReserveProduct`<br>`patchUpdateReservation` | `A reserva só pode ser cancelada enquanto estiver nova.`<br>`client` | `CAT-13-F.test.ts` | — |
 | `API-CAT-14` | P0 | Falha de e-mail não desfaz a reserva | `endUserAuth` | 201 | `postPublicReserveProduct` | — | — | `CAT-14-F.test.ts` | — |
-| `API-CAT-15` | P2 | E-mail só com configuração completa | `endUserAuth` | 201 | `postPublicReserveProduct` | — | — | `CAT-15-F.test.ts` | — |
+| `API-CAT-15` | P2 | E-mail só com configuração completa | `endUserAuth` | 201 | `postPublicReserveProduct` | — | — | **ausente** | — |
 | `API-CAT-XT` | P0 | Isolamento entre tenants | `tenantAuth` | 200 | `getProducts` | `patchUpdateProduct`<br>`getPublicProducts` | — | `CAT-XT-F.test.ts` | — |
 
 ## Marca e aparência (`MK`)
@@ -206,7 +206,7 @@ Domínio: `branding/` · casos: 12 (P0: 8)
 | `API-MK-02` | P0 | Campos obrigatórios | `tenantAuth` | 400 | `putSaveBranding` | — | `O nome é obrigatório.`<br>`O tema deve ser \"dark\" ou \"light\".`<br>`O tema deve ser \`<br>` ou \` | `MK-02-F.test.ts` | — |
 | `API-MK-03` | P0 | Formato da cor de destaque | `tenantAuth` | 400 | `putSaveBranding` | — | `Informe a cor de destaque em hexadecimal, no formato #RRGGBB.` | `MK-03-F.test.ts` | — |
 | `API-MK-03b` | P0 | Tema derivado acompanha a resposta | `tenantAuth` | 200 | `putSaveBranding` | — | — | `MK-03b-F.test.ts` | — |
-| `API-MK-04` | P1 | Substituição remove o ativo anterior | `tenantAuth` | 201 | `postUploadBranding` | — | — | `MK-04-F.test.ts` | — |
+| `API-MK-04` | P1 | Substituição remove o ativo anterior | `tenantAuth` | 201 | `postUploadBranding` | — | — | **ausente** | — |
 | `API-MK-05` | P0 | Remover ativo exige null explícito | `tenantAuth` | 200 | `putSaveBranding` | — | — | `MK-05-F.test.ts` | — |
 | `API-MK-06` | P0 | Chave de outro tenant | `tenantAuth` | 400 | `putSaveBranding` | — | — | `MK-06-F.test.ts` | — |
 | `API-MK-07` | P1 | Upload — tipo e tamanho | `tenantAuth` | 400 | `postUploadBranding` | — | `Envie JPEG, PNG ou WebP com até 5 MB.` | `MK-07-F.test.ts` | — |
@@ -250,9 +250,9 @@ Domínio: `privacy/` · casos: 4 (P0: 2)
 | Caso | Prio | Cenário | Token | Status | Service (ação) | Services (arranjo) | Asserção literal | Teste | Bug |
 |---|---|---|---|---|---|---|---|---|---|
 | `API-AN-01` | P1 | Rota de anonimização não existe | — | 404 | `POST /dashboard/privacy/people/{personId}/anonymization-requests` *(não existe no contrato)* | — | — | `AN-01-F.test.ts` | — |
-| `API-AN-02` | P0 | Exclusão física de pessoa não existe | — | 404 | `DELETE /dashboard/people/{personId}` *(não existe no contrato)* | — | — | `AN-02-F.test.ts` | — |
+| `API-AN-02` | P0 | Exclusão física de pessoa não existe | — | 404 | `DELETE /dashboard/people/{personId}` *(não existe no contrato)* | — | — | **ausente** | — |
 | `API-AN-03` | P0 | "Remover acesso" não é anonimizar | `tenantAuth` | 200 | `postRemoveAccess` | `getListPeople`<br>`getListFormAssignments` | `revoked` | `AN-03-F.test.ts` | — |
-| `API-AN-04` | P2 | Auditoria não tem evento de anonimização | `tenantAuth` | 200 | `getListPeople` | `postRunRetention` | — | `AN-04-F.test.ts` | — |
+| `API-AN-04` | P2 | Auditoria não tem evento de anonimização | `tenantAuth` | 200 | `getListPeople` | `postRunRetention` | — | **não verificável** — sem rota de leitura de trilha no contrato ([#98](https://github.com/pricaimiTech/dev.CrossHub/issues/98)) | — |
 
 ## Bugs abertos pela automação
 
@@ -276,6 +276,44 @@ Domínio: `privacy/` · casos: 4 (P0: 2)
 - `API-F-23` → [#97](https://github.com/pricaimiTech/dev.CrossHub/issues/97) — o teste segue falhando até a correção
 - `API-F-15` → [#94](https://github.com/pricaimiTech/dev.CrossHub/issues/94) — o teste segue falhando até a correção
 - `API-AG-32` → [#87](https://github.com/pricaimiTech/dev.CrossHub/issues/87) — o teste segue falhando até a correção
+
+## Casos sem teste
+
+**11 de 166** casos da estratégia não têm arquivo de teste: 7 ausente(s) e 4 não verificável(is) contra o contrato atual.
+
+### Ausentes (7, sendo 3 P0)
+
+| Caso | Prio | Cenário | Onde o arquivo deve ficar |
+|---|---|---|---|
+| `API-LGPD-02` | P0 | Principal legado sem a flag continua autorizado | `privacy/tests/functional/LGPD-02-F.test.ts` |
+| `API-H-01` | P0 | Janela de 24 h nas reservas | `dashboard/tests/functional/H-01-F.test.ts` |
+| `API-H-02` | P1 | Janela de 7 dias nas pessoas | `dashboard/tests/functional/H-02-F.test.ts` |
+| `API-H-09` | P1 | Alerta de atraso | `dashboard/tests/functional/H-09-F.test.ts` |
+| `API-CAT-15` | P2 | E-mail só com configuração completa | `catalog/tests/functional/CAT-15-F.test.ts` |
+| `API-MK-04` | P1 | Substituição remove o ativo anterior | `branding/tests/functional/MK-04-F.test.ts` |
+| `API-AN-02` | P0 | Exclusão física de pessoa não existe | `privacy/tests/functional/AN-02-F.test.ts` |
+
+### Não verificáveis contra o contrato (4)
+
+Descritos na estratégia e sem rota que os torne observáveis. Saem daqui quando a
+issue correspondente for resolvida — não antes, e não por serem esquecidos.
+
+| Caso | Prio | Cenário | Motivo |
+|---|---|---|---|
+| `API-F-21` | P1 | Auditoria de leitura sensível | sem rota de leitura de trilha no contrato ([#96](https://github.com/pricaimiTech/dev.CrossHub/issues/96)) |
+| `API-LGPD-13` | P1 | Auditoria da mudança de acesso | sem rota de leitura de trilha no contrato ([#98](https://github.com/pricaimiTech/dev.CrossHub/issues/98)) |
+| `API-C-15` | P1 | Auditoria | sem rota de leitura de trilha no contrato ([#98](https://github.com/pricaimiTech/dev.CrossHub/issues/98)) |
+| `API-AN-04` | P2 | Auditoria não tem evento de anonimização | sem rota de leitura de trilha no contrato ([#98](https://github.com/pricaimiTech/dev.CrossHub/issues/98)) |
+
+## Testes fora da estratégia
+
+1 arquivo(s) no disco sem caso correspondente. Normalmente é caso que
+a automação descobriu depois de a estratégia ser escrita — vale registrar lá para não sumir
+da rastreabilidade.
+
+| Teste | Arquivo |
+|---|---|
+| `G-08b` | `groups/tests/functional/G-08b-F.test.ts` |
 
 ## Cobertura do contrato
 
