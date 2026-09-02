@@ -27,6 +27,35 @@ cross-env TEST_ENV=prod npm run all-auth      # usa .env.prod
 Faltando o arquivo `.env.<ambiente>` correspondente, ou um `TEST_ENV`
 desconhecido, a suíte falha rápido com um erro explicando o que fazer.
 
+## Estratégias de teste
+
+Este repo é o dono dos documentos de estratégia. A **implementação** dos testes
+unitários, de integração e de componente vive em `../dev.CrossHub/__tests__/`.
+
+```
+.doc/
+├── dashboard/
+│   ├── estrategia-testes-dashboard.html   # a fonte — editar aqui
+│   ├── estrategia-testes-dashboard.json   # artefato de build
+│   └── build-strategy-json.mjs            # gera o .json a partir do HTML
+└── admin/
+    └── estrategia-testes-admin.md
+```
+
+Rastreabilidade, nos dois sentidos, com reprovação quando um caso P0 fica sem
+teste:
+
+```bash
+npm run generate:map        # tudo: JSON + carimbo + mapa de API + mapa unitário
+npm run generate:unit-map   # só a camada unitária
+```
+
+O mapa unitário casa caso e teste pelo **ID citado no `describe`** dos specs de
+`../dev.CrossHub/__tests__/unit/**` — não pelo nome do arquivo, porque lá um
+arquivo cobre vários casos. Aponte outra árvore com `CROSSHUB_DEV_ROOT` ou com
+um argumento de CLI; sem a clonagem irmã o portão pula com aviso, e com
+`--exigir` (o modo do CI) reprova.
+
 ## Estrutura
 
 ```
@@ -72,6 +101,13 @@ npm run localTest          # todos os testes
 npm run all-<dominio>       # tudo de um domínio      (ex.: all-auth)
 npm run e2e-<dominio>       # só e2e do domínio       (ex.: e2e-billing)
 npm run functional-<dominio> # só funcionais          (ex.: functional-people)
+```
+
+```bash
+npm run generate:strategy   # HTML da estratégia -> .json
+npm run stamp:strategy      # carimba o estado de automação de cada caso no HTML
+npm run generate:map        # os dois acima + mapa de API + mapa unitário
+npm run generate:unit-map   # só o mapa da camada unitária
 ```
 
 `GREP="texto" npm run localTest` filtra por nome de teste.
