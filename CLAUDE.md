@@ -12,7 +12,9 @@ Visão geral do repositório e referência rápida. **Padrões de implementaçã
 - **Dados compartilhados entre domínios**: `data/`
 - **Configuração**: `.env.<ambiente>`, `constants.ts` (raiz), `package.json`, `.mocharc.js`, `tsconfig.json`
 - **Contrato da API**: `openapi.json` na raiz — fonte de verdade de rotas, payloads e schemas
-- **Estratégia de testes**: `.doc/dashboard/estrategia-testes-dashboard.json` (artefato de build do HTML irmão) — 166 casos de API do dashboard, cada um com rota, token, status e asserção literal. Rastreados em `docs/plans/mapa-casos-api.md`
+- **Estratégias de teste** (este repo é o dono dos documentos; a implementação dos testes unitários, de integração e de componente vive em `../dev.CrossHub/__tests__/`):
+  - `.doc/dashboard/estrategia-testes-dashboard.html` — a fonte. `.json` é artefato de build (`npm run generate:strategy`), com **167 casos de API** (rota, token, status e asserção literal) e **46 casos unitários** (`casosUnit`: alvo, o que prova, relação). Rastreados em `docs/plans/mapa-casos-api.md` e `docs/plans/mapa-casos-unit.md`
+  - `.doc/admin/estrategia-testes-admin.md` — Markdown, sem artefato de build
 
 ### Pastas por domínio
 
