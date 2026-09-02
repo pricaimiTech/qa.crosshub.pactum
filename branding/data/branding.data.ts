@@ -1,4 +1,5 @@
 import { preSetup } from "@core/constants"
+import { knownBugs } from "@shared-data/knownBugs.data"
 
 /** Login responde 201, não 200 — divergência aberta na issue #86. */
 const loginParams = preSetup.preSetupParamsDefault(201, 5, 500)
@@ -66,26 +67,34 @@ export const brandingMK05 = {
 }
 
 /**
- * `API-MK-04` — substituir a logo apaga o objeto anterior do armazenamento.
+ * `API-MK-04` — substituir a logo sobrescreve a chave, não deixa órfão.
  *
- * Não basta a marca passar a apontar para a nova: o arquivo antigo tem de sumir.
- * Ativo órfão em bucket é custo que ninguém revisa e, em imagem de cliente, é
- * dado pessoal sobrevivendo à substituição.
+ * A especificação diz que o objeto antigo some do armazenamento **exceto se a
+ * chave terminar em `/current`**. A logo é justamente essa exceção: o
+ * `r2-storage.service.ts` gera `.../branding/logo/current` — chave FIXA —
+ * enquanto banner, produto e foto recebem `crypto.randomUUID()`.
  *
- * A exceção que a especificação abre — chave terminada em `/current` — é
- * preservada de propósito: é o apelido estável que o app usa, e apagá-lo
- * quebraria o link enquanto o novo sobe.
+ * Ou seja: para a logo não existe objeto antigo a apagar. A substituição
+ * sobrescreve no lugar, e a URL pública continua válida — que é o ponto de usar
+ * um apelido estável, porque apagar quebraria o link enquanto o novo sobe.
+ *
+ * A primeira versão deste caso assertava 404 na URL antiga e falhou no CI com
+ * 200. O teste estava errado, não a API: eu tinha lido a exceção na estratégia e
+ * escrito a asserção contrária.
  */
 export const brandingMK04 = {
 	...brandingDefaults,
 	casePrefix: "[MK-04]",
 	caseId: "MK-04",
 	kind: "logo" as const,
-	/** Tamanhos diferentes para as duas: chave igual esconderia a substituição. */
+	/**
+	 * Tamanhos diferentes nas duas, e é o que prova a substituição: a chave é a
+	 * mesma, então só o CONTEÚDO distingue a logo nova da antiga.
+	 */
 	primeiraLogoBytes: 48 * 1024,
 	segundaLogoBytes: 72 * 1024,
-	paramsDefault404: (token?: string) =>
-		preSetup.preSetupParamsDefault(404, 5, 500, token),
+	/** Sufixo que a especificação isenta da remoção. */
+	chavePreservada: "/current",
 }
 
 /** `API-MK-06` — chave de outro tenant é recusada. */
@@ -123,6 +132,7 @@ export const brandingMK08 = {
 	...brandingDefaults,
 	casePrefix: "[MK-08]",
 	caseId: "MK-08",
+	knownBug: knownBugs["API-MK-08"],
 	carousel: {
 		interval: 7 as const,
 		height: "large" as const,
