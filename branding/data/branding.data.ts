@@ -95,6 +95,7 @@ export const brandingMK04 = {
 	segundaLogoBytes: 72 * 1024,
 	/** Sufixo que a especificação isenta da remoção. */
 	chavePreservada: "/current",
+	contentType: "image/jpeg",
 }
 
 /** `API-MK-06` — chave de outro tenant é recusada. */
