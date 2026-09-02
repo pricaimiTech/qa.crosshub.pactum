@@ -15,6 +15,7 @@ import { brandingMK04 } from "@branding-data/branding.data"
 describe(describeName.dashboard, () => {
 	let adminParams: IParamsDefault
 	let tenantId: string
+	let chaveAntiga: string
 	let arquivoAntigo: string
 
 	before("Marca com a primeira logo salva", async () => {
@@ -34,31 +35,34 @@ describe(describeName.dashboard, () => {
 			brandingMK04.paramsDefault201(adminParams.token),
 		)
 
-		arquivoAntigo = `${primeira.json.key}`.split("/").pop() as string
+		chaveAntiga = `${primeira.json.key}`
+		arquivoAntigo = chaveAntiga.split("/").pop() as string
 
 		await putSaveBranding(
 			brandingBuilder
 				.withDisplayName(brandingMK04.casePrefix)
-				.withLogoKey(primeira.json.key)
+				.withLogoKey(chaveAntiga)
 				.build(),
-			brandingMK04.paramsDefault200(adminParams.token),
-		)
-
-		// A antiga precisa estar servível ANTES da substituição, senão o 404 do
-		// teste não prova nada — poderia ser upload que nunca chegou ao bucket.
-		await getBrandingAsset(
-			tenantId,
-			brandingMK04.kind,
-			arquivoAntigo,
 			brandingMK04.paramsDefault200(adminParams.token),
 		)
 	})
 
-	it("[MK-04-F] - Substituir a logo apaga o objeto anterior do armazenamento", async () => {
+	it("[MK-04-F] - Substituir a logo sobrescreve a chave `/current` e não deixa ativo órfão", async () => {
 		const segunda = await postUploadBranding(
 			writeJpeg("marca-logo-nova.jpg", brandingMK04.segundaLogoBytes),
 			brandingMK04.kind,
 			brandingMK04.paramsDefault201(adminParams.token),
+		)
+
+		assertTs.equal(
+			`${segunda.json.key}`,
+			chaveAntiga,
+			"A segunda logo recebeu chave diferente da primeira. Para a logo a chave é fixa em `/current`, e é isso que mantém a URL pública válida durante a troca — chave nova deixaria a anterior órfã no armazenamento.",
+		)
+
+		assertTs.isTrue(
+			chaveAntiga.endsWith(brandingMK04.chavePreservada),
+			"A chave da logo não termina em `/current`. É esse sufixo que a especificação isenta da remoção; sem ele, o caso passa a exigir que o objeto antigo seja apagado.",
 		)
 
 		const salva = await putSaveBranding(
@@ -74,16 +78,20 @@ describe(describeName.dashboard, () => {
 			"A marca ficou sem logo depois da substituição.",
 		)
 
-		await getBrandingAsset(
+		// A URL continua válida — é o ponto do apelido estável. O que mudou é o
+		// conteúdo, e é o único jeito de distinguir a logo nova da antiga quando
+		// a chave é a mesma.
+		const servida = await getBrandingAsset(
 			tenantId,
 			brandingMK04.kind,
 			arquivoAntigo,
-			brandingMK04.paramsDefault404(adminParams.token),
+			brandingMK04.paramsDefault200(adminParams.token),
 		)
 
-		assertTs.isFalse(
-			`${salva.json.logoUrl}`.includes(arquivoAntigo),
-			"A marca continua apontando para o arquivo antigo depois da substituição.",
+		assertTs.equal(
+			Number(servida.headers["content-length"]),
+			brandingMK04.segundaLogoBytes,
+			"A URL da logo continua servindo o arquivo ANTIGO depois da substituição. A chave é a mesma, então o upload não sobrescreveu o objeto.",
 		)
 	})
 })

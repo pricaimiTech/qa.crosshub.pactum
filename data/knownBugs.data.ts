@@ -69,6 +69,26 @@ export const knownBugs: Record<string, IKnownBug> = {
 		summary:
 			"Configuração do carrossel responde 200 mas não grava nada em tenant sem marca salva",
 	},
+	/*
+	 * O MESMO bug #105, indexado também pelo caso que ele derruba de lado.
+	 *
+	 * O `MK-08` grava o carrossel e depois salva a marca, esperando que o
+	 * carrossel sobreviva. Em tenant sem linha de marca, o `saveSettings` faz
+	 * `UPDATE ... WHERE tenant_id` que não acha nada, responde 200 devolvendo o
+	 * que recebeu, e não grava — então o `putSaveBranding` seguinte INSERE a
+	 * linha com o padrão 5. O caso não testa upsert de carrossel; ele tropeça no
+	 * defeito de outro.
+	 *
+	 * **Só aparece em banco limpo.** Localmente o tenant já tem linha de marca
+	 * de execuções anteriores e o teste passa. Foi a primeira execução no CI que
+	 * mostrou, e é o tipo de dependência de ordem que só um banco novo revela.
+	 */
+	"API-MK-08": {
+		number: 105,
+		url: "https://github.com/pricaimiTech/dev.CrossHub/issues/105",
+		summary:
+			"Salvar a marca zera o carrossel quando o tenant ainda não tinha linha de marca",
+	},
 	"API-CAT-01": {
 		number: 89,
 		url: "https://github.com/pricaimiTech/dev.CrossHub/issues/89",
