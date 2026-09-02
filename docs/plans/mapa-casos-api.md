@@ -212,7 +212,7 @@ Domínio: `branding/` · casos: 12 (P0: 8)
 | `API-MK-06` | P0 | Chave de outro tenant | `tenantAuth` | 400 | `putSaveBranding` | — | — | `MK-06-F.test.ts` | — |
 | `API-MK-07` | P1 | Upload — tipo e tamanho | `tenantAuth` | 400 | `postUploadBranding` | — | `Envie JPEG, PNG ou WebP com até 5 MB.` | `MK-07-F.test.ts` | — |
 | `API-MK-07b` | P1 | Upload assinado devolve URL temporária | `tenantAuth` | 200 | `putBrandingPresign` | — | — | `MK-07b-F.test.ts` | — |
-| `API-MK-08` | P0 | Marca não zera o carrossel | `tenantAuth` | 200 | `putSaveBranding` | `patchBannerSettings`<br>`getBranding` | — | `MK-08-F.test.ts` | — |
+| `API-MK-08` | P0 | Marca não zera o carrossel | `tenantAuth` | 200 | `putSaveBranding` | `patchBannerSettings`<br>`getBranding` | — | `MK-08-F.test.ts` | [#105](https://github.com/pricaimiTech/dev.CrossHub/issues/105) |
 | `API-MK-09` | P1 | Publicação no payload público | — | 200 | `getPublicTenant` | `putSaveBranding` | — | `MK-09-F.test.ts` | — |
 | `API-MK-XT` | P0 | Isolamento entre tenants | `tenantAuth` | 200 | `getBranding` | `putSaveBranding` | — | `MK-XT-F.test.ts` | — |
 
@@ -257,7 +257,7 @@ Domínio: `privacy/` · casos: 4 (P0: 2)
 
 ## Bugs abertos pela automação
 
-18 caso(s) vermelho(s) de propósito, com issue aberta no [board de QA](https://github.com/users/pricaimiTech/projects/7/views/4):
+19 caso(s) vermelho(s) de propósito, com issue aberta no [board de QA](https://github.com/users/pricaimiTech/projects/7/views/4):
 
 - `API-AG-05` → [#85](https://github.com/pricaimiTech/dev.CrossHub/issues/85) — o teste segue falhando até a correção
 - `API-AG-07` → [#88](https://github.com/pricaimiTech/dev.CrossHub/issues/88) — o teste segue falhando até a correção
@@ -268,6 +268,7 @@ Domínio: `privacy/` · casos: 4 (P0: 2)
 - `API-AG-30` → [#92](https://github.com/pricaimiTech/dev.CrossHub/issues/92) — o teste segue falhando até a correção
 - `API-H-04` → [#109](https://github.com/pricaimiTech/dev.CrossHub/issues/109) — o teste segue falhando até a correção
 - `API-BN-08` → [#105](https://github.com/pricaimiTech/dev.CrossHub/issues/105) — o teste segue falhando até a correção
+- `API-MK-08` → [#105](https://github.com/pricaimiTech/dev.CrossHub/issues/105) — o teste segue falhando até a correção
 - `API-CAT-01` → [#89](https://github.com/pricaimiTech/dev.CrossHub/issues/89) — o teste segue falhando até a correção
 - `API-C-02` → [#100](https://github.com/pricaimiTech/dev.CrossHub/issues/100) — o teste segue falhando até a correção
 - `API-C-16` → [#101](https://github.com/pricaimiTech/dev.CrossHub/issues/101) — o teste segue falhando até a correção
