@@ -1,6 +1,6 @@
 {
-  "gerado": "2026-09-01",
-  "origem": "docs/test-strategy/02/estrategia-testes-dashboard.html",
+  "gerado": "2026-09-02",
+  "origem": ".doc/dashboard/estrategia-testes-dashboard.html",
   "aviso": "Artefato de build. Editar o HTML e rodar build-strategy-json.mjs.",
   "totais": {
     "casos": 167,
@@ -17,6 +17,23 @@
       "BN": 11,
       "MN": 3,
       "AN": 4
+    },
+    "unit": {
+      "casos": 46,
+      "p0": 25,
+      "extrair": 0,
+      "porModulo": {
+        "AG": 10,
+        "F": 6,
+        "LGPD": 3,
+        "C": 6,
+        "H": 5,
+        "G": 5,
+        "CAT": 3,
+        "MK": 3,
+        "BN": 3,
+        "MN": 2
+      }
     }
   },
   "conferencia": {
@@ -5579,6 +5596,1554 @@
       ],
       "doc": null,
       "novo": false
+    }
+  ],
+  "casosUnit": [
+    {
+      "id": "UNIT-AG-01",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "slots() → extrair generateSlots(regra, duracao, intervalo) · appointments.service.ts:73",
+      "fontes": [
+        {
+          "arquivo": "appointments.service.ts",
+          "linhas": [
+            73
+          ],
+          "bruto": "73"
+        }
+      ],
+      "funcoes": [
+        "slots",
+        "generateSlots"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "08:00–12:00 com 60 min e intervalo 0 devolve exatamente 08:00, 09:00, 10:00, 11:00. 07:00–12:00 com 60 min e intervalo 5 devolve 07:00, 08:05, 09:10, 10:15 — a próxima ultrapassa o fim do turno. Serviço de 90 min em turno de 60 min devolve lista vazia.",
+      "literais": [],
+      "campos": [],
+      "relacao": [
+        "API-AG-01",
+        "API-AG-02",
+        "API-AG-03"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-AG-02",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "passo do cursor na mesma função · cursor += (duracao + intervalo)",
+      "fontes": [],
+      "funcoes": [],
+      "codigos": [
+        "cursor += (duracao + intervalo)"
+      ],
+      "superficie": null,
+      "extrair": false,
+      "prova": "O intervalo entra no passo , não na checagem de cabimento — que usa só a duração. Trocar os dois desloca a grade inteira sem nunca estourar o turno, que é o erro mais difícil de enxergar pela resposta da API.",
+      "literais": [],
+      "campos": [],
+      "relacao": [
+        "API-AG-02"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-AG-03",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "predicado de bloqueio block.startsAt < slotEnd && block.endsAt > cursor",
+      "fontes": [],
+      "funcoes": [],
+      "codigos": [
+        "block.startsAt < slotEnd && block.endsAt > cursor"
+      ],
+      "superficie": null,
+      "extrair": false,
+      "prova": "Sobreposição parcial fecha a janela; bloqueio que termina exatamente no início da janela não fecha. As quatro posições relativas (antes, encostando, cruzando, contendo) em quatro asserções.",
+      "literais": [],
+      "campos": [],
+      "relacao": [
+        "API-AG-24",
+        "API-AG-25"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-AG-04",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "predicado de ocupação — conjunto occupying · appointments.service.ts:10",
+      "fontes": [
+        {
+          "arquivo": "appointments.service.ts",
+          "linhas": [
+            10
+          ],
+          "bruto": "10"
+        }
+      ],
+      "funcoes": [
+        "occupying"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "Só pending e approved ocupam vaga. Os sete estados percorridos um a um: rejected , cancelled_by_client , cancelled_by_admin , completed e no_show liberam a capacidade.",
+      "literais": [],
+      "campos": [
+        "pending",
+        "approved",
+        "rejected",
+        "cancelled_by_client",
+        "cancelled_by_admin",
+        "completed",
+        "no_show"
+      ],
+      "relacao": [
+        "API-AG-17",
+        "API-AG-18"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-AG-05",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "at(date, time) · appointments.service.ts:86",
+      "fontes": [
+        {
+          "arquivo": "appointments.service.ts",
+          "linhas": [
+            86
+          ],
+          "bruto": "86"
+        }
+      ],
+      "funcoes": [
+        "at"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "A função monta o instante com offset fixo -03:00 — não lê appointmentSettings.timezone . O teste fixa o comportamento atual e falha no dia em que o fuso do tenant passar a valer, que é o que a especificação descreve. É a divergência mais barata de detectar aqui e a mais cara de detectar pela API.",
+      "literais": [],
+      "campos": [
+        "-03:00",
+        "appointmentSettings.timezone"
+      ],
+      "relacao": [
+        "API-AG-04"
+      ],
+      "relacaoNota": "divergência a decidir",
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-AG-06",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "localDate(value) · appointments.service.ts:87",
+      "fontes": [
+        {
+          "arquivo": "appointments.service.ts",
+          "linhas": [
+            87
+          ],
+          "bruto": "87"
+        }
+      ],
+      "funcoes": [
+        "localDate"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "Mesmo caso: America/Sao_Paulo está escrito no código. É esta função que decide a qual dia um agendamento pertence — logo, quem decide a cota diária do cliente.",
+      "literais": [],
+      "campos": [
+        "America/Sao_Paulo"
+      ],
+      "relacao": [
+        "API-AG-07",
+        "API-AG-08"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-AG-07",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "dayBoundary(date, timezone, end) · appointments.service.ts:88",
+      "fontes": [
+        {
+          "arquivo": "appointments.service.ts",
+          "linhas": [
+            88
+          ],
+          "bruto": "88"
+        }
+      ],
+      "funcoes": [
+        "dayBoundary"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "A única das três que respeita o fuso recebido. Bordas 00:00:00.000 e 23:59:59.999 em três fusos (−03, UTC, +09) e num dia de mudança de horário de verão.",
+      "literais": [],
+      "campos": [
+        "00:00:00.000",
+        "23:59:59.999"
+      ],
+      "relacao": [
+        "API-AG-04",
+        "API-H-03"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-AG-08",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "UNIT",
+      "prioridade": "P1",
+      "alvo": "holidays(year) · appointments.service.ts:89",
+      "fontes": [
+        {
+          "arquivo": "appointments.service.ts",
+          "linhas": [
+            89
+          ],
+          "bruto": "89"
+        }
+      ],
+      "funcoes": [
+        "holidays"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "Os nove fixos e os quatro móveis — Carnaval, Sexta-feira Santa, Páscoa e Corpus Christi, derivados do domingo de Páscoa, como a §4.8.5 da especificação exige ( \"fixos e móveis\" ). Datas conhecidas em sete anos, incluindo os extremos do algoritmo (22/03 e 25/04), e a lista ordenada por data. o código foi corrigido em 02/09/2026",
+      "literais": [
+        "fixos e móveis"
+      ],
+      "campos": [],
+      "relacao": [
+        "API-AG-27",
+        "API-AG-28"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-AG-09",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "saldo de restorePackageCredit() → extrair saldoDevolvivel(entradas) · appointments.service.ts:79",
+      "fontes": [
+        {
+          "arquivo": "appointments.service.ts",
+          "linhas": [
+            79
+          ],
+          "bruto": "79"
+        }
+      ],
+      "funcoes": [
+        "restorePackageCredit",
+        "saldoDevolvivel"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "Devolução nunca passa do consumido; a segunda devolução do mesmo agendamento resulta em zero; agendamento sem contrato não gera lançamento. Aritmética de crédito conferida sem tocar no razão.",
+      "literais": [],
+      "campos": [],
+      "relacao": [
+        "API-AG-31"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-AG-10",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "prazo de cancelamento de cancelByClient() → extrair podeCancelar(inicio, agora, horas) · appointments.service.ts:65",
+      "fontes": [
+        {
+          "arquivo": "appointments.service.ts",
+          "linhas": [
+            65
+          ],
+          "bruto": "65"
+        }
+      ],
+      "funcoes": [
+        "cancelByClient",
+        "podeCancelar"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "Com cancellationNoticeHours = 24 : 23 h 59 min recusa; 24 h 00 min exatos aceita — a comparação é >= , e é a especificação que decide (caso AG-13 : \"cancelar com 24h ou mais de antecedência → aceito\" ; AG-14 : \"com menos de 24h → bloqueada\" ); 24 h 01 min aceita. E a mensagem interpola o valor configurado, não o literal 24.",
+      "literais": [
+        "cancelar com 24h ou mais de antecedência → aceito",
+        "com menos de 24h → bloqueada"
+      ],
+      "campos": [
+        "cancellationNoticeHours = 24",
+        ">="
+      ],
+      "relacao": [
+        "API-AG-19",
+        "API-AG-20"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-F-01",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "hasAnswerValue(type, answer) · forms.service.ts:1143",
+      "fontes": [
+        {
+          "arquivo": "forms.service.ts",
+          "linhas": [
+            1143
+          ],
+          "bruto": "1143"
+        }
+      ],
+      "funcoes": [
+        "hasAnswerValue"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "Os seis tipos contra resposta ausente, vazia e preenchida. CONSENT só é preenchido com true ; texto com apenas espaços conta como vazio; SCALE aceita o número 0 como preenchido. É este predicado que decide se uma obrigatória foi respondida.",
+      "literais": [],
+      "campos": [
+        "CONSENT",
+        "true",
+        "SCALE"
+      ],
+      "relacao": [
+        "API-F-17"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-F-02",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "normalizeAnswerRows(question, answer) · forms.service.ts:1153",
+      "fontes": [
+        {
+          "arquivo": "forms.service.ts",
+          "linhas": [
+            1153
+          ],
+          "bruto": "1153"
+        }
+      ],
+      "funcoes": [
+        "normalizeAnswerRows"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "Opção que não pertence à pergunta é rejeitada com mensagem citando o título; múltipla escolha vazia devolve zero linhas sem erro ; escala fora de 1–5 é rejeitada; tipo desconhecido levanta exceção. Um caso por ramo.",
+      "literais": [],
+      "campos": [],
+      "relacao": [
+        "API-F-17"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-F-03",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "UNIT",
+      "prioridade": "P1",
+      "alvo": "normalizeAnswerRows — ramo CONSENT",
+      "fontes": [],
+      "funcoes": [
+        "normalizeAnswerRows",
+        "CONSENT"
+      ],
+      "codigos": [],
+      "superficie": null,
+      "extrair": false,
+      "prova": "consentText e consentVersion caem para o título da pergunta e 'v1' quando settingsJson não traz string. O consentimento gravado é prova jurídica: o valor de fallback precisa estar escrito em algum lugar que falhe se mudar.",
+      "literais": [],
+      "campos": [
+        "consentText",
+        "consentVersion",
+        "'v1'",
+        "settingsJson"
+      ],
+      "relacao": [
+        "API-F-17"
+      ],
+      "relacaoNota": "LGPD",
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-F-04",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "UNIT",
+      "prioridade": "P2",
+      "alvo": "estimateMinutes(questionCount) · forms.service.ts:1095",
+      "fontes": [
+        {
+          "arquivo": "forms.service.ts",
+          "linhas": [
+            1095
+          ],
+          "bruto": "1095"
+        }
+      ],
+      "funcoes": [
+        "estimateMinutes"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "Zero perguntas devolve 0; uma pergunta devolve 1 (o piso vence o arredondamento); cinco devolvem 4; seis devolvem 5. Três linhas de código, quatro asserções, nenhum banco.",
+      "literais": [],
+      "campos": [],
+      "relacao": [],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-F-05",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "UNIT",
+      "prioridade": "P1",
+      "alvo": "isFormActiveForResponses , isFormClosedForResponses e formStatusPresentation · forms-panel.tsx:228, 232, 317",
+      "fontes": [
+        {
+          "arquivo": "forms-panel.tsx",
+          "linhas": [
+            228,
+            232,
+            317
+          ],
+          "bruto": "228, 232, 317"
+        }
+      ],
+      "funcoes": [
+        "isFormActiveForResponses",
+        "isFormClosedForResponses",
+        "formStatusPresentation"
+      ],
+      "codigos": [],
+      "superficie": "front",
+      "extrair": false,
+      "prova": "Os cinco estados do formulário mapeados para rótulo e tom, sem renderizar componente. Estes três predicados decidem quais botões aparecem — testá-los aqui evita três testes de componente.",
+      "literais": [],
+      "campos": [],
+      "relacao": [
+        "API-F-02"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-F-06",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "UNIT",
+      "prioridade": "P2",
+      "alvo": "formatDurationSeconds e renderStarRating · forms-panel.tsx:192, 199",
+      "fontes": [
+        {
+          "arquivo": "forms-panel.tsx",
+          "linhas": [
+            192,
+            199
+          ],
+          "bruto": "192, 199"
+        }
+      ],
+      "funcoes": [
+        "formatDurationSeconds",
+        "renderStarRating"
+      ],
+      "codigos": [],
+      "superficie": "front",
+      "extrair": false,
+      "prova": "Duração nula, menos de um minuto, exatamente 60 s e mais de uma hora. Nota nula não renderiza estrela nenhuma.",
+      "literais": [],
+      "campos": [],
+      "relacao": [
+        "API-F-23"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-LGPD-01",
+      "modulo": "LGPD",
+      "moduloNome": "Privacidade e LGPD",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "predicado canViewSensitiveData · forms.service.ts:1191 e dashboard.service.ts:54",
+      "fontes": [
+        {
+          "arquivo": "forms.service.ts",
+          "linhas": [
+            1191
+          ],
+          "bruto": "1191"
+        },
+        {
+          "arquivo": "dashboard.service.ts",
+          "linhas": [
+            54
+          ],
+          "bruto": "54"
+        }
+      ],
+      "funcoes": [
+        "canViewSensitiveData"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "isPrimaryAdmin === true || canViewSensitiveData === true ; usuário inexistente devolve false ; ambas as flags falsas devolvem false . As duas cópias rodam contra a mesma tabela de casos — é o teste que prova que Formulários e Home decidem igual. Depois de unificadas, sobra um teste só.",
+      "literais": [],
+      "campos": [
+        "isPrimaryAdmin === true || canViewSensitiveData === true",
+        "false"
+      ],
+      "relacao": [
+        "API-F-19",
+        "API-H-08"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-LGPD-02",
+      "modulo": "LGPD",
+      "moduloNome": "Privacidade e LGPD",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "guarda de retenção · privacy.controller.ts:14",
+      "fontes": [
+        {
+          "arquivo": "privacy.controller.ts",
+          "linhas": [
+            14
+          ],
+          "bruto": "14"
+        }
+      ],
+      "funcoes": [],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "0, 1, 3650, 3651, 3.5 , '30' e ausente. Seis dos sete são recusa; a regra cabe em uma linha e hoje só é exercitável subindo o Nest inteiro.",
+      "literais": [],
+      "campos": [
+        "3.5",
+        "'30'"
+      ],
+      "relacao": [
+        "API-LGPD-10"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-LGPD-03",
+      "modulo": "LGPD",
+      "moduloNome": "Privacidade e LGPD",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "mensagem literal → extrair para constante exportada · repetida em forms.service.ts:622, 685, 739, 906",
+      "fontes": [
+        {
+          "arquivo": "forms.service.ts",
+          "linhas": [
+            622,
+            685,
+            739,
+            906
+          ],
+          "bruto": "622, 685, 739, 906"
+        }
+      ],
+      "funcoes": [],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "\"Você não possui a permissão para visualizar respostas sensíveis.\" está escrita quatro vezes no mesmo arquivo. Um teste de igualdade estrita sobre a constante única é o que impede que três delas mudem e a quarta não.",
+      "literais": [
+        "Você não possui a permissão para visualizar respostas sensíveis."
+      ],
+      "campos": [],
+      "relacao": [
+        "API-LGPD-04",
+        "API-LGPD-05"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-C-01",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "UNIT",
+      "prioridade": "P1",
+      "alvo": "generateCode() · people.service.ts:129",
+      "fontes": [
+        {
+          "arquivo": "people.service.ts",
+          "linhas": [
+            129
+          ],
+          "bruto": "129"
+        }
+      ],
+      "funcoes": [
+        "generateCode"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "Comprimento estável, alfabeto base64url em maiúsculas (sem + , / ou = ), e dez mil chamadas sem repetição. O código é a única credencial do cliente final.",
+      "literais": [],
+      "campos": [
+        "+",
+        "/",
+        "="
+      ],
+      "relacao": [
+        "API-C-05"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-C-02",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "lookupHash(code) · people.service.ts:150",
+      "fontes": [
+        {
+          "arquivo": "people.service.ts",
+          "linhas": [
+            150
+          ],
+          "bruto": "150"
+        }
+      ],
+      "funcoes": [
+        "lookupHash"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "HMAC-SHA256 determinístico para a mesma entrada; sensível a maiúsculas; lança quando ACCESS_CODE_LOOKUP_SECRET não está definido — falha que hoje só apareceria em produção.",
+      "literais": [],
+      "campos": [
+        "ACCESS_CODE_LOOKUP_SECRET"
+      ],
+      "relacao": [
+        "API-C-09",
+        "API-C-10"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-C-03",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "normalização de e-mail de assertEmailAvailable() → extrair normalizeEmail() · people.service.ts:136",
+      "fontes": [
+        {
+          "arquivo": "people.service.ts",
+          "linhas": [
+            136
+          ],
+          "bruto": "136"
+        }
+      ],
+      "funcoes": [
+        "assertEmailAvailable",
+        "normalizeEmail"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "trim + toLowerCase : espaço à esquerda, maiúsculas, string vazia e null . É esta normalização que define o que conta como e-mail duplicado dentro do tenant.",
+      "literais": [],
+      "campos": [
+        "trim",
+        "toLowerCase",
+        "null"
+      ],
+      "relacao": [
+        "API-C-02"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-C-04",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "UNIT",
+      "prioridade": "P1",
+      "alvo": "initials(name) e avatarColor(name) · console-utils.ts:14, 35",
+      "fontes": [
+        {
+          "arquivo": "console-utils.ts",
+          "linhas": [
+            14,
+            35
+          ],
+          "bruto": "14, 35"
+        }
+      ],
+      "funcoes": [
+        "initials",
+        "avatarColor"
+      ],
+      "codigos": [],
+      "superficie": "front",
+      "extrair": false,
+      "prova": "Nome de uma palavra, de três, com acento e com espaço duplo. Para a cor, valores fixados no teste : o próprio arquivo avisa que trocar a função trocaria a cor de todas as pessoas de uma vez. O teste é o que transforma esse aviso em trava.",
+      "literais": [],
+      "campos": [],
+      "relacao": [
+        "E2E-C-03"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-C-05",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "UNIT",
+      "prioridade": "P1",
+      "alvo": "personCodeStatus , personCodeStatusLabel e personCodeStatusTone · people-panel.tsx:76, 80, 88",
+      "fontes": [
+        {
+          "arquivo": "people-panel.tsx",
+          "linhas": [
+            76,
+            80,
+            88
+          ],
+          "bruto": "76, 80, 88"
+        }
+      ],
+      "funcoes": [
+        "personCodeStatus",
+        "personCodeStatusLabel",
+        "personCodeStatusTone"
+      ],
+      "codigos": [],
+      "superficie": "front",
+      "extrair": false,
+      "prova": "Os quatro estados ( none , active , used , revoked ) e o fallback de accessCodeStatus ausente, com rótulo e tom conferidos.",
+      "literais": [],
+      "campos": [
+        "none",
+        "active",
+        "used",
+        "revoked",
+        "accessCodeStatus"
+      ],
+      "relacao": [
+        "API-C-06",
+        "API-C-08"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-C-06",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "UNIT",
+      "prioridade": "P2",
+      "alvo": "formatPersonPublicId e formatMaskedAccessCode · people-panel.tsx:64, 68",
+      "fontes": [
+        {
+          "arquivo": "people-panel.tsx",
+          "linhas": [
+            64,
+            68
+          ],
+          "bruto": "64, 68"
+        }
+      ],
+      "funcoes": [
+        "formatPersonPublicId",
+        "formatMaskedAccessCode"
+      ],
+      "codigos": [],
+      "superficie": "front",
+      "extrair": false,
+      "prova": "Remove hífens, corta em oito caracteres e minúsculo. A máscara é constante — e o teste é o que garante que ela nunca passe a receber o código real por parâmetro.",
+      "literais": [],
+      "campos": [],
+      "relacao": [
+        "API-C-07"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-H-01",
+      "modulo": "H",
+      "moduloNome": "Home",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "localDateKey(date) · dashboard.service.ts:25",
+      "fontes": [
+        {
+          "arquivo": "dashboard.service.ts",
+          "linhas": [
+            25
+          ],
+          "bruto": "25"
+        }
+      ],
+      "funcoes": [
+        "localDateKey"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "Fuso America/Sao_Paulo escrito no código, como em Agendamentos. Instante às 23:30 −03 e às 00:30 −03 caem em dias diferentes; o mesmo instante em UTC não muda a chave.",
+      "literais": [],
+      "campos": [
+        "America/Sao_Paulo"
+      ],
+      "relacao": [
+        "API-H-03"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-H-02",
+      "modulo": "H",
+      "moduloNome": "Home",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "janelas de home() → extrair homeWindows(now) · dashboard.service.ts:45-48",
+      "fontes": [
+        {
+          "arquivo": "dashboard.service.ts",
+          "linhas": [
+            45,
+            46,
+            47,
+            48
+          ],
+          "bruto": "45-48"
+        }
+      ],
+      "funcoes": [
+        "home",
+        "homeWindows"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "As quatro janelas (24 h para reservas, 7 dias para pessoas, 3 dias de atraso, 48 h de pendência) derivadas de um único now injetado. Com o relógio congelado, cada borda vira uma asserção exata em vez de uma comparação aproximada.",
+      "literais": [],
+      "campos": [
+        "now"
+      ],
+      "relacao": [
+        "API-H-01",
+        "API-H-02",
+        "API-H-09"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-H-03",
+      "modulo": "H",
+      "moduloNome": "Home",
+      "camada": "UNIT",
+      "prioridade": "P1",
+      "alvo": "montagem da lista de ações → extrair a partir de home()",
+      "fontes": [],
+      "funcoes": [
+        "home"
+      ],
+      "codigos": [],
+      "superficie": null,
+      "extrair": false,
+      "prova": "Corte em quatro ações e contagem zero não vira ação . Cinco candidatas devolvem quatro; nenhuma candidata devolve lista vazia, não uma ação com \"0\".",
+      "literais": [],
+      "campos": [],
+      "relacao": [
+        "API-H-04",
+        "API-H-05"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-H-04",
+      "modulo": "H",
+      "moduloNome": "Home",
+      "camada": "UNIT",
+      "prioridade": "P1",
+      "alvo": "montagem do feed → extrair a partir de home()",
+      "fontes": [],
+      "funcoes": [
+        "home"
+      ],
+      "codigos": [],
+      "superficie": null,
+      "extrair": false,
+      "prova": "Dez itens no máximo, deduplicados, e só metadados — o teste confere que nenhuma chave de conteúdo de resposta atravessa o objeto montado.",
+      "literais": [],
+      "campos": [],
+      "relacao": [
+        "API-H-06",
+        "API-H-07"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-H-05",
+      "modulo": "H",
+      "moduloNome": "Home",
+      "camada": "UNIT",
+      "prioridade": "P1",
+      "alvo": "formatActivityTime(date) · home-panel.tsx:533",
+      "fontes": [
+        {
+          "arquivo": "home-panel.tsx",
+          "linhas": [
+            533
+          ],
+          "bruto": "533"
+        }
+      ],
+      "funcoes": [
+        "formatActivityTime"
+      ],
+      "codigos": [],
+      "superficie": "front",
+      "extrair": false,
+      "prova": "Hoje devolve só a hora; ontem devolve Ontem HH:MM ; anteontem devolve dd/MM HH:MM . As duas viradas conferidas com relógio fixo — inclusive a virada à meia-noite, que é onde a função erra se comparar instantes em vez de dias.",
+      "literais": [],
+      "campos": [
+        "Ontem HH:MM",
+        "dd/MM HH:MM"
+      ],
+      "relacao": [
+        "E2E-H-01"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-G-01",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "distributeGroupParticipants(total, groupCount, groupSize) · create-group-wizard.tsx:206",
+      "fontes": [
+        {
+          "arquivo": "create-group-wizard.tsx",
+          "linhas": [
+            206
+          ],
+          "bruto": "206"
+        }
+      ],
+      "funcoes": [
+        "distributeGroupParticipants"
+      ],
+      "codigos": [],
+      "superficie": "front",
+      "extrair": false,
+      "prova": "10 pessoas em 3 grupos de 3 devolve [3,3,3] e descarta o décimo em silêncio . groupCount 0 devolve lista vazia; total 0 devolve zeros. O descarte é a regra mais surpreendente do módulo e a mais fácil de provar aqui.",
+      "literais": [],
+      "campos": [
+        "[3,3,3]",
+        "groupCount"
+      ],
+      "relacao": [
+        "API-G-09"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-G-02",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "equivalência entre o wizard e o laço sizes de create() · groups.service.ts:174",
+      "fontes": [
+        {
+          "arquivo": "groups.service.ts",
+          "linhas": [
+            174
+          ],
+          "bruto": "174"
+        }
+      ],
+      "funcoes": [
+        "sizes",
+        "create"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "A mesma tabela de entradas alimenta as duas implementações e as saídas têm de ser idênticas. É o único teste desta estratégia cujo objetivo é provar que duas cópias concordam — e o que autoriza apagar uma delas depois.",
+      "literais": [],
+      "campos": [],
+      "relacao": [
+        "API-G-09",
+        "E2E-G-02"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-G-03",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "validateStatusTransition(current, next, memberCount) · groups.service.ts:27",
+      "fontes": [
+        {
+          "arquivo": "groups.service.ts",
+          "linhas": [
+            27
+          ],
+          "bruto": "27"
+        }
+      ],
+      "funcoes": [
+        "validateStatusTransition"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "Para active ou finalized sem integrante, recusa; mesmo status não valida nada; e qualquer outro par é permitido , inclusive finalized → draft . O teste registra a permissividade atual — é a evidência que a decisão pendente de API-G-14 precisa para ser tomada.",
+      "literais": [],
+      "campos": [
+        "active",
+        "finalized",
+        "draft",
+        "API-G-14"
+      ],
+      "relacao": [
+        "API-G-10",
+        "API-G-14"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-G-04",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "UNIT",
+      "prioridade": "P2",
+      "alvo": "strategyLabel(input) · groups.service.ts:34",
+      "fontes": [
+        {
+          "arquivo": "groups.service.ts",
+          "linhas": [
+            34
+          ],
+          "bruto": "34"
+        }
+      ],
+      "funcoes": [
+        "strategyLabel"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "Manual vence tudo; origem pessoas devolve \"Divisão por pessoas\"; senão, o rótulo da estratégia. Prova que a estratégia é só rótulo — não altera a composição.",
+      "literais": [
+        "Divisão por pessoas"
+      ],
+      "campos": [],
+      "relacao": [
+        "API-G-08"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-G-05",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "UNIT",
+      "prioridade": "P1",
+      "alvo": "toRecord(group, members) · groups.service.ts:205",
+      "fontes": [
+        {
+          "arquivo": "groups.service.ts",
+          "linhas": [
+            205
+          ],
+          "bruto": "205"
+        }
+      ],
+      "funcoes": [
+        "toRecord"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "formId cai para manual-<id> quando não há formulário de origem; participantCount bate com o tamanho da lista; datas saem em ISO. É o formato que o front consome inteiro.",
+      "literais": [],
+      "campos": [
+        "formId",
+        "manual-<id>",
+        "participantCount"
+      ],
+      "relacao": [
+        "API-G-01"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-CAT-01",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "validateReservationTransition(current, next) · catalog.service.ts:29",
+      "fontes": [
+        {
+          "arquivo": "catalog.service.ts",
+          "linhas": [
+            29
+          ],
+          "bruto": "29"
+        }
+      ],
+      "funcoes": [
+        "validateReservationTransition"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "A matriz completa, incluindo o que a tabela não lista: completed e cancelled são terminais, e qualquer saída deles cai no ?. e é recusada. Mais a mensagem literal \"Essa alteração de status não é permitida.\"",
+      "literais": [
+        "não",
+        "Essa alteração de status não é permitida."
+      ],
+      "campos": [
+        "completed",
+        "cancelled",
+        "?."
+      ],
+      "relacao": [
+        "API-CAT-11"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-CAT-02",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "conversão de preço — formatPrice(priceCents) · shop-panel.tsx:991 e o parse do formulário",
+      "fontes": [
+        {
+          "arquivo": "shop-panel.tsx",
+          "linhas": [
+            991
+          ],
+          "bruto": "991"
+        }
+      ],
+      "funcoes": [
+        "formatPrice"
+      ],
+      "codigos": [],
+      "superficie": "front",
+      "extrair": false,
+      "prova": "0, 1 centavo, 1999 e um valor com centavo quebrado; ida e volta reais ↔ centavos sem perda. Erro de fator 100 em dinheiro é o defeito clássico que passa por revisão e não passa por este teste.",
+      "literais": [],
+      "campos": [],
+      "relacao": [
+        "API-CAT-06"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-CAT-03",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "UNIT",
+      "prioridade": "P2",
+      "alvo": "formatReservationDate e statusChoice · shop-panel.tsx:995, 964",
+      "fontes": [
+        {
+          "arquivo": "shop-panel.tsx",
+          "linhas": [
+            995,
+            964
+          ],
+          "bruto": "995, 964"
+        }
+      ],
+      "funcoes": [
+        "formatReservationDate",
+        "statusChoice"
+      ],
+      "codigos": [],
+      "superficie": "front",
+      "extrair": false,
+      "prova": "Formatação estável em pt-BR e o par rótulo/estado do seletor de disponibilidade.",
+      "literais": [],
+      "campos": [
+        "pt-BR"
+      ],
+      "relacao": [
+        "E2E-CAT-01"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-MK-01",
+      "modulo": "MK",
+      "moduloNome": "Marca e aparência",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "validação de cor hexadecimal — branding.controller.ts e o toUpperCase de branding-panel.tsx:624",
+      "fontes": [
+        {
+          "arquivo": "branding.controller.ts",
+          "linhas": [],
+          "bruto": null
+        },
+        {
+          "arquivo": "branding-panel.tsx",
+          "linhas": [
+            624
+          ],
+          "bruto": "624"
+        }
+      ],
+      "funcoes": [
+        "toUpperCase"
+      ],
+      "codigos": [],
+      "superficie": "ambas",
+      "extrair": false,
+      "prova": "#FFFFFF , #fff , fff sem cerquilha, #GGGGGG , string vazia e valor com espaço. O front normaliza para maiúsculas antes de enviar — o teste confere que o backend aceita as duas caixas, ou recusa as duas.",
+      "literais": [],
+      "campos": [
+        "#FFFFFF",
+        "#fff",
+        "fff",
+        "#GGGGGG"
+      ],
+      "relacao": [
+        "API-MK-03"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-MK-02",
+      "modulo": "MK",
+      "moduloNome": "Marca e aparência",
+      "camada": "UNIT",
+      "prioridade": "P1",
+      "alvo": "publicUrl(key) · r2-storage.service.ts:40",
+      "fontes": [
+        {
+          "arquivo": "r2-storage.service.ts",
+          "linhas": [
+            40
+          ],
+          "bruto": "40"
+        }
+      ],
+      "funcoes": [
+        "publicUrl"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "Chave nula devolve null , não string vazia nem URL quebrada; chave válida devolve a URL do bucket sem barra dupla.",
+      "literais": [],
+      "campos": [
+        "null"
+      ],
+      "relacao": [
+        "API-MK-09"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-MK-03",
+      "modulo": "MK",
+      "moduloNome": "Marca e aparência",
+      "camada": "UNIT",
+      "prioridade": "P1",
+      "alvo": "withUrls(settings) · branding.service.ts:34",
+      "fontes": [
+        {
+          "arquivo": "branding.service.ts",
+          "linhas": [
+            34
+          ],
+          "bruto": "34"
+        }
+      ],
+      "funcoes": [
+        "withUrls"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "Deriva logoUrl e coverUrl a partir das chaves e não acrescenta URL ao que vai para o banco. O banco guarda key ; a URL é sempre calculada.",
+      "literais": [],
+      "campos": [
+        "logoUrl",
+        "coverUrl",
+        "key"
+      ],
+      "relacao": [
+        "API-MK-09"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-BN-01",
+      "modulo": "BN",
+      "moduloNome": "Banners",
+      "camada": "UNIT",
+      "prioridade": "P0",
+      "alvo": "guarda de presignUpload() e upload() · r2-storage.service.ts:20, 29",
+      "fontes": [
+        {
+          "arquivo": "r2-storage.service.ts",
+          "linhas": [
+            20,
+            29
+          ],
+          "bruto": "20, 29"
+        }
+      ],
+      "funcoes": [
+        "presignUpload",
+        "upload"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "Tipo fora de JPEG/PNG/WebP; size 0; size negativo; NaN ; 5 MB exatos (aceita) e 5 MB + 1 byte (recusa); buffer vazio. Mesma mensagem nas duas funções. Um arquivo de teste substitui a bateria de upload de quatro módulos.",
+      "literais": [
+        "buffer"
+      ],
+      "campos": [
+        "size",
+        "NaN"
+      ],
+      "relacao": [
+        "API-BN-03",
+        "API-MK-07",
+        "API-C-13",
+        "API-CAT-08"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-BN-02",
+      "modulo": "BN",
+      "moduloNome": "Banners",
+      "camada": "UNIT",
+      "prioridade": "P1",
+      "alvo": "validação do formato do link do banner",
+      "fontes": [],
+      "funcoes": [],
+      "codigos": [],
+      "superficie": null,
+      "extrair": false,
+      "prova": "URL absoluta com https , com http , caminho relativo, string vazia e texto que não é URL.",
+      "literais": [],
+      "campos": [
+        "https",
+        "http"
+      ],
+      "relacao": [
+        "API-BN-04"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-BN-03",
+      "modulo": "BN",
+      "moduloNome": "Banners",
+      "camada": "UNIT",
+      "prioridade": "P2",
+      "alvo": "withUrl(banner) · banners.service.ts:19",
+      "fontes": [
+        {
+          "arquivo": "banners.service.ts",
+          "linhas": [
+            19
+          ],
+          "bruto": "19"
+        }
+      ],
+      "funcoes": [
+        "withUrl"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "Mesma derivação de imageKey para imageUrl que a Marca faz — e a diferença deliberada de que Banners não remove o ativo anterior fica visível ao comparar os dois testes lado a lado.",
+      "literais": [],
+      "campos": [
+        "imageKey",
+        "imageUrl"
+      ],
+      "relacao": [
+        "API-BN-01"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-MN-01",
+      "modulo": "MN",
+      "moduloNome": "Menu e navegação",
+      "camada": "UNIT",
+      "prioridade": "P1",
+      "alvo": "tenantAppUrl() → extrair para função pura (webAppUrl, slug) · dashboard-console.tsx:1958",
+      "fontes": [
+        {
+          "arquivo": "dashboard-console.tsx",
+          "linhas": [
+            1958
+          ],
+          "bruto": "1958"
+        }
+      ],
+      "funcoes": [
+        "tenantAppUrl"
+      ],
+      "codigos": [
+        "(webAppUrl, slug)"
+      ],
+      "superficie": "front",
+      "extrair": false,
+      "prova": "Slug ausente devolve null (e é isso que dispara a mensagem de erro, não uma URL quebrada); barra final da base é removida antes de concatenar; slug com espaço.",
+      "literais": [],
+      "campos": [
+        "null"
+      ],
+      "relacao": [
+        "E2E-MN-04"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-MN-02",
+      "modulo": "MN",
+      "moduloNome": "Menu e navegação",
+      "camada": "UNIT",
+      "prioridade": "P1",
+      "alvo": "derivação dos itens visíveis a partir da sessão e dos add-ons",
+      "fontes": [],
+      "funcoes": [],
+      "codigos": [],
+      "superficie": null,
+      "extrair": false,
+      "prova": "Todos os itens aparecem para qualquer tenant_admin : nem o add-on appointment_analytics nem canViewSensitiveData escondem item. É o que a especificação do menu decide — visibilidade por plano está fora de escopo , a §3.5 diz que todo item é apresentado a qualquer admin autenticado, e o ADR-004 explica por quê: \"visibilidade de interface não é controle de segurança e não impede chamadas diretas às rotas\" . A fronteira é a API: GET /dashboard/appointments/analytics responde 400 a quem não tem o add-on. O teste registra essa divisão de responsabilidade.",
+      "literais": [
+        "fora de escopo",
+        "visibilidade de interface não é controle de segurança e não impede chamadas diretas às rotas"
+      ],
+      "campos": [
+        "tenant_admin",
+        "appointment_analytics",
+        "canViewSensitiveData",
+        "GET /dashboard/appointments/analytics",
+        "400"
+      ],
+      "relacao": [
+        "API-MN-03"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
     }
   ]
 }
