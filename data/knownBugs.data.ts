@@ -13,11 +13,6 @@ import type { IKnownBug } from "@core/interfaces/global.interface"
  * Board: https://github.com/users/pricaimiTech/projects/7/views/4
  */
 export const knownBugs: Record<string, IKnownBug> = {
-	"API-AG-05": {
-		number: 85,
-		url: "https://github.com/pricaimiTech/dev.CrossHub/issues/85",
-		summary: "Disponibilidade aceita regras sobrepostas no mesmo dia da semana",
-	},
 	"API-AG-07": {
 		number: 88,
 		url: "https://github.com/pricaimiTech/dev.CrossHub/issues/88",

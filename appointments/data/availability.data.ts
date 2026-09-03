@@ -1,6 +1,5 @@
 import { preSetup } from "@core/constants"
 import { dateInDays, weekdayOfDate } from "@core/utils/date.utils"
-import { knownBugs } from "@shared-data/knownBugs.data"
 
 /**
  * Data de referência das consultas de disponibilidade: uma semana à frente,
@@ -80,8 +79,6 @@ export const availabilityAG05 = {
 	overlappingStartTime: "11:00",
 	overlappingEndTime: "15:00",
 	expectedRuleCount: 1,
-	/** A API responde 200 e grava as duas regras — o teste segue vermelho até a correção. */
-	knownBug: knownBugs["API-AG-05"],
 	loginParams,
 	paramsDefault: preSetup.preSetupParamsDefault200(5, 500),
 	paramsDefault200: (token?: string) =>
