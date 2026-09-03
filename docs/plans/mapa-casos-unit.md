@@ -20,7 +20,7 @@ Estratégia gerada em 2026-09-03 · mapa gerado por `npm run generate:unit-map` 
 | UNIT-AG-04 | P0 | predicado de ocupação — conjunto occupying · appointments.service.ts:10 | API-AG-17, API-AG-18 | — | `__tests__/unit/api/dashboard/agendamentos/estados-e-datas.spec.ts:24` |
 | UNIT-AG-05 | P0 | at(date, time) · appointments.service.ts:86 | API-AG-04 · _divergência a decidir_ | — | `__tests__/unit/api/dashboard/agendamentos/estados-e-datas.spec.ts:43` |
 | UNIT-AG-06 | P0 | localDate(value) · appointments.service.ts:87 | API-AG-07, API-AG-08 | — | `__tests__/unit/api/dashboard/agendamentos/estados-e-datas.spec.ts:57` |
-| UNIT-AG-07 | P0 | dayBoundary(date, timezone, end) · appointments.service.ts:88 | API-AG-04, API-H-03 | — | `__tests__/unit/api/dashboard/agendamentos/estados-e-datas.spec.ts:73` |
+| UNIT-AG-07 | P0 | dayBoundary(date, timezone, end) · appointments.service.ts:88 | API-AG-04, API-H-03 | — | `__tests__/unit/api/dashboard/agendamentos/estados-e-datas.spec.ts:73`<br>`__tests__/unit/api/dashboard/agendamentos/mensagem-cota-diaria.spec.ts:11` |
 | UNIT-AG-08 | P1 | holidays(year) · appointments.service.ts:89 | API-AG-27, API-AG-28 | — | `__tests__/unit/api/dashboard/agendamentos/estados-e-datas.spec.ts:100` |
 | UNIT-AG-09 | P0 | saldo de restorePackageCredit() → extrair saldoDevolvivel(entradas) · appointments.service.ts:79 | API-AG-31 | — | `__tests__/unit/api/dashboard/agendamentos/credito-e-cancelamento.spec.ts:10` |
 | UNIT-AG-10 | P0 | prazo de cancelamento de cancelByClient() → extrair podeCancelar(inicio, agora, horas) · appointments.service.ts:65 | API-AG-19, API-AG-20 | — | `__tests__/unit/api/dashboard/agendamentos/credito-e-cancelamento.spec.ts:56` |
@@ -136,7 +136,7 @@ Nenhum. Todo ID declarado em `describe` existe na estratégia.
 
 ## Arquivos unitários sem ID de caso
 
-3 de 24 specs do escopo dashboard não citam caso nenhum. São testes legítimos que a estratégia não conhece — pedem um caso, não bloqueiam.
+3 de 25 specs do escopo dashboard não citam caso nenhum. São testes legítimos que a estratégia não conhece — pedem um caso, não bloqueiam.
 
 - `__tests__/unit/api/dashboard/agendamentos/fase-zero.spec.ts` (jest)
 - `__tests__/unit/api/dashboard/agendamentos/validacao-de-dto.spec.ts` (jest)

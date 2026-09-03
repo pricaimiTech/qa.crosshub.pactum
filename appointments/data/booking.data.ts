@@ -61,8 +61,6 @@ export const bookingAG07 = {
 	approvalMode: "manual" as const,
 	errorMessage:
 		"Para realizar outro agendamento neste dia, entre em contato com a administração.",
-	/** A API responde outro texto — vermelho até a decisão sobre a fonte de verdade. */
-	knownBug: knownBugs["API-AG-07"],
 }
 
 /** `API-AG-08` — agendamento cancelado libera a cota diária. */
