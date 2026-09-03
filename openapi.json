@@ -3233,7 +3233,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppointmentDto"
+                  "$ref": "#/components/schemas/ClientAppointmentDto"
                 }
               }
             }
@@ -3302,7 +3302,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/AppointmentDto"
+                    "$ref": "#/components/schemas/ClientAppointmentDto"
                   }
                 }
               }
@@ -3360,7 +3360,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppointmentDto"
+                  "$ref": "#/components/schemas/ClientAppointmentDto"
                 }
               }
             }
@@ -8794,28 +8794,100 @@
   },
   "info": {
     "title": "Cross Hub API",
-    "description": "",
+    "description": "Contrato HTTP da plataforma Cross Hub.",
     "version": "1.0.0",
     "contact": {}
   },
-  "tags": [],
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Disponibilidade da API."
+    },
+    {
+      "name": "Autenticação",
+      "description": "Login e gestão de sessão dos três perfis de acesso."
+    },
+    {
+      "name": "Agendamentos",
+      "description": "Profissionais, serviços, pacotes, agenda e financeiro dos atendimentos."
+    },
+    {
+      "name": "Formulários",
+      "description": "Criação, publicação, atribuição e respostas de formulários."
+    },
+    {
+      "name": "Catálogo",
+      "description": "Categorias, produtos e reservas."
+    },
+    {
+      "name": "Pessoas",
+      "description": "Cadastro de clientes e códigos de acesso."
+    },
+    {
+      "name": "Grupos",
+      "description": "Formação e gestão de grupos de participantes."
+    },
+    {
+      "name": "Banners",
+      "description": "Carrossel da tela inicial do app."
+    },
+    {
+      "name": "Branding",
+      "description": "Identidade visual da organização."
+    },
+    {
+      "name": "Privacidade",
+      "description": "Retenção de dados sensíveis e permissões de acesso."
+    },
+    {
+      "name": "Dashboard",
+      "description": "Sessão e resumo do painel da organização."
+    },
+    {
+      "name": "Arquivos",
+      "description": "Entrega de imagens e demais binários."
+    },
+    {
+      "name": "Admin · Organizações",
+      "description": "Gestão de tenants pelo Super Admin."
+    },
+    {
+      "name": "Admin · Planos",
+      "description": "Catálogo de planos da plataforma."
+    },
+    {
+      "name": "Admin · Add-ons",
+      "description": "Habilitação de add-ons por organização."
+    },
+    {
+      "name": "Admin · Faturamento",
+      "description": "Consolidado financeiro da plataforma."
+    },
+    {
+      "name": "Público",
+      "description": "Rotas consumidas pelo app do usuário final."
+    }
+  ],
   "servers": [],
   "components": {
     "securitySchemes": {
       "platformAuth": {
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "type": "http"
+        "type": "http",
+        "description": "Token do Super Admin."
       },
       "tenantAuth": {
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "type": "http"
+        "type": "http",
+        "description": "Token do administrador da organização."
       },
       "endUserAuth": {
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "type": "http"
+        "type": "http",
+        "description": "Token do usuário final."
       }
     },
     "schemas": {
@@ -11017,6 +11089,90 @@
           "startsAt"
         ]
       },
+      "ClientAppointmentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "serviceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "professionalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startsAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "endsAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "approved",
+              "rejected",
+              "cancelled_by_client",
+              "cancelled_by_admin",
+              "completed",
+              "no_show"
+            ],
+            "type": "string"
+          },
+          "unitPriceCents": {
+            "type": "number",
+            "minimum": 0
+          },
+          "discountCents": {
+            "type": "number",
+            "minimum": 0
+          },
+          "surchargeCents": {
+            "type": "number",
+            "minimum": 0
+          },
+          "totalCents": {
+            "type": "number",
+            "minimum": 0
+          },
+          "packageContractId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Presente nas rotas de listagem; ausente na criação e no cancelamento."
+          },
+          "professionalName": {
+            "type": "string",
+            "description": "Presente nas rotas de listagem; ausente na criação e no cancelamento."
+          }
+        },
+        "required": [
+          "id",
+          "serviceId",
+          "professionalId",
+          "startsAt",
+          "endsAt",
+          "status",
+          "unitPriceCents",
+          "discountCents",
+          "surchargeCents",
+          "totalCents",
+          "packageContractId",
+          "createdAt"
+        ]
+      },
       "PersonAvailabilityDto": {
         "type": "object",
         "properties": {
@@ -11037,7 +11193,7 @@
             "description": "Presente apenas quando o dia está bloqueado.",
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AppointmentDto"
+              "$ref": "#/components/schemas/ClientAppointmentDto"
             }
           },
           "slots": {

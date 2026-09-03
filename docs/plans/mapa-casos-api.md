@@ -51,7 +51,7 @@ Domínio: `appointments/` · casos: 36 (P0: 20)
 | `API-AG-30` | P1 | Gate do add-on de indicadores | `tenantAuth` | 400 | `getAnalytics` | `putSaveTenantAddOns` | `O add-on de indicadores de agendamento não está ativo para este tenant.` | `AG-30-F.test.ts` | [#92](https://github.com/pricaimiTech/dev.CrossHub/issues/92) |
 | `API-AG-31` | P0 | Crédito de pacote — venda e consumo | `tenantAuth` | 200 | `getPackageLedger` | `postCreatePackage`<br>`postSellPackage`<br>`postCreateAppointment` | — | `AG-31-F.test.ts` | — |
 | `API-AG-31b` | P0 | Crédito de pacote — cancelamento e restauração excepcional | `tenantAuth` | 200 | `postExceptionalRestore` | `putSaveSettings`<br>`patchUpdateAppointmentStatus` | `Devolução excepcional:` | `AG-31b-F.test.ts` | — |
-| `API-AG-32` | P0 | Notas internas não vazam para o app | `endUserAuth` | 200 | `getPublicMyAppointments` | `postCreateAppointment`<br>`postCreateBlock` | — | `AG-32-F.test.ts` | [#87](https://github.com/pricaimiTech/dev.CrossHub/issues/87) |
+| `API-AG-32` | P0 | Notas internas não vazam para o app | `endUserAuth` | 200 | `getPublicMyAppointments` | `postCreateAppointment`<br>`postCreateBlock` | — | `AG-32-F.test.ts` | — |
 | `API-AG-XT` | P0 | Isolamento entre tenants | `tenantAuth` | 200 | `getListAppointments` | — | — | `AG-XT-F.test.ts` | — |
 
 ## Formulários (`F`)
@@ -257,7 +257,7 @@ Domínio: `privacy/` · casos: 4 (P0: 2)
 
 ## Bugs abertos pela automação
 
-18 caso(s) vermelho(s) de propósito, com issue aberta no [board de QA](https://github.com/users/pricaimiTech/projects/7/views/4):
+17 caso(s) vermelho(s) de propósito, com issue aberta no [board de QA](https://github.com/users/pricaimiTech/projects/7/views/4):
 
 - `API-AG-07` → [#88](https://github.com/pricaimiTech/dev.CrossHub/issues/88) — o teste segue falhando até a correção
 - `API-AG-12` → [#91](https://github.com/pricaimiTech/dev.CrossHub/issues/91) — o teste segue falhando até a correção
@@ -276,7 +276,6 @@ Domínio: `privacy/` · casos: 4 (P0: 2)
 - `API-F-18` → [#95](https://github.com/pricaimiTech/dev.CrossHub/issues/95) — o teste segue falhando até a correção
 - `API-F-23` → [#97](https://github.com/pricaimiTech/dev.CrossHub/issues/97) — o teste segue falhando até a correção
 - `API-F-15` → [#94](https://github.com/pricaimiTech/dev.CrossHub/issues/94) — o teste segue falhando até a correção
-- `API-AG-32` → [#87](https://github.com/pricaimiTech/dev.CrossHub/issues/87) — o teste segue falhando até a correção
 
 ## Casos sem teste
 

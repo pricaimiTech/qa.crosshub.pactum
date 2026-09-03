@@ -2,7 +2,7 @@
  * Contratos do domínio `public` gerados de `openapi.json`.
  * Regerar com `npm run generate:api`.
  */
-import type { IAppointment, IAvailabilitySlot, IFormQuestion, IQuestionOption } from "../shared/IShared.interface"
+import type { IAvailabilitySlot, IFormQuestion, IQuestionOption } from "../shared/IShared.interface"
 
 export interface ICancelClientAppointment {
 	/** Motivo informado pelo cliente. */
@@ -11,6 +11,25 @@ export interface ICancelClientAppointment {
 
 export interface ICancelReservation {
 	reason?: string
+}
+
+export interface IClientAppointment {
+	id: string
+	serviceId: string
+	professionalId: string
+	startsAt: string
+	endsAt: string
+	status: "pending" | "approved" | "rejected" | "cancelled_by_client" | "cancelled_by_admin" | "completed" | "no_show"
+	unitPriceCents: number
+	discountCents: number
+	surchargeCents: number
+	totalCents: number
+	packageContractId: string | null
+	createdAt: string
+	/** Presente nas rotas de listagem; ausente na criação e no cancelamento. */
+	serviceName?: string
+	/** Presente nas rotas de listagem; ausente na criação e no cancelamento. */
+	professionalName?: string
 }
 
 export interface ICompletedFormCard {
@@ -54,7 +73,7 @@ vazio e `message` explica o bloqueio. */
 	/** Presente apenas quando o dia está bloqueado. */
 	message?: string
 	/** Presente apenas quando o dia está bloqueado. */
-	existingAppointments?: Array<IAppointment>
+	existingAppointments?: Array<IClientAppointment>
 	slots: Array<IAvailabilitySlot>
 }
 

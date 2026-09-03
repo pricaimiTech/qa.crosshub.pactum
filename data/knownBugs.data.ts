@@ -131,9 +131,4 @@ export const knownBugs: Record<string, IKnownBug> = {
 		summary:
 			"Segunda resposta em formulário ONCE_PER_PERSON devolve 500 em vez de 409",
 	},
-	"API-AG-32": {
-		number: 87,
-		url: "https://github.com/pricaimiTech/dev.CrossHub/issues/87",
-		summary: "Notas internas do admin vazam para o app do cliente",
-	},
 }

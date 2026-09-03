@@ -2,32 +2,6 @@
  * Contratos do domínio `shared` gerados de `openapi.json`.
  * Regerar com `npm run generate:api`.
  */
-export interface IAppointment {
-	id: string
-	tenantId: string
-	personId: string
-	serviceId: string
-	professionalId: string
-	startsAt: string
-	endsAt: string
-	status: "pending" | "approved" | "rejected" | "cancelled_by_client" | "cancelled_by_admin" | "completed" | "no_show"
-	createdBy: "client" | "admin"
-	approvedByUserId: string | null
-	approvedAt: string | null
-	cancelledAt: string | null
-	cancellationReason: string | null
-	notes: string
-	unitPriceCents: number
-	discountCents: number
-	surchargeCents: number
-	totalCents: number
-	priceSource: "service" | "professional" | "manual"
-	financialStatus: "pending" | "partial" | "paid" | "covered_by_package" | "waived" | "refunded" | "void"
-	packageContractId: string | null
-	createdAt: string
-	updatedAt: string
-}
-
 export interface IAvailabilitySlot {
 	professionalId: string
 	startsAt: string

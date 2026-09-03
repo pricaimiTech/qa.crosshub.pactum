@@ -169,8 +169,6 @@ export const bookingAG32 = {
 	weekday: weekdayOfDate(dateForCase("AG-32")),
 	capacity: 5,
 	approvalMode: "automatic" as const,
-	/** A API devolve `notes` no payload do cliente — vazamento aberto. */
-	knownBug: knownBugs["API-AG-32"],
 	internalNote: "Nota interna: cliente devendo mensalidade.",
 	blockReason: "Motivo interno: sala interditada.",
 }
