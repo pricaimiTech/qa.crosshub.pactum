@@ -2,7 +2,7 @@
 
 Rastreabilidade entre os **167 casos de API** de `.doc/dashboard/estrategia-testes-dashboard.json` (97 deles P0), os endpoints de `openapi.json` e os services em `core/src/services/`.
 
-Estratégia gerada em 2026-09-02 · mapa gerado por `npm run generate:map` — não editar à mão.
+Estratégia gerada em 2026-09-03 · mapa gerado por `npm run generate:map` — não editar à mão.
 
 | Convenção | Valor |
 |---|---|
@@ -21,7 +21,7 @@ Domínio: `appointments/` · casos: 36 (P0: 20)
 | `API-AG-02` | P0 | Geração de janelas com intervalo | `tenantAuth` | 200 | `getAvailability` | `putSetProfessionals`<br>`putSaveProfessionalAvailability` | — | `AG-02-F.test.ts` | — |
 | `API-AG-03` | P0 | Janela que não cabe no turno | `tenantAuth` | 200 | `getAvailability` | `putSetProfessionals`<br>`putSaveProfessionalAvailability` | — | `AG-03-F.test.ts` | — |
 | `API-AG-04` | P1 | Janelas já passadas são omitidas | `tenantAuth` | 200 | `getAvailability` | — | — | `AG-04-F.test.ts` | — |
-| `API-AG-05` | P0 | Disponibilidade sobreposta é rejeitada | `tenantAuth` | 400 | `putSaveProfessionalAvailability` | — | — | `AG-05-F.test.ts` | [#85](https://github.com/pricaimiTech/dev.CrossHub/issues/85) |
+| `API-AG-05` | P0 | Disponibilidade sobreposta é rejeitada | `tenantAuth` | 400 | `putSaveProfessionalAvailability` | — | — | `AG-05-F.test.ts` | — |
 | `API-AG-06` | P1 | Validação de parâmetros do vínculo serviço–profissional | `tenantAuth` | 400 | `putSetProfessionals` | — | `Configuração de profissional inválida.` | `AG-06-F.test.ts` | — |
 | `API-AG-07` | P0 | Limite de um agendamento por dia — cliente | `endUserAuth` | 409 | `postPublicCreateAppointmentRace` | `postPublicCreateAppointmentRace` | `Para realizar outro agendamento neste dia, entre em contato com a administração.` | `AG-07-F.test.ts` | [#88](https://github.com/pricaimiTech/dev.CrossHub/issues/88) |
 | `API-AG-08` | P0 | Cancelado não bloqueia novo agendamento | `endUserAuth` | 201 | `postPublicCreateAppointmentRace` | `postPublicCreateAppointmentRace`<br>`postPublicCancelAppointment` | — | `AG-08-F.test.ts` | — |
@@ -257,9 +257,8 @@ Domínio: `privacy/` · casos: 4 (P0: 2)
 
 ## Bugs abertos pela automação
 
-19 caso(s) vermelho(s) de propósito, com issue aberta no [board de QA](https://github.com/users/pricaimiTech/projects/7/views/4):
+18 caso(s) vermelho(s) de propósito, com issue aberta no [board de QA](https://github.com/users/pricaimiTech/projects/7/views/4):
 
-- `API-AG-05` → [#85](https://github.com/pricaimiTech/dev.CrossHub/issues/85) — o teste segue falhando até a correção
 - `API-AG-07` → [#88](https://github.com/pricaimiTech/dev.CrossHub/issues/88) — o teste segue falhando até a correção
 - `API-AG-12` → [#91](https://github.com/pricaimiTech/dev.CrossHub/issues/91) — o teste segue falhando até a correção
 - `API-AG-13` → [#91](https://github.com/pricaimiTech/dev.CrossHub/issues/91) — o teste segue falhando até a correção

@@ -2,7 +2,7 @@
 
 Rastreabilidade entre os **46 casos `UNIT-*`** de `.doc/dashboard/estrategia-testes-dashboard.json` (25 deles P0) e os specs de `__tests__/unit/` do repo de desenvolvimento.
 
-Estratégia gerada em 2026-09-02 · mapa gerado por `npm run generate:unit-map` — não editar à mão.
+Estratégia gerada em 2026-09-03 · mapa gerado por `npm run generate:unit-map` — não editar à mão.
 
 | Convenção | Valor |
 |---|---|
@@ -14,9 +14,9 @@ Estratégia gerada em 2026-09-02 · mapa gerado por `npm run generate:unit-map` 
 
 | Caso | Prio | Alvo | Relação | Extrair | Teste |
 |---|---|---|---|---|---|
-| UNIT-AG-01 | P0 | slots() → extrair generateSlots(regra, duracao, intervalo) · appointments.service.ts:73 | API-AG-01, API-AG-02, API-AG-03 | — | `__tests__/unit/api/dashboard/agendamentos/grade-de-horarios.spec.ts:16` |
-| UNIT-AG-02 | P0 | passo do cursor na mesma função · cursor += (duracao + intervalo) | API-AG-02 | — | `__tests__/unit/api/dashboard/agendamentos/grade-de-horarios.spec.ts:40` |
-| UNIT-AG-03 | P0 | predicado de bloqueio block.startsAt < slotEnd && block.endsAt > cursor | API-AG-24, API-AG-25 | — | `__tests__/unit/api/dashboard/agendamentos/grade-de-horarios.spec.ts:62` |
+| UNIT-AG-01 | P0 | slots() → extrair generateSlots(regra, duracao, intervalo) · appointments.service.ts:73 | API-AG-01, API-AG-02, API-AG-03 | — | `__tests__/unit/api/dashboard/agendamentos/grade-de-horarios.spec.ts:17` |
+| UNIT-AG-02 | P0 | passo do cursor na mesma função · cursor += (duracao + intervalo) | API-AG-02 | — | `__tests__/unit/api/dashboard/agendamentos/grade-de-horarios.spec.ts:41` |
+| UNIT-AG-03 | P0 | predicado de bloqueio block.startsAt < slotEnd && block.endsAt > cursor | API-AG-24, API-AG-25 | — | `__tests__/unit/api/dashboard/agendamentos/grade-de-horarios.spec.ts:63` |
 | UNIT-AG-04 | P0 | predicado de ocupação — conjunto occupying · appointments.service.ts:10 | API-AG-17, API-AG-18 | — | `__tests__/unit/api/dashboard/agendamentos/estados-e-datas.spec.ts:24` |
 | UNIT-AG-05 | P0 | at(date, time) · appointments.service.ts:86 | API-AG-04 · _divergência a decidir_ | — | `__tests__/unit/api/dashboard/agendamentos/estados-e-datas.spec.ts:43` |
 | UNIT-AG-06 | P0 | localDate(value) · appointments.service.ts:87 | API-AG-07, API-AG-08 | — | `__tests__/unit/api/dashboard/agendamentos/estados-e-datas.spec.ts:57` |
