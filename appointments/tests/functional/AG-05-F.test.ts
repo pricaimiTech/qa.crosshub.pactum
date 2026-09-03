@@ -7,7 +7,6 @@ import {
 	professionalBuilder,
 } from "@core/constants"
 import type { IParamsDefault } from "@core/interfaces/global.interface"
-import { bugMessage, bugTag } from "@core/utils/bug.utils"
 import getProfessionalAvailability from "@core/services/appointments/getProfessionalAvailability.service"
 import postCreateProfessional from "@core/services/appointments/postCreateProfessional.service"
 import putSaveProfessionalAvailability from "@core/services/appointments/putSaveProfessionalAvailability.service"
@@ -51,7 +50,7 @@ describe(describeName.dashboard, () => {
 		)
 	})
 
-	it(`[AG-05-F]${bugTag(availabilityAG05.knownBug)} - Recusa duas regras que se cruzam no mesmo dia e não persiste nada`, async () => {
+	it("[AG-05-F] - Recusa duas regras que se cruzam no mesmo dia e não persiste nada", async () => {
 		await putSaveProfessionalAvailability(
 			professionalId,
 			availabilityBuilder
@@ -79,10 +78,7 @@ describe(describeName.dashboard, () => {
 		assertTs.lengthOf(
 			json,
 			availabilityAG05.expectedRuleCount,
-			bugMessage(
-				"A gravação não foi atômica: a grade do profissional mudou apesar da recusa.",
-				availabilityAG05.knownBug,
-			),
+			"A gravação não foi atômica: a grade do profissional mudou apesar da recusa.",
 		)
 	})
 })
