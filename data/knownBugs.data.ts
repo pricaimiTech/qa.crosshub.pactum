@@ -13,11 +13,6 @@ import type { IKnownBug } from "@core/interfaces/global.interface"
  * Board: https://github.com/users/pricaimiTech/projects/7/views/4
  */
 export const knownBugs: Record<string, IKnownBug> = {
-	"API-AG-07": {
-		number: 88,
-		url: "https://github.com/pricaimiTech/dev.CrossHub/issues/88",
-		summary: "Mensagem da cota diária de agendamentos diverge da especificação",
-	},
 	"API-AG-12": {
 		number: 91,
 		url: "https://github.com/pricaimiTech/dev.CrossHub/issues/91",
