@@ -23,7 +23,7 @@ Domínio: `appointments/` · casos: 36 (P0: 20)
 | `API-AG-04` | P1 | Janelas já passadas são omitidas | `tenantAuth` | 200 | `getAvailability` | — | — | `AG-04-F.test.ts` | — |
 | `API-AG-05` | P0 | Disponibilidade sobreposta é rejeitada | `tenantAuth` | 400 | `putSaveProfessionalAvailability` | — | — | `AG-05-F.test.ts` | — |
 | `API-AG-06` | P1 | Validação de parâmetros do vínculo serviço–profissional | `tenantAuth` | 400 | `putSetProfessionals` | — | `Configuração de profissional inválida.` | `AG-06-F.test.ts` | — |
-| `API-AG-07` | P0 | Limite de um agendamento por dia — cliente | `endUserAuth` | 409 | `postPublicCreateAppointmentRace` | `postPublicCreateAppointmentRace` | `Para realizar outro agendamento neste dia, entre em contato com a administração.` | `AG-07-F.test.ts` | [#88](https://github.com/pricaimiTech/dev.CrossHub/issues/88) |
+| `API-AG-07` | P0 | Limite de um agendamento por dia — cliente | `endUserAuth` | 409 | `postPublicCreateAppointmentRace` | `postPublicCreateAppointmentRace` | `Para realizar outro agendamento neste dia, entre em contato com a administração.` | `AG-07-F.test.ts` | — |
 | `API-AG-08` | P0 | Cancelado não bloqueia novo agendamento | `endUserAuth` | 201 | `postPublicCreateAppointmentRace` | `postPublicCreateAppointmentRace`<br>`postPublicCancelAppointment` | — | `AG-08-F.test.ts` | — |
 | `API-AG-09` | P0 | Admin não tem limite diário | `tenantAuth` | 201 | `postCreateAppointment` | `postCreateAppointment` | — | `AG-09-F.test.ts` | — |
 | `API-AG-10` | P0 | approvalMode: manual | `endUserAuth` | 201 | `postPublicCreateAppointmentRace` | `postCreateService`<br>`getPublicAvailability` | `pending` | `AG-10-F.test.ts` | — |
@@ -257,9 +257,8 @@ Domínio: `privacy/` · casos: 4 (P0: 2)
 
 ## Bugs abertos pela automação
 
-17 caso(s) vermelho(s) de propósito, com issue aberta no [board de QA](https://github.com/users/pricaimiTech/projects/7/views/4):
+16 caso(s) vermelho(s) de propósito, com issue aberta no [board de QA](https://github.com/users/pricaimiTech/projects/7/views/4):
 
-- `API-AG-07` → [#88](https://github.com/pricaimiTech/dev.CrossHub/issues/88) — o teste segue falhando até a correção
 - `API-AG-12` → [#91](https://github.com/pricaimiTech/dev.CrossHub/issues/91) — o teste segue falhando até a correção
 - `API-AG-13` → [#91](https://github.com/pricaimiTech/dev.CrossHub/issues/91) — o teste segue falhando até a correção
 - `API-AG-21` → [#90](https://github.com/pricaimiTech/dev.CrossHub/issues/90) — o teste segue falhando até a correção

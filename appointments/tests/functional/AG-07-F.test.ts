@@ -10,7 +10,6 @@ import {
 } from "@core/constants"
 import type { IParamsDefault } from "@core/interfaces/global.interface"
 import postPublicCreateAppointment from "@core/services/public/postPublicCreateAppointment.service"
-import { bugMessage, bugTag } from "@core/utils/bug.utils"
 import { endUsersFor } from "@core/utils/endUser.utils"
 import { bookingAG07 } from "@appointments-data/booking.data"
 
@@ -100,7 +99,7 @@ describe(describeName.public, () => {
 		)
 	})
 
-	it(`[AG-07-F]${bugTag(bookingAG07.knownBug)} - Cliente com agendamento ativo no dia não consegue outro, nem em serviço diferente`, async () => {
+	it("[AG-07-F] - Cliente com agendamento ativo no dia não consegue outro, nem em serviço diferente", async () => {
 		const { json } = await postPublicCreateAppointment(
 			{ serviceId: secondServiceId, startsAt: secondStartsAt },
 			bookingAG07.paramsDefault409(clientParams.token),
@@ -109,10 +108,7 @@ describe(describeName.public, () => {
 		assertTs.equal(
 			json.message,
 			bookingAG07.errorMessage,
-			bugMessage(
-				"A mensagem da cota diária não é a especificada.",
-				bookingAG07.knownBug,
-			),
+			"A mensagem da cota diária não é a especificada.",
 		)
 	})
 })
