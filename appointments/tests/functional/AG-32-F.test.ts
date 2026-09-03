@@ -12,7 +12,6 @@ import type { IParamsDefault } from "@core/interfaces/global.interface"
 import getPublicMyAppointments from "@core/services/public/getPublicMyAppointments.service"
 import postCreateAppointment from "@core/services/appointments/postCreateAppointment.service"
 import postCreateBlock from "@core/services/appointments/postCreateBlock.service"
-import { bugMessage, bugTag } from "@core/utils/bug.utils"
 import { endUsersFor } from "@core/utils/endUser.utils"
 import { bookingAG32 } from "@appointments-data/booking.data"
 
@@ -86,7 +85,7 @@ describe(describeName.public, () => {
 		)
 	})
 
-	it(`[AG-32-F]${bugTag(bookingAG32.knownBug)} - Notas internas e motivo de bloqueio não aparecem no app do cliente`, async () => {
+	it("[AG-32-F] - Notas internas e motivo de bloqueio não aparecem no app do cliente", async () => {
 		const { json } = await getPublicMyAppointments(
 			bookingAG32.paramsDefault200(clientParams.token),
 		)
@@ -96,19 +95,13 @@ describe(describeName.public, () => {
 		assertTs.notInclude(
 			payload,
 			bookingAG32.internalNote,
-			bugMessage(
-				"A nota interna do admin vazou para o app do cliente.",
-				bookingAG32.knownBug,
-			),
+			"A nota interna do admin vazou para o app do cliente.",
 		)
 
 		assertTs.notInclude(
 			payload,
 			bookingAG32.blockReason,
-			bugMessage(
-				"O motivo do bloqueio vazou para o app do cliente.",
-				bookingAG32.knownBug,
-			),
+			"O motivo do bloqueio vazou para o app do cliente.",
 		)
 	})
 })
