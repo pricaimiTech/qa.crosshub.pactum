@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-09-03",
+  "gerado": "2026-09-07",
   "origem": ".doc/dashboard/estrategia-testes-dashboard.html",
   "aviso": "Artefato de build. Editar o HTML e rodar build-strategy-json.mjs.",
   "totais": {
@@ -37,8 +37,8 @@
     }
   },
   "conferencia": {
-    "contrato": 137,
-    "comCaso": 88,
+    "contrato": 139,
+    "comCaso": 90,
     "semCaso": 49
   },
   "casos": [
@@ -1928,13 +1928,13 @@
         200
       ],
       "precondicao": "Formulário publicado sem envio para a pessoa",
-      "assercao": "Não aparece em available nem em completed . Acesso direto por GET /public/forms/{id} devolve 403",
+      "assercao": "Não aparece em available nem em completed . Acesso direto por GET /public/forms/{id} devolve 404 — não revela que o formulário existe (decisão registrada em #95)",
       "literais": [],
       "campos": [
         "available",
         "completed",
         "GET /public/forms/{id}",
-        "403"
+        "404"
       ],
       "doc": "F-17",
       "novo": false
@@ -2007,15 +2007,17 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Auditoria de leitura sensível",
-      "naoVerificavel": {
-        "motivo": "o contrato não expõe leitura de trilha de auditoria",
-        "issue": 96
-      },
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
           "metodo": "GET",
           "caminho": "/dashboard/forms/submissions/{submissionId}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/audit-logs"
         }
       ],
       "token": "tenantAuth",
@@ -2199,8 +2201,8 @@
       "prioridade": "P0",
       "cenario": "Principal legado sem a flag continua autorizado",
       "naoVerificavel": {
-        "motivo": "o API-LGPD-06 prova que o Principal não consegue revogar o próprio acesso — a precondição é inalcançável pela API",
-        "issue": 123
+        "motivo": "verificação manual, uma vez, na migração : o estado só existe em base legada e a API não o constrói de propósito ( API-LGPD-06 ). Decisão registrada em #98",
+        "issue": 98
       },
       "rotas": [
         {
@@ -2522,15 +2524,17 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Auditoria da mudança de acesso",
-      "naoVerificavel": {
-        "motivo": "o contrato não expõe leitura de trilha de auditoria",
-        "issue": 98
-      },
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
           "metodo": "PATCH",
           "caminho": "/dashboard/privacy/professionals/{userId}/sensitive-data-access"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/audit-logs"
         }
       ],
       "token": "tenantAuth",
@@ -3075,10 +3079,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Auditoria",
-      "naoVerificavel": {
-        "motivo": "o contrato não expõe leitura de trilha de auditoria",
-        "issue": 98
-      },
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3104,6 +3105,11 @@
           "papel": "arranjo",
           "metodo": "POST",
           "caminho": "/dashboard/people/{personId}/remove-access"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/audit-logs"
         }
       ],
       "token": "tenantAuth",
@@ -3194,10 +3200,7 @@
       "camada": "API",
       "prioridade": "P0",
       "cenario": "Janela de 24 h nas reservas",
-      "naoVerificavel": {
-        "motivo": "a API grava com now() e a suíte só fala HTTP",
-        "issue": 123
-      },
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3213,6 +3216,11 @@
           "papel": "arranjo",
           "metodo": "PATCH",
           "caminho": "/dashboard/reservations/{id}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/test-fixtures/backdate"
         }
       ],
       "token": "tenantAuth",
@@ -3235,10 +3243,7 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Janela de 7 dias nas pessoas",
-      "naoVerificavel": {
-        "motivo": "a API grava com now() e a suíte só fala HTTP",
-        "issue": 123
-      },
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
@@ -3249,6 +3254,11 @@
           "papel": "arranjo",
           "metodo": "POST",
           "caminho": "/dashboard/people"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/test-fixtures/backdate"
         }
       ],
       "token": "tenantAuth",
@@ -3270,7 +3280,7 @@
       "moduloNome": "Home",
       "camada": "API",
       "prioridade": "P0",
-      "cenario": "Fuso do tenant na virada do dia",
+      "cenario": "Janelas deslizantes das métricas",
       "naoVerificavel": null,
       "rotas": [
         {
@@ -3288,11 +3298,14 @@
       "status": [
         200
       ],
-      "precondicao": "Tenant fora de America/Sao_Paulo ; registro criado perto da meia-noite local",
-      "assercao": "A contagem usa o fuso do tenant, não UTC nem o relógio do servidor. periods.recentSince confere com a janela local",
+      "precondicao": "Qualquer tenant; a Home é gerada em generatedAt",
+      "assercao": "As janelas são deslizantes por decisão (#102): periods.recentSince fica exatamente 24 h antes de generatedAt e periods.peopleSince 7 dias antes. A virada do dia no fuso do tenant vale só para todayAppointments",
       "literais": [],
       "campos": [
-        "periods.recentSince"
+        "periods.recentSince",
+        "generatedAt",
+        "periods.peopleSince",
+        "todayAppointments"
       ],
       "doc": "H-03",
       "novo": false
@@ -3462,26 +3475,29 @@
       "camada": "API",
       "prioridade": "P1",
       "cenario": "Alerta de atraso",
-      "naoVerificavel": {
-        "motivo": "a API grava com now() e a suíte só fala HTTP",
-        "issue": 123
-      },
+      "naoVerificavel": null,
       "rotas": [
         {
           "papel": "acao",
           "metodo": "GET",
           "caminho": "/dashboard/home"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/test-fixtures/backdate"
         }
       ],
       "token": "tenantAuth",
       "status": [
         200
       ],
-      "precondicao": "Reservas in_progress paradas há 2 e há 4 dias",
-      "assercao": "alerts.overdue traz só a de 4 dias",
+      "precondicao": "Reservas pending sem ação há 1 e há 4 dias (massa envelhecida)",
+      "assercao": "alerts.overdue traz só a de 4 dias: a janela é de 48 h sobre createdAt de reservas pendentes — comportamento real, registrado aqui (#102)",
       "literais": [],
       "campos": [
-        "alerts.overdue"
+        "alerts.overdue",
+        "createdAt"
       ],
       "doc": "H-09",
       "novo": false
@@ -4549,7 +4565,7 @@
       "prioridade": "P2",
       "cenario": "E-mail só com configuração completa",
       "naoVerificavel": {
-        "motivo": "exige a API no ar sem EMAIL_FROM , que é estado do processo",
+        "motivo": "verificação manual : exige a API no ar sem EMAIL_FROM , que é estado do processo, não de uma requisição. Decisão registrada em #123",
         "issue": 123
       },
       "rotas": [
