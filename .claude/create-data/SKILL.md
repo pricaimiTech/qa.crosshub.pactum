@@ -7,7 +7,7 @@ description: Cria ou estende arquivos `[funcionalidade].data.ts` com `paramsDefa
 
 ## Antes de criar
 
-- [ ] Existe a pasta `[dominio]/data/`? Domínios: `addons`, `appointments`, `audit`, `auth`, `banners`, `billing`, `branding`, `catalog`, `dashboard`, `forms`, `groups`, `people`, `plans`, `privacy`, `tenants`.
+- [ ] Existe a pasta `[dominio]/data/`? Domínios: `addons`, `analytics`, `appointments`, `audit`, `auth`, `banners`, `billing`, `branding`, `catalog`, `dashboard`, `forms`, `groups`, `people`, `plans`, `privacy`, `tenants`.
 - [ ] Já existe DataBuilder para o mesmo domínio? Se sim, usar no teste e evitar duplicar massa estática.
 - [ ] Nome do arquivo: `[funcionalidade].data.ts` (ex.: `people.data.ts`).
 

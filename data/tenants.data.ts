@@ -79,6 +79,12 @@ export const tenantAllocation: Record<string, string> = {
 	"H-01": "Janela de 24 h nas reservas, com massa envelhecida",
 	"H-02": "Janela de 7 dias nas pessoas, com massa envelhecida",
 	"H-09": "Alerta de atraso, com massa envelhecida",
+	"ANL-01": "Sessão com e sem o add-on Analytics",
+	"ANL-02": "Pedido de interesse idempotente no Analytics",
+	"ANL-03": "Rotas do Analytics sem o add-on",
+	"ANL-03b": "Ocupação de 40% com 10 h de agenda e 4 h atendidas",
+	"ANL-03c": "Bloqueio reduz o denominador da ocupação",
+	"ANL-06": "Ativar o add-on atende o pedido de interesse",
 }
 
 /** Senha usada por todos os admins dos tenants por caso. */
