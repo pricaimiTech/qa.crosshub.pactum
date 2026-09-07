@@ -426,6 +426,140 @@
         ]
       }
     },
+    "/dashboard/audit-logs": {
+      "get": {
+        "description": "Somente leitura. Filtra por ação, ator, entidade e período; do mais recente para o mais antigo. Os metadados identificam o evento e nunca carregam conteúdo fornecido por uma pessoa.",
+        "operationId": "AuditController_list",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Página, começando em 1.",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Itens por página.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 25,
+              "type": "number"
+            }
+          },
+          {
+            "name": "action",
+            "required": false,
+            "in": "query",
+            "description": "Ação exata registrada.",
+            "schema": {
+              "maxLength": 120,
+              "example": "sensitive_submission.viewed",
+              "type": "string"
+            }
+          },
+          {
+            "name": "actorId",
+            "required": false,
+            "in": "query",
+            "description": "Usuário que executou a ação.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "entityType",
+            "required": false,
+            "in": "query",
+            "description": "Tipo da entidade alvo.",
+            "schema": {
+              "maxLength": 80,
+              "example": "form_submission",
+              "type": "string"
+            }
+          },
+          {
+            "name": "entityId",
+            "required": false,
+            "in": "query",
+            "description": "Identificador da entidade alvo.",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "description": "Início do período (inclusivo).",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "description": "Fim do período (inclusivo).",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditLogPageDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Payload inválido ou regra de negócio violada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, expirado ou inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "tenantAuth": []
+          }
+        ],
+        "summary": "Lista a trilha de auditoria do tenant",
+        "tags": [
+          "Auditoria"
+        ]
+      }
+    },
     "/admin/add-ons": {
       "get": {
         "operationId": "AdminAddOnsController_list",
@@ -2727,7 +2861,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppointmentDto"
+                  "$ref": "#/components/schemas/RescheduleResultDto"
                 }
               }
             }
@@ -2809,7 +2943,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "",
             "content": {
               "application/json": {
@@ -3355,7 +3489,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "",
             "content": {
               "application/json": {
@@ -4942,19 +5076,58 @@
     },
     "/dashboard/people": {
       "get": {
-        "description": "Inclui o status do código de acesso mais recente de cada pessoa.",
+        "description": "Inclui o status do código de acesso mais recente de cada pessoa. Com `page` ou `pageSize` a resposta vem paginada no envelope `PersonPageDto`; sem os dois, devolve o array inteiro (compatibilidade).",
         "operationId": "PeopleController_list",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Página, começando em 1. Quando presente, a resposta vem paginada.",
+            "schema": {
+              "minimum": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Itens por página. Quando presente, a resposta vem paginada.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PersonListItemDto"
-                  }
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/PersonPageDto"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PersonListItemDto"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Payload inválido ou regra de negócio violada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
                 }
               }
             }
@@ -5360,7 +5533,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "",
             "content": {
               "application/json": {
@@ -5699,7 +5872,7 @@
         "operationId": "PrivacyController_runRetention",
         "parameters": [],
         "responses": {
-          "200": {
+          "201": {
             "description": "",
             "content": {
               "application/json": {
@@ -7370,7 +7543,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "",
             "content": {
               "application/json": {
@@ -7437,7 +7610,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "",
             "content": {
               "application/json": {
@@ -7504,7 +7677,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "",
             "content": {
               "application/json": {
@@ -7561,7 +7734,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "",
             "content": {
               "application/json": {
@@ -7618,7 +7791,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "",
             "content": {
               "application/json": {
@@ -8662,7 +8835,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "",
             "content": {
               "application/json": {
@@ -8788,6 +8961,74 @@
         "summary": "Atualiza um grupo",
         "tags": [
           "Grupos"
+        ]
+      }
+    },
+    "/dashboard/test-fixtures/backdate": {
+      "post": {
+        "description": "Disponível apenas com `TEST_FIXTURES_ENABLED=true`. Em produção a rota não existe.",
+        "operationId": "TestFixturesController_backdate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BackdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackdateResultDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Payload inválido ou regra de negócio violada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, expirado ou inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado neste tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "tenantAuth": []
+          }
+        ],
+        "summary": "Envelhece um registro do tenant (somente ambiente de teste)",
+        "tags": [
+          "Fixtures de teste"
         ]
       }
     }
@@ -9200,6 +9441,85 @@
         },
         "required": [
           "updated"
+        ]
+      },
+      "AuditLogDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "actorUserId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "action": {
+            "type": "string",
+            "example": "sensitive_submission.viewed"
+          },
+          "entityType": {
+            "type": "string",
+            "example": "form_submission"
+          },
+          "entityId": {
+            "type": "string",
+            "nullable": true
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Identifica o evento; nunca carrega conteúdo fornecido por uma pessoa."
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "actorUserId",
+          "action",
+          "entityType",
+          "entityId",
+          "metadata",
+          "createdAt"
+        ]
+      },
+      "AuditLogPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditLogDto"
+            }
+          },
+          "total": {
+            "type": "number",
+            "minimum": 0
+          },
+          "page": {
+            "type": "number",
+            "minimum": 1
+          },
+          "pageSize": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "totalPages": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "pageSize",
+          "totalPages"
         ]
       },
       "AddOnDto": {
@@ -10741,6 +11061,18 @@
             "nullable": true,
             "format": "uuid"
           },
+          "rescheduledFromId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid",
+            "description": "Agendamento que este substituiu, quando nasceu de uma remarcação."
+          },
+          "rescheduledToId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid",
+            "description": "Agendamento que substituiu este, quando foi remarcado."
+          },
           "createdAt": {
             "format": "date-time",
             "type": "string"
@@ -10772,6 +11104,8 @@
           "priceSource",
           "financialStatus",
           "packageContractId",
+          "rescheduledFromId",
+          "rescheduledToId",
           "createdAt",
           "updatedAt"
         ]
@@ -11022,6 +11356,31 @@
         "required": [
           "startsAt",
           "reason"
+        ]
+      },
+      "RescheduleResultDto": {
+        "type": "object",
+        "properties": {
+          "previous": {
+            "description": "O original, cancelado pelo admin com `rescheduledToId` preenchido.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AppointmentDto"
+              }
+            ]
+          },
+          "replacement": {
+            "description": "O substituto, com `rescheduledFromId` apontando para o original.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AppointmentDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "previous",
+          "replacement"
         ]
       },
       "ExceptionalCreditRestoreDto": {
@@ -12674,6 +13033,15 @@
             "type": "string"
           },
           "type": {
+            "enum": [
+              "pending_appointments",
+              "today_appointments",
+              "appointment_blocks",
+              "new_reservations",
+              "ready_for_pickup",
+              "overdue_orders",
+              "new_form_submissions"
+            ],
             "type": "string",
             "example": "pending_appointments",
             "description": "Identificador estável do tipo de ação."
@@ -12957,6 +13325,42 @@
           "updatedAt",
           "accessCodeStatus",
           "hasActiveCode"
+        ]
+      },
+      "PersonPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonListItemDto"
+            }
+          },
+          "total": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Total de pessoas do tenant, ignorando a paginação."
+          },
+          "page": {
+            "type": "number",
+            "minimum": 1
+          },
+          "pageSize": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "totalPages": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "pageSize",
+          "totalPages"
         ]
       },
       "CreatePersonDto": {
@@ -15985,6 +16389,61 @@
         "required": [
           "name",
           "status"
+        ]
+      },
+      "BackdateDto": {
+        "type": "object",
+        "properties": {
+          "entity": {
+            "enum": [
+              "person",
+              "reservation",
+              "form_submission",
+              "appointment"
+            ],
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Novo instante de criação (ou de envio, para respostas de formulário)."
+          }
+        },
+        "required": [
+          "entity",
+          "id",
+          "at"
+        ]
+      },
+      "BackdateResultDto": {
+        "type": "object",
+        "properties": {
+          "entity": {
+            "enum": [
+              "person",
+              "reservation",
+              "form_submission",
+              "appointment"
+            ],
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "entity",
+          "id",
+          "at"
         ]
       }
     }

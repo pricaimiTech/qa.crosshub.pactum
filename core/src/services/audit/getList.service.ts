@@ -2,24 +2,24 @@ import { specPactumJs } from "../../constants"
 import { apiName } from "../../data/api.data"
 import { withQuery } from "../../utils/query.utils"
 import type { IParamsDefault } from "../../interface/global.interface"
-import type { IGetListPeopleQuery } from "../../interface/people/IPeople.interface"
+import type { IGetListQuery } from "../../interface/audit/IAudit.interface"
 
 /**
- * Lista as pessoas cadastradas
+ * Lista a trilha de auditoria do tenant
  * @param query - Filtros enviados na query string
  * @param paramsDefault - Parâmetros padrão da requisição
- * @returns Resposta de `GET /dashboard/people`
+ * @returns Resposta de `GET /dashboard/audit-logs`
  */
-export default async function getListPeople(
-	query: IGetListPeopleQuery,
+export default async function getList(
+	query: IGetListQuery,
 	paramsDefault: IParamsDefault,
 ) {
 	return await (
-		withQuery(specPactumJs().get(`${process.env.BASE_URL}${apiName.dashboardPeople}`), query)
+		withQuery(specPactumJs().get(`${process.env.BASE_URL}${apiName.dashboard}/audit-logs`), query)
 			.withBearerToken(`${paramsDefault.token}`)
 			.expectStatus(
 				paramsDefault.statusCode,
-				`O status code da requisição GET /dashboard/people não é o esperado.`,
+				`O status code da requisição GET /dashboard/audit-logs não é o esperado.`,
 			)
 			.retry({
 				count: paramsDefault.retry.count,

@@ -82,6 +82,10 @@ export interface IAppointment {
 	priceSource: "service" | "professional" | "manual"
 	financialStatus: "pending" | "partial" | "paid" | "covered_by_package" | "waived" | "refunded" | "void"
 	packageContractId: string | null
+	/** Agendamento que este substituiu, quando nasceu de uma remarcação. */
+	rescheduledFromId: string | null
+	/** Agendamento que substituiu este, quando foi remarcado. */
+	rescheduledToId: string | null
 	createdAt: string
 	updatedAt: string
 }
@@ -312,6 +316,13 @@ export interface IRescheduleAppointment {
 	professionalId?: string
 	/** Motivo da remarcação, registrado na auditoria. */
 	reason: string
+}
+
+export interface IRescheduleResult {
+	/** O original, cancelado pelo admin com `rescheduledToId` preenchido. */
+	previous: IAppointment
+	/** O substituto, com `rescheduledFromId` apontando para o original. */
+	replacement: IAppointment
 }
 
 export interface ISaveAppointmentSettings {

@@ -183,7 +183,7 @@ export default class AppointmentsBusiness {
 		paramsDefault: IParamsDefault,
 	): Promise<IAvailabilitySlotResponse> {
 		const response = await getAvailability({ serviceId, date }, paramsDefault)
-		const slots: Array<IAvailabilitySlotResponse> = response.json
+		const slots: Array<IAvailabilitySlotResponse> = response.json.slots
 
 		const available = slots.filter((slot) => slot.occupied < slot.capacity)
 
@@ -209,8 +209,12 @@ export default class AppointmentsBusiness {
 		serviceId: string,
 		date: string,
 		paramsDefault: IParamsDefault,
+		professionalId?: string,
 	): Promise<IAvailabilitySlotResponse> {
-		const response = await getPublicAvailability({ serviceId, date }, paramsDefault)
+		const response = await getPublicAvailability(
+			professionalId ? { serviceId, date, professionalId } : { serviceId, date },
+			paramsDefault,
+		)
 		const slots: Array<IAvailabilitySlotResponse> = response.json.slots
 
 		const available = slots.filter((slot) => slot.occupied < slot.capacity)
@@ -292,7 +296,7 @@ export default class AppointmentsBusiness {
 	): Promise<Array<string>> {
 		const authBusiness = new AuthBusiness()
 		const loginParams = preSetup.preSetupParamsDefault(
-			201,
+			200,
 			paramsDefault.retry.count,
 			paramsDefault.retry.delay,
 		)
@@ -367,7 +371,7 @@ export default class AppointmentsBusiness {
 		paramsDefault: IParamsDefault,
 	): Promise<boolean> {
 		const response = await getAvailability({ serviceId, date }, paramsDefault)
-		const slots: Array<IAvailabilitySlotResponse> = response.json
+		const slots: Array<IAvailabilitySlotResponse> = response.json.slots
 
 		const found = slots.filter((slot) => slot.startsAt === startsAt)
 
@@ -387,7 +391,7 @@ export default class AppointmentsBusiness {
 		paramsDefault: IParamsDefault,
 	): Promise<Array<IAvailabilitySlotResponse>> {
 		const response = await getAvailability({ serviceId, date }, paramsDefault)
-		const slots: Array<IAvailabilitySlotResponse> = response.json
+		const slots: Array<IAvailabilitySlotResponse> = response.json.slots
 
 		assertTs.isAbove(
 			slots.length,
@@ -521,7 +525,7 @@ export default class AppointmentsBusiness {
 	): Promise<Array<Array<number>>> {
 		const authBusiness = new AuthBusiness()
 		const loginParams = preSetup.preSetupParamsDefault(
-			201,
+			200,
 			paramsDefault.retry.count,
 			paramsDefault.retry.delay,
 		)
@@ -817,7 +821,7 @@ export default class AppointmentsBusiness {
 			client.email,
 			client.password,
 			preSetup.preSetupParamsDefault(
-				201,
+				200,
 				paramsDefault.retry.count,
 				paramsDefault.retry.delay,
 			),
