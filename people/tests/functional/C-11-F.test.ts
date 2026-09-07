@@ -50,10 +50,11 @@ describe(describeName.public, () => {
 				consent: true,
 				name: peopleC11.socialName,
 			},
-			peopleC11.paramsDefault201(),
+			peopleC11.paramsDefault200(),
 		)
 
 		const pessoas = await getListPeople(
+			{},
 			peopleC11.paramsDefault200(adminParams.token),
 		)
 

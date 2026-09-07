@@ -1,7 +1,6 @@
 import { assertTs, authBusiness, describeName } from "@core/constants"
 import type { IParamsDefault } from "@core/interfaces/global.interface"
 import getListPeople from "@core/services/people/getListPeople.service"
-import { bugMessage, bugTag } from "@core/utils/bug.utils"
 import { peopleC16 } from "@people-data/people.data"
 
 describe(describeName.dashboard, () => {
@@ -16,31 +15,51 @@ describe(describeName.dashboard, () => {
 		)
 	})
 
-	it(`[C-16-F]${bugTag(peopleC16.knownBug)} - A listagem de clientes devolve tudo em uma resposta só, sem paginação`, async () => {
-		const inicio = Date.now()
-
-		const { json } = await getListPeople(
+	it(`[C-16-F] - A listagem de clientes pagina quando pedida e mantém o array quando não`, async () => {
+		const pagina = await getListPeople(
+			{ page: 1, pageSize: peopleC16.pageSize },
 			peopleC16.paramsDefault200(adminParams.token),
 		)
 
-		const duracaoMs = Date.now() - inicio
-		const tamanhoKb = Math.round(JSON.stringify(json).length / 1024)
-
 		assertTs.isArray(
-			json,
-			"A listagem devolveu um envelope paginado — o contrato declara um array simples.",
+			pagina.json.items,
+			"Com page/pageSize a resposta não veio no envelope paginado.",
 		)
 
-		// O caso é uma medição, não um limite: o número alimenta a decisão de
-		// paginar. A asserção só falha quando o volume já passou do ponto em que
-		// devolver tudo de uma vez deixa de ser aceitável.
-		assertTs.isBelow(
-			json.length,
-			peopleC16.warningThreshold,
-			bugMessage(
-				`A base já tem ${json.length} clientes e a rota devolve todos em ${tamanhoKb} KB (${duracaoMs} ms). Sem paginação, a resposta cresce sem limite.`,
-				peopleC16.knownBug,
-			),
+		assertTs.isAtMost(
+			pagina.json.items.length,
+			peopleC16.pageSize,
+			"A página trouxe mais itens que o pageSize pedido.",
+		)
+
+		assertTs.equal(pagina.json.page, 1, "O envelope não ecoa a página pedida.")
+		assertTs.equal(pagina.json.pageSize, peopleC16.pageSize, "O envelope não ecoa o pageSize pedido.")
+		assertTs.isAtLeast(pagina.json.total, pagina.json.items.length, "`total` é menor que a própria página.")
+		assertTs.equal(
+			pagina.json.totalPages,
+			Math.ceil(pagina.json.total / peopleC16.pageSize),
+			"`totalPages` não confere com total / pageSize.",
+		)
+
+		// Período de compatibilidade: sem parâmetros, o array de sempre — até o
+		// dashboard migrar para o envelope.
+		const tudo = await getListPeople({}, peopleC16.paramsDefault200(adminParams.token))
+
+		assertTs.isArray(
+			tudo.json,
+			"Sem page/pageSize a resposta deixou de ser o array — o dashboard ainda depende dele.",
+		)
+		assertTs.equal(
+			tudo.json.length,
+			pagina.json.total,
+			"O total paginado não bate com o tamanho do array completo.",
+		)
+	})
+
+	it(`[C-16-F] - pageSize acima do máximo é recusado`, async () => {
+		await getListPeople(
+			{ pageSize: peopleC16.pageSize * 100 },
+			peopleC16.paramsDefault400(adminParams.token),
 		)
 	})
 })

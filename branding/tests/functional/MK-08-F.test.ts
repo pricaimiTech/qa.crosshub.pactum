@@ -9,7 +9,6 @@ import getBranding from "@core/services/branding/getBranding.service"
 import patchBannerSettings from "@core/services/banners/patchBannerSettings.service"
 import putSaveBranding from "@core/services/branding/putSaveBranding.service"
 import { tenantFor } from "@core/utils/tenant.utils"
-import { bugMessage, bugTag } from "@core/utils/bug.utils"
 import { brandingMK08 } from "@branding-data/branding.data"
 
 describe(describeName.dashboard, () => {
@@ -31,7 +30,7 @@ describe(describeName.dashboard, () => {
 		)
 	})
 
-	it(`[MK-08-F]${bugTag(brandingMK08.knownBug)} - Salvar a marca não zera as configurações do carrossel`, async () => {
+	it(`[MK-08-F] - Salvar a marca não zera as configurações do carrossel`, async () => {
 		await putSaveBranding(
 			brandingBuilder.withDisplayName(brandingMK08.casePrefix).build(),
 			brandingMK08.paramsDefault200(adminParams.token),
@@ -44,10 +43,7 @@ describe(describeName.dashboard, () => {
 		assertTs.equal(
 			json.carouselInterval,
 			brandingMK08.carousel.interval,
-			bugMessage(
-				"O intervalo do carrossel foi perdido ao salvar a marca.",
-				brandingMK08.knownBug,
-			),
+			"O intervalo do carrossel foi perdido ao salvar a marca.",
 		)
 
 		assertTs.equal(

@@ -9,7 +9,6 @@ import {
 } from "@core/constants"
 import type { IParamsDefault } from "@core/interfaces/global.interface"
 import postCreateCategory from "@core/services/catalog/postCreateCategory.service"
-import { bugMessage, bugTag } from "@core/utils/bug.utils"
 import { secondTenantFile } from "@shared-data/tenants.data"
 import { catalogCAT01 } from "@catalog-data/catalog.data"
 
@@ -42,7 +41,7 @@ describe(describeName.dashboard, () => {
 		)
 	})
 
-	it(`[CAT-01-F]${bugTag(catalogCAT01.knownBug)} - Nome de categoria é único no tenant, mas livre em outro tenant`, async () => {
+	it(`[CAT-01-F] - Nome de categoria é único no tenant, mas livre em outro tenant`, async () => {
 		const { json } = await postCreateCategory(
 			categoryBuilder.withExactName(catalogCAT01.sharedName).build(),
 			catalogCAT01.paramsDefault409(adminParams.token),
@@ -51,10 +50,7 @@ describe(describeName.dashboard, () => {
 		assertTs.equal(
 			json.statusCode,
 			409,
-			bugMessage(
-				"A colisão de nome de categoria não foi recusada com 409.",
-				catalogCAT01.knownBug,
-			),
+			"A colisão de nome de categoria não foi recusada com 409.",
 		)
 
 		const outroTenant = await postCreateCategory(

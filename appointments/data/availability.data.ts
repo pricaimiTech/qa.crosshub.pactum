@@ -12,7 +12,7 @@ const referenceDate = dateInDays(7)
  * declara — divergência aberta em
  * https://github.com/pricaimiTech/dev.CrossHub/issues/86.
  */
-const loginParams = preSetup.preSetupParamsDefault(201, 5, 500)
+const loginParams = preSetup.preSetupParamsDefault(200, 5, 500)
 
 /** `API-AG-01` — geração de janelas sem intervalo. */
 export const availabilityAG01 = {
