@@ -81,6 +81,15 @@ export interface IPersonListItem {
 	hasActiveCode: boolean
 }
 
+export interface IPersonPage {
+	items: Array<IPersonListItem>
+	/** Total de pessoas do tenant, ignorando a paginação. */
+	total: number
+	page: number
+	pageSize: number
+	totalPages: number
+}
+
 export interface IRemovedAccess {
 	id: string
 	name: string
@@ -99,4 +108,12 @@ export interface IUpdatePerson {
 	/** `pending` não é atribuível: é o estado inicial de quem ainda não ativou o acesso. */
 	status?: "active" | "revoked"
 	email?: string | null
+}
+
+/** Query string de `GET /dashboard/people`. */
+export interface IGetListPeopleQuery {
+	/** Página, começando em 1. Quando presente, a resposta vem paginada. */
+	page?: number
+	/** Itens por página. Quando presente, a resposta vem paginada. */
+	pageSize?: number
 }

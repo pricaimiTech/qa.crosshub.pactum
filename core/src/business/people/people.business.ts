@@ -40,13 +40,9 @@ export default class PeopleBusiness {
 			paramsDefault.retry.delay,
 			paramsDefault.token,
 		)
-		/**
-		 * A ativação responde **201**, não 200 como o `openapi.json` declara —
-		 * mesma divergência dos logins (issue #86). Esperar 200 fazia o retry
-		 * repetir a chamada e estourar o rate limit da rota (429).
-		 */
-		const activated201 = preSetup.preSetupParamsDefault(
-			201,
+		/** A ativação responde 200, como o contrato declara (#86 corrigido). */
+		const activated200 = preSetup.preSetupParamsDefault(
+			200,
 			paramsDefault.retry.count,
 			paramsDefault.retry.delay,
 		)
@@ -61,7 +57,7 @@ export default class PeopleBusiness {
 
 		await postActivate(
 			{ slug, code, password, consent: true, name: person.name },
-			activated201,
+			activated200,
 		)
 
 		return { personId, email: `${person.email}`, password }

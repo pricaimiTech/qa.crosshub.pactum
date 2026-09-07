@@ -26,7 +26,7 @@ export interface IHomeAction {
 	id: string
 	priority: "high" | "medium" | "low"
 	/** Identificador estável do tipo de ação. */
-	type: string
+	type: "pending_appointments" | "today_appointments" | "appointment_blocks" | "new_reservations" | "ready_for_pickup" | "overdue_orders" | "new_form_submissions"
 	count: number
 	title: string
 	description: string
