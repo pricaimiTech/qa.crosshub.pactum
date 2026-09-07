@@ -46,6 +46,7 @@ const TAG_TO_DOMAIN = {
 	Branding: "branding",
 	Catálogo: "catalog",
 	Dashboard: "dashboard",
+	"Dashboard · Analytics": "analytics",
 	"Fixtures de teste": "fixtures",
 	Formulários: "forms",
 	Grupos: "groups",
@@ -71,6 +72,7 @@ const NAME_OVERRIDES = {
 	"get /admin/add-ons": "getListAddOns",
 	"get /admin/add-ons/tenants/{tenantId}": "getTenantAddOns",
 	"put /admin/add-ons/tenants/{tenantId}": "putSaveTenantAddOns",
+	"get /admin/add-ons/tenants/{tenantId}/interests": "getTenantAddOnInterests",
 	"get /admin/billing/summary": "getBillingSummary",
 
 	"get /admin/plans": "getListPlans",
@@ -82,6 +84,13 @@ const NAME_OVERRIDES = {
 	"get /admin/tenants": "getListTenants",
 	"post /admin/tenants": "postCreateTenant",
 	"patch /admin/tenants/{id}": "patchUpdateTenant",
+
+	"get /dashboard/analytics/appointments": "getAppointmentsAnalytics",
+	"get /dashboard/analytics/appointments/export": "getAppointmentsAnalyticsExport",
+	"get /dashboard/analytics/customers": "getCustomersAnalytics",
+	"get /dashboard/analytics/customers/export": "getCustomersAnalyticsExport",
+	"post /dashboard/analytics/interest": "postRequestAnalyticsInterest",
+	"get /dashboard/analytics/interest": "getPendingAnalyticsInterest",
 
 	"get /dashboard/appointments": "getListAppointments",
 	"post /dashboard/appointments": "postCreateAppointment",

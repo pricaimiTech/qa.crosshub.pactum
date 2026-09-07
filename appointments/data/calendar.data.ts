@@ -79,9 +79,3 @@ export const calendarAG28 = {
 }
 
 /** `API-AG-30` — gate do add-on de indicadores. */
-export const calendarAG30 = {
-	...calendarDefaults,
-	casePrefix: "[AG-30]",
-	errorMessage:
-		"O add-on de indicadores de agendamento não está ativo para este tenant.",
-}

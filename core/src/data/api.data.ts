@@ -15,6 +15,7 @@ export const apiName = {
 
 	// Área logada do tenant (dashboard)
 	dashboard: "/dashboard",
+	dashboardAnalytics: "/dashboard/analytics",
 	dashboardAppointments: "/dashboard/appointments",
 	dashboardBanners: "/dashboard/banners",
 	dashboardBranding: "/dashboard/branding",

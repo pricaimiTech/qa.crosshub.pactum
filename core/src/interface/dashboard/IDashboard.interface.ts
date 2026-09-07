@@ -20,6 +20,10 @@ export interface IDashboardSession {
 	role: "tenant_admin" | "end_user"
 	/** Nulo enquanto o administrador não preenche o cadastro. */
 	name: string | null
+	/** Módulos habilitados para a organização. Governam quais abas o Analytics mostra. */
+	enabledModules: Array<"branding" | "banners" | "shop" | "people" | "access_codes" | "quiz">
+	/** Add-ons válidos agora (ativos sem vencimento ou em teste no prazo). A checagem de rota continua na API. */
+	addons: Array<ISessionAddOn>
 }
 
 export interface IHomeAction {
@@ -98,4 +102,11 @@ export interface IHomePeriods {
 	recentSince: string
 	/** Início da janela de 7 dias usada na métrica de pessoas. */
 	peopleSince: string
+}
+
+export interface ISessionAddOn {
+	code: string
+	status: "active" | "trial" | "inactive"
+	trialEndsAt: string | null
+	endsAt: string | null
 }
