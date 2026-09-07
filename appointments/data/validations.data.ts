@@ -2,8 +2,8 @@ import { preSetup } from "@core/constants"
 import { hourWindowFromNow, weekdayOfDate } from "@core/utils/date.utils"
 import { dateForCase } from "@shared-data/testDates.data"
 
-/** Login responde 201, não 200 — divergência aberta na issue #86. */
-const loginParams = preSetup.preSetupParamsDefault(201, 5, 500)
+/** Login responde 200, como o contrato declara (#86 corrigido). */
+const loginParams = preSetup.preSetupParamsDefault(200, 5, 500)
 
 const validationDefaults = {
 	startTime: "08:00",

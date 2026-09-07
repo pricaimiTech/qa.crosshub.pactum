@@ -1,9 +1,8 @@
 import { faker } from "@faker-js/faker"
 import { preSetup } from "@core/constants"
-import { knownBugs } from "@shared-data/knownBugs.data"
 
-/** Login responde 201, não 200 — divergência aberta na issue #86. */
-const loginParams = preSetup.preSetupParamsDefault(201, 5, 500)
+/** Login responde 200, como o contrato declara (#86 corrigido). */
+const loginParams = preSetup.preSetupParamsDefault(200, 5, 500)
 
 const catalogDefaults = {
 	note: "Observação da reserva",
@@ -27,8 +26,6 @@ export const catalogCAT01 = {
 	casePrefix: "[CAT-01]",
 	/** O mesmo nome literal, enviado duas vezes. */
 	sharedName: `[CAT-01] Categoria ${faker.string.alphanumeric(8)}`,
-	/** A colisão sobe como 500 — vermelho até a correção. */
-	knownBug: knownBugs["API-CAT-01"],
 }
 
 /** `API-CAT-02` — limites de nome, descrição e ícone da categoria. */
@@ -113,6 +110,9 @@ export const catalogCAT10 = {
 	...catalogDefaults,
 	casePrefix: "[CAT-10]",
 	caseId: "CAT-10",
+	/** Mesmo padrão de profissionais com agendamento (API-CAT-10). */
+	errorMessage:
+		"Este produto possui reservas e não pode ser excluído. Inative-o para preservar o histórico.",
 }
 
 /** `API-CAT-11` — máquina de estados da reserva. */

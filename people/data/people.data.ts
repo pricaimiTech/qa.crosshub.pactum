@@ -1,8 +1,7 @@
 import { preSetup } from "@core/constants"
-import { knownBugs } from "@shared-data/knownBugs.data"
 
-/** Login responde 201, não 200 — divergência aberta na issue #86. */
-const loginParams = preSetup.preSetupParamsDefault(201, 5, 500)
+/** Login responde 200, como o contrato declara (#86 corrigido). */
+const loginParams = preSetup.preSetupParamsDefault(200, 5, 500)
 
 const peopleDefaults = {
 	/** Senha numérica usada nas ativações deste módulo. */
@@ -39,14 +38,14 @@ export const peopleC01b = {
 }
 
 /** `API-C-02` — normalização de e-mail e telefone. */
+/** E-mail único por execução: e-mail repetido é 409 no tenant, e o caso mede a normalização, não a duplicidade. */
+const c02Stamp = Date.now().toString(36)
 export const peopleC02 = {
 	...peopleDefaults,
 	casePrefix: "[C-02]",
-	rawEmail: " Maria@Exemplo.COM ",
-	expectedEmail: "maria@exemplo.com",
+	rawEmail: ` Maria.${c02Stamp}@Exemplo.COM `,
+	expectedEmail: `maria.${c02Stamp}@exemplo.com`,
 	rawPhone: "",
-	/** A API grava string vazia — vermelho até a correção. */
-	knownBug: knownBugs["API-C-02"],
 }
 
 /** `API-C-03` — limites dos campos opcionais. */
@@ -69,8 +68,6 @@ export const peopleC03 = {
 export const peopleC04 = {
 	...peopleDefaults,
 	casePrefix: "[C-04]",
-	/** A API responde 400; contrato e estratégia dizem 409. */
-	knownBug: knownBugs["API-C-04"],
 }
 
 /** `API-C-05` — só um código ativo por pessoa. */
@@ -172,17 +169,23 @@ export const peopleC14 = {
 export const peopleC16 = {
 	...peopleDefaults,
 	casePrefix: "[C-16]",
-	/** Acima disso, a resposta única passa a ser um problema de verdade. */
-	warningThreshold: 500,
-	/** O teste é o alarme: fica vermelho enquanto a rota não paginar. */
-	knownBug: knownBugs["API-C-16"],
+	/** Dentro do máximo de 100 do contrato. */
+	pageSize: 2,
 }
 
 /**
- * `API-C-15` — **bloqueado**.
- *
- * Exige conferir seis eventos em `audit_logs` (`person.created`,
- * `person.updated`, `access_code.created`, `access_code.regenerated`,
- * `access_code.revoked`, `person.access_removed`), e a API não expõe rota de
- * leitura da trilha. Ver https://github.com/pricaimiTech/dev.CrossHub/issues/96.
+ * `API-C-15` — cada ação sobre a pessoa deixa um evento em `audit_logs`, agora
+ * legível por `GET /dashboard/audit-logs` (#96/#98).
  */
+export const peopleC15 = {
+	...peopleDefaults,
+	casePrefix: "[C-15]",
+	expectedActions: [
+		"person.created",
+		"person.updated",
+		"access_code.created",
+		"access_code.regenerated",
+		"access_code.revoked",
+		"person.access_removed",
+	],
+}

@@ -46,7 +46,7 @@ describe(describeName.dashboard, () => {
 				password: peopleC12.pin,
 				consent: true,
 			},
-			peopleC12.paramsDefault201(),
+			peopleC12.paramsDefault200(),
 		)
 	})
 
@@ -59,6 +59,7 @@ describe(describeName.dashboard, () => {
 		// A resposta da rota é enxuta (`RemovedAccessDto`, só id e nome), então a
 		// revogação é conferida no cadastro.
 		const pessoas = await getListPeople(
+			{},
 			peopleC12.paramsDefault200(adminParams.token),
 		)
 

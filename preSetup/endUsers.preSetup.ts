@@ -35,7 +35,7 @@ describe("preSetup", () => {
 			`${process.env.TENANT_SLUG}`,
 			`${process.env.TENANT_EMAIL}`,
 			`${process.env.TENANT_PASSWORD}`,
-			preSetup.preSetupParamsDefault(201, 5, 500),
+			preSetup.preSetupParamsDefault(200, 5, 500),
 		)
 
 		const poolPath = resolve(process.cwd(), endUsersFile)

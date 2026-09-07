@@ -11,7 +11,6 @@ import {
 } from "@core/constants"
 import type { IParamsDefault } from "@core/interfaces/global.interface"
 import postRescheduleAppointment from "@core/services/appointments/postRescheduleAppointment.service"
-import { bugMessage, bugTag } from "@core/utils/bug.utils"
 import { bookingAG21 } from "@appointments-data/booking.data"
 
 describe(describeName.dashboard, () => {
@@ -67,11 +66,11 @@ describe(describeName.dashboard, () => {
 		newStartsAt = slots[1].startsAt
 	})
 
-	it(`[AG-21-F]${bugTag(bookingAG21.knownBug)} - Reagendamento cancela o original, cria o substituto e encadeia os dois`, async () => {
+	it(`[AG-21-F] - Reagendamento cancela o original, cria o substituto e encadeia os dois`, async () => {
 		const { json } = await postRescheduleAppointment(
 			appointmentId,
 			{ startsAt: newStartsAt, reason: bookingAG21.rescheduleReason },
-			bookingAG21.paramsDefault201(adminParams.token),
+			bookingAG21.paramsDefault200(adminParams.token),
 		)
 
 		assertTs.equal(
@@ -88,18 +87,12 @@ describe(describeName.dashboard, () => {
 
 		assertTs.exists(
 			json.replacement.rescheduledFromId,
-			bugMessage(
-				"O substituto não aponta para o agendamento original.",
-				bookingAG21.knownBug,
-			),
+			"O substituto não aponta para o agendamento original.",
 		)
 
 		assertTs.exists(
 			json.previous.rescheduledToId,
-			bugMessage(
-				"O original não aponta para o agendamento substituto.",
-				bookingAG21.knownBug,
-			),
+			"O original não aponta para o agendamento substituto.",
 		)
 
 		// A vaga antiga volta a ser oferecida e a nova sai da oferta.

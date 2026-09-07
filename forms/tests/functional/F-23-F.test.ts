@@ -9,7 +9,6 @@ import {
 import type { IParamsDefault } from "@core/interfaces/global.interface"
 import getFormInsights from "@core/services/forms/getFormInsights.service"
 import postAssignForm from "@core/services/forms/postAssignForm.service"
-import { bugMessage, bugTag } from "@core/utils/bug.utils"
 import { endUsersFor } from "@core/utils/endUser.utils"
 import { formsF23 } from "@forms-data/forms.data"
 
@@ -53,7 +52,7 @@ describe(describeName.dashboard, () => {
 		)
 	})
 
-	it(`[F-23-F]${bugTag(formsF23.knownBug)} - Média da escala confere com o cálculo manual e a distribuição soma 100%`, async () => {
+	it(`[F-23-F] - Média da escala confere com o cálculo manual e a distribuição soma 100%`, async () => {
 		const { json } = await getFormInsights(
 			formId,
 			formsF23.paramsDefault200(adminParams.token),
@@ -73,10 +72,7 @@ describe(describeName.dashboard, () => {
 		assertTs.equal(
 			Math.round(somaPercentual),
 			formsF23.expectedDistributionPercent,
-			bugMessage(
-				"A distribuição da escala não soma 100%.",
-				formsF23.knownBug,
-			),
+			"A distribuição da escala não soma 100%.",
 		)
 	})
 })

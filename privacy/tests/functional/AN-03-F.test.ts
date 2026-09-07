@@ -55,6 +55,7 @@ describe(describeName.dashboard, () => {
 		)
 
 		const pessoas = await getListPeople(
+			{},
 			anonymizationAN03.paramsDefault200(adminParams.token),
 		)
 
@@ -70,6 +71,7 @@ describe(describeName.dashboard, () => {
 		)
 
 		const pessoas = await getListPeople(
+			{},
 			anonymizationAN03.paramsDefault200(adminParams.token),
 		)
 

@@ -1,8 +1,7 @@
 import { preSetup } from "@core/constants"
-import { knownBugs } from "@shared-data/knownBugs.data"
 
-/** Login responde 201, não 200 — divergência aberta na issue #86. */
-const loginParams = preSetup.preSetupParamsDefault(201, 5, 500)
+/** Login responde 200, como o contrato declara (#86 corrigido). */
+const loginParams = preSetup.preSetupParamsDefault(200, 5, 500)
 
 const homeDefaults = {
 	loginParams,
@@ -28,8 +27,6 @@ export const homeH04 = {
 	maxActions: 4,
 	/** Da mais urgente para a menos urgente. */
 	priorityOrder: ["high", "medium", "low"] as Array<string>,
-	/** A lista vem fora de ordem — vermelho até a correção. */
-	knownBug: knownBugs["API-H-04"],
 }
 
 /** `API-H-05` — contagem zero não vira card. */
@@ -109,4 +106,40 @@ export const homeH03 = {
 	peopleWindowDays: 7,
 	/** Tolerância para o tempo entre a geração da resposta e a asserção. */
 	toleranceMs: 2000,
+}
+
+/**
+ * `API-H-01`, `API-H-02` e `API-H-09` — os cortes das janelas da Home.
+ *
+ * Precisam de massa com data no passado, que a API normal não cria. Cada caso
+ * roda em tenant reservado (`tenantFor`) para as contagens serem exatas, e
+ * envelhece o registro por `POST /dashboard/test-fixtures/backdate`, que só
+ * existe com `TEST_FIXTURES_ENABLED=true` (#123).
+ */
+export const homeH01 = {
+	...homeDefaults,
+	casePrefix: "[H-01]",
+	caseId: "H-01",
+	clientPassword: "1234",
+	insideWindowHours: 23,
+	outsideWindowHours: 25,
+	cancellationReason: "Cancelada dentro da janela para provar a exclusão.",
+}
+
+export const homeH02 = {
+	...homeDefaults,
+	casePrefix: "[H-02]",
+	caseId: "H-02",
+	insideWindowDays: 6,
+	outsideWindowDays: 8,
+}
+
+/** A janela do alerta é de 48 h sobre reservas `pending`, por `createdAt` — comportamento real, registrado na estratégia. */
+export const homeH09 = {
+	...homeDefaults,
+	casePrefix: "[H-09]",
+	caseId: "H-09",
+	clientPassword: "1234",
+	insideWindowDays: 1,
+	outsideWindowDays: 4,
 }

@@ -41,7 +41,7 @@ describe("preSetup", () => {
 		const platformParams = await authBusiness.loginAsPlatformAdmin(
 			`${process.env.ADMIN_EMAIL}`,
 			`${process.env.ADMIN_PASSWORD}`,
-			preSetup.preSetupParamsDefault(201, 5, 500),
+			preSetup.preSetupParamsDefault(200, 5, 500),
 		)
 
 		const read200 = preSetup.preSetupParamsDefault200(
@@ -67,7 +67,7 @@ describe("preSetup", () => {
 			`${process.env.TENANT_SLUG}`,
 			`${process.env.TENANT_EMAIL}`,
 			`${process.env.TENANT_PASSWORD}`,
-			preSetup.preSetupParamsDefault(201, 5, 500),
+			preSetup.preSetupParamsDefault(200, 5, 500),
 		)
 		const tenant200 = preSetup.preSetupParamsDefault200(
 			5,

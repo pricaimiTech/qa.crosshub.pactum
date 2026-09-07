@@ -10,7 +10,6 @@ import {
 } from "@core/constants"
 import type { IParamsDefault } from "@core/interfaces/global.interface"
 import postPublicCreateAppointment from "@core/services/public/postPublicCreateAppointment.service"
-import { bugMessage, bugTag } from "@core/utils/bug.utils"
 import { endUsersFor } from "@core/utils/endUser.utils"
 import { bookingAG13 } from "@appointments-data/booking.data"
 
@@ -60,16 +59,19 @@ describe(describeName.public, () => {
 			bookingAG13.loginParams,
 		)
 
+		// A consulta sem profissional agora é recusada (é o que o caso prova);
+		// o horário de partida vem da consulta com o profissional escolhido.
 		startsAt = (
 			await appointmentsBusiness.firstPublicSlot(
 				serviceId,
 				bookingAG13.date,
 				bookingAG13.paramsDefault200(clientParams.token),
+				bookable.professionalId,
 			)
 		).startsAt
 	})
 
-	it(`[AG-13-F]${bugTag(bookingAG13.knownBug)} - Serviço que exige profissional recusa a omissão, na disponibilidade e na criação`, async () => {
+	it(`[AG-13-F] - Serviço que exige profissional recusa a omissão, na disponibilidade e na criação`, async () => {
 		const { json } = await postPublicCreateAppointment(
 			{ serviceId, startsAt },
 			bookingAG13.paramsDefault400(clientParams.token),
@@ -78,10 +80,7 @@ describe(describeName.public, () => {
 		assertTs.equal(
 			json.statusCode,
 			400,
-			bugMessage(
-				"A criação sem profissional em serviço `required` não foi recusada com 400.",
-				bookingAG13.knownBug,
-			),
+			"A criação sem profissional em serviço `required` não foi recusada com 400.",
 		)
 
 		// A especificação estende a exigência à consulta de disponibilidade.
@@ -89,16 +88,13 @@ describe(describeName.public, () => {
 			await appointmentsBusiness.publicAvailabilityStatus(
 				serviceId,
 				bookingAG13.date,
-				bookingAG13.paramsDefault200(clientParams.token),
+				bookingAG13.paramsDefault400(clientParams.token),
 			)
 
 		assertTs.equal(
 			availabilityStatus,
 			bookingAG13.expectedAvailabilityStatus,
-			bugMessage(
-				"A consulta de disponibilidade não exigiu a escolha do profissional.",
-				bookingAG13.knownBug,
-			),
+			"A consulta de disponibilidade não exigiu a escolha do profissional.",
 		)
 	})
 })

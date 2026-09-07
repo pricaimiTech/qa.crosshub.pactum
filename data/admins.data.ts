@@ -16,6 +16,7 @@ export const adminAllocation: Record<string, string> = {
 	"LGPD-08": "Recebe autorização com o token já emitido",
 	"LGPD-09": "Perde autorização com o token já emitido",
 	"LGPD-12": "Dispara a retenção sem autorização de leitura",
+	"LGPD-13": "Alvo da concessão e da revogação auditadas",
 	"F-19": "Não lê respostas de formulário sensível",
 	"F-20": "Não conta respostas sensíveis no agregado",
 	"H-08": "Não vê dado sensível na Home",

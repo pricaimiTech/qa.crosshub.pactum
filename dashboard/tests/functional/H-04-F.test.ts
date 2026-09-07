@@ -1,7 +1,6 @@
 import { assertTs, authBusiness, describeName } from "@core/constants"
 import type { IParamsDefault } from "@core/interfaces/global.interface"
 import getHome from "@core/services/dashboard/getHome.service"
-import { bugMessage, bugTag } from "@core/utils/bug.utils"
 import { homeH04 } from "@dashboard-data/home.data"
 
 describe(describeName.dashboard, () => {
@@ -16,7 +15,7 @@ describe(describeName.dashboard, () => {
 		)
 	})
 
-	it(`[H-04-F]${bugTag(homeH04.knownBug)} - A Home oferece no máximo quatro ações, na ordem de prioridade`, async () => {
+	it(`[H-04-F] - A Home oferece no máximo quatro ações, na ordem de prioridade`, async () => {
 		const { json } = await getHome(homeH04.paramsDefault200(adminParams.token))
 
 		assertTs.isAtMost(
@@ -45,12 +44,9 @@ describe(describeName.dashboard, () => {
 		assertTs.deepEqual(
 			foraDaOrdem,
 			[],
-			bugMessage(
-				`As ações não vêm da mais urgente para a menos urgente: ${json.actions
+			`As ações não vêm da mais urgente para a menos urgente: ${json.actions
 					.map((action: { priority: string }) => action.priority)
 					.join(", ")}.`,
-				homeH04.knownBug,
-			),
 		)
 	})
 })
