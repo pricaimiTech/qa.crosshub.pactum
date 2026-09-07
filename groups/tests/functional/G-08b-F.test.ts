@@ -8,7 +8,6 @@ import {
 	groupsBusiness,
 } from "@core/constants"
 import type { IParamsDefault } from "@core/interfaces/global.interface"
-import { bugMessage, bugTag } from "@core/utils/bug.utils"
 import { endUsersFor } from "@core/utils/endUser.utils"
 import { groupsG08b } from "@groups-data/groups.data"
 
@@ -45,7 +44,7 @@ describe(describeName.dashboard, () => {
 		},
 	)
 
-	it(`[G-08b-F]${bugTag(groupsG08b.knownBug)} - A estratégia "similar" agrupa quem respondeu igual, não quem respondeu antes`, async () => {
+	it(`[G-08b-F] - A estratégia "similar" agrupa quem respondeu igual, não quem respondeu antes`, async () => {
 		const grupos = await groupsBusiness.createGroups(
 			groupBuilder
 				.withName(groupsG08b.casePrefix)
@@ -67,8 +66,7 @@ describe(describeName.dashboard, () => {
 		assertTs.deepEqual(
 			gruposMisturados,
 			[],
-			bugMessage(
-				`A estratégia "${groupsG08b.strategy}" ignorou as respostas: ${grupos
+			`A estratégia "${groupsG08b.strategy}" ignorou as respostas: ${grupos
 					.map(
 						(grupo) =>
 							`[${grupo.participantIds
@@ -76,8 +74,6 @@ describe(describeName.dashboard, () => {
 								.join(",")}]`,
 					)
 					.join(" ")}. A divisão seguiu a ordem de envio.`,
-				groupsG08b.knownBug,
-			),
 		)
 	})
 })

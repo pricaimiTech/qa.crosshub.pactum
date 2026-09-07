@@ -1,8 +1,7 @@
 import { preSetup } from "@core/constants"
-import { knownBugs } from "@shared-data/knownBugs.data"
 
-/** Login responde 201, não 200 — divergência aberta na issue #86. */
-const loginParams = preSetup.preSetupParamsDefault(201, 5, 500)
+/** Login responde 200, como o contrato declara (#86 corrigido). */
+const loginParams = preSetup.preSetupParamsDefault(200, 5, 500)
 
 const brandingDefaults = {
 	loginParams,
@@ -133,7 +132,6 @@ export const brandingMK08 = {
 	...brandingDefaults,
 	casePrefix: "[MK-08]",
 	caseId: "MK-08",
-	knownBug: knownBugs["API-MK-08"],
 	carousel: {
 		interval: 7 as const,
 		height: "large" as const,

@@ -54,6 +54,7 @@ describe(describeName.dashboard, () => {
 
 	it("[C-XT-F] - Tenant A não lista nem edita a pessoa do tenant B", async () => {
 		const { json } = await getListPeople(
+			{},
 			peopleCXT.paramsDefault200(firstTenantParams.token),
 		)
 

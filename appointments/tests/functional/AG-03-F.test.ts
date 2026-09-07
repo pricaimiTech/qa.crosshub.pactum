@@ -58,7 +58,7 @@ describe(describeName.dashboard, () => {
 			availabilityAG03.paramsDefault200(authParams.token),
 		)
 
-		const slots: Array<string> = json.map((slot: { startsAt: string }) =>
+		const slots: Array<string> = json.slots.map((slot: { startsAt: string }) =>
 			timeInTenantTimezone(slot.startsAt),
 		)
 

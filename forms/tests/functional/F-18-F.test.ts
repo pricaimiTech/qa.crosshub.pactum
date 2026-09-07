@@ -9,7 +9,6 @@ import {
 import type { IParamsDefault } from "@core/interfaces/global.interface"
 import getPublicForm from "@core/services/public/getPublicForm.service"
 import getPublicMyForms from "@core/services/public/getPublicMyForms.service"
-import { bugTag } from "@core/utils/bug.utils"
 import { endUsersFor } from "@core/utils/endUser.utils"
 import { formsF18 } from "@forms-data/forms.data"
 
@@ -45,7 +44,7 @@ describe(describeName.public, () => {
 		)
 	})
 
-	it(`[F-18-F]${bugTag(formsF18.knownBug)} - Formulário sem atribuição não aparece para a pessoa nem abre por acesso direto`, async () => {
+	it(`[F-18-F] - Formulário sem atribuição não aparece para a pessoa nem abre por acesso direto (404: não revela que existe)`, async () => {
 		const { json } = await getPublicMyForms(
 			formsF18.paramsDefault200(clientParams.token),
 		)
@@ -58,7 +57,7 @@ describe(describeName.public, () => {
 
 		await getPublicForm(
 			formId,
-			formsF18.paramsDefault403(clientParams.token),
+			formsF18.paramsDefault404(clientParams.token),
 		)
 	})
 })

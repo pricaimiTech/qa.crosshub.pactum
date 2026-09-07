@@ -11,7 +11,6 @@ import getListQuestions from "@core/services/forms/getListQuestions.service"
 import postClose from "@core/services/forms/postClose.service"
 import postDuplicate from "@core/services/forms/postDuplicate.service"
 import postPublish from "@core/services/forms/postPublish.service"
-import { bugTag } from "@core/utils/bug.utils"
 import { formsF03 } from "@forms-data/forms.data"
 
 describe(describeName.dashboard, () => {
@@ -41,7 +40,7 @@ describe(describeName.dashboard, () => {
 		await postClose(formId, formsF03.paramsDefault201(adminParams.token))
 	})
 
-	it(`[F-03-F]${bugTag(formsF03.knownBug)} - Formulário encerrado não volta a ser publicado; duplicar gera novo rascunho`, async () => {
+	it(`[F-03-F] - Formulário encerrado não volta a ser publicado; duplicar gera novo rascunho`, async () => {
 		await postPublish(formId, formsF03.paramsDefault400(adminParams.token))
 
 		const duplicated = await postDuplicate(

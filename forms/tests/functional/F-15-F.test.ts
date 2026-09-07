@@ -8,7 +8,6 @@ import {
 } from "@core/constants"
 import type { IParamsDefault } from "@core/interfaces/global.interface"
 import postPublicSubmitForm from "@core/services/public/postPublicSubmitForm.service"
-import { bugMessage, bugTag } from "@core/utils/bug.utils"
 import { endUsersFor } from "@core/utils/endUser.utils"
 import { formsF15 } from "@forms-data/forms.data"
 
@@ -57,7 +56,7 @@ describe(describeName.public, () => {
 		)
 	})
 
-	it(`[F-15-F]${bugTag(formsF15.knownBug)} - Formulário de resposta única recusa a segunda submissão da mesma pessoa`, async () => {
+	it(`[F-15-F] - Formulário de resposta única recusa a segunda submissão da mesma pessoa`, async () => {
 		const { json } = await postPublicSubmitForm(
 			formId,
 			{
@@ -72,10 +71,7 @@ describe(describeName.public, () => {
 		assertTs.equal(
 			json.statusCode,
 			409,
-			bugMessage(
-				"A segunda resposta em formulário ONCE_PER_PERSON não foi recusada com 409.",
-				formsF15.knownBug,
-			),
+			"A segunda resposta em formulário ONCE_PER_PERSON não foi recusada com 409.",
 		)
 	})
 })

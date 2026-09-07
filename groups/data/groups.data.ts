@@ -1,8 +1,7 @@
 import { preSetup } from "@core/constants"
-import { knownBugs } from "@shared-data/knownBugs.data"
 
-/** Login responde 201, não 200 — divergência aberta na issue #86. */
-const loginParams = preSetup.preSetupParamsDefault(201, 5, 500)
+/** Login responde 200, como o contrato declara (#86 corrigido). */
+const loginParams = preSetup.preSetupParamsDefault(200, 5, 500)
 
 const groupDefaults = {
 	loginParams,
@@ -172,6 +171,8 @@ export const groupsG14 = {
 	personPrefix: "[G-14]",
 	finalizedStatus: "finalized" as const,
 	draftStatus: "draft" as const,
+	/** A mesma máquina de estados da ativação, agora também no PATCH (API-G-14). */
+	errorMessage: "Um grupo finalizado não pode voltar a rascunho nem a ativo.",
 }
 
 /** `API-G-XT` — isolamento entre tenants. */
@@ -197,7 +198,6 @@ export const groupsG08b = {
 	...groupDefaults,
 	casePrefix: "[G-08b]",
 	caseId: "G-08b",
-	knownBug: knownBugs["API-G-08b"],
 	formType: "TEAM_FORMATION" as const,
 	/** Seis respostas alternando entre os extremos da escala. */
 	scaleValues: [1, 5, 1, 5, 1, 5] as Array<number>,

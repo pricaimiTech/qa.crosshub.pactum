@@ -6,7 +6,6 @@ import {
 } from "@core/constants"
 import type { IParamsDefault } from "@core/interfaces/global.interface"
 import patchBannerSettings from "@core/services/banners/patchBannerSettings.service"
-import { bugMessage, bugTag } from "@core/utils/bug.utils"
 import { tenantFor } from "@core/utils/tenant.utils"
 import { bannersBN08 } from "@banners-data/banners.data"
 
@@ -24,7 +23,7 @@ describe(describeName.dashboard, () => {
 		)
 	})
 
-	it(`[BN-08-F]${bugTag(bannersBN08.knownBug)} - Intervalo fora do enum e altura desconhecida são recusados; combinação válida é gravada`, async () => {
+	it(`[BN-08-F] - Intervalo fora do enum e altura desconhecida são recusados; combinação válida é gravada`, async () => {
 		const mensagens = await bannersBusiness.rejectedCarouselSettings(
 			bannersBN08.invalidSettings,
 			bannersBN08.paramsDefault400(adminParams.token),
@@ -52,16 +51,13 @@ describe(describeName.dashboard, () => {
 		assertTs.equal(
 			settings.interval,
 			bannersBN08.validSettings.interval,
-			bugMessage(
-				"O intervalo válido não foi gravado.",
-				bannersBN08.knownBug,
-			),
+			"O intervalo válido não foi gravado.",
 		)
 
 		assertTs.equal(
 			settings.height,
 			bannersBN08.validSettings.height,
-			bugMessage("A altura válida não foi gravada.", bannersBN08.knownBug),
+			"A altura válida não foi gravada.",
 		)
 	})
 })
