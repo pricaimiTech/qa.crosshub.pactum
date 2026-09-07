@@ -1,8 +1,7 @@
 import { preSetup } from "@core/constants"
-import { knownBugs } from "@shared-data/knownBugs.data"
 
-/** Login responde 201, não 200 — divergência aberta na issue #86. */
-const loginParams = preSetup.preSetupParamsDefault(201, 5, 500)
+/** Login responde 200, como o contrato declara (#86 corrigido). */
+const loginParams = preSetup.preSetupParamsDefault(200, 5, 500)
 
 const privacyDefaults = {
 	cleanupReason: "Limpeza da massa de automação de API.",
@@ -44,6 +43,8 @@ export const privacyLGPD11 = {
 	answer: "Resposta sensível recente",
 	retentionDays: 1,
 	defaultRetentionDays: 365,
+	/** Bem além do prazo de 1 dia. */
+	expiredAgeDays: 31,
 }
 
 /** `API-LGPD-03` — só o Principal concede acesso a dados sensíveis. */
@@ -142,3 +143,14 @@ export const privacyLGPDXT = {
  * Depende de ler `audit_logs`, que não tem rota na API. Ver
  * https://github.com/pricaimiTech/dev.CrossHub/issues/96.
  */
+
+/**
+ * `API-LGPD-13` — conceder e revogar o acesso a dados sensíveis deixa dois
+ * eventos `sensitive_data_access.updated`, com ator, alvo e o valor aplicado.
+ */
+export const privacyLGPD13 = {
+	...privacyDefaults,
+	casePrefix: "[LGPD-13]",
+	caseId: "LGPD-13",
+	action: "sensitive_data_access.updated",
+}
