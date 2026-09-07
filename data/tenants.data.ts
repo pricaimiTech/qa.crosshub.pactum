@@ -76,6 +76,9 @@ export const tenantAllocation: Record<string, string> = {
 	"BN-08b": "Carrossel em tenant que nunca salvou marca",
 	"BN-09": "Substituição de imagem deixa órfão",
 	"BN-10": "Só banner ativo chega ao app",
+	"H-01": "Janela de 24 h nas reservas, com massa envelhecida",
+	"H-02": "Janela de 7 dias nas pessoas, com massa envelhecida",
+	"H-09": "Alerta de atraso, com massa envelhecida",
 }
 
 /** Senha usada por todos os admins dos tenants por caso. */

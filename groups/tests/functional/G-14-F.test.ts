@@ -45,6 +45,12 @@ describe(describeName.dashboard, () => {
 		groupId = grupos[0].id
 		groupName = grupos[0].name
 
+		// A máquina de estados exige passar por active antes de finalizar.
+		await patchUpdateGroup(
+			groupId,
+			{ name: groupName, status: "active" },
+			groupsG14.paramsDefault200(adminParams.token),
+		)
 		await patchUpdateGroup(
 			groupId,
 			{ name: groupName, status: groupsG14.finalizedStatus },
@@ -52,19 +58,31 @@ describe(describeName.dashboard, () => {
 		)
 	})
 
-	it("[G-14-F] - Grupo finalizado volta para rascunho: o PATCH não tem máquina de estados", async () => {
+	it("[G-14-F] - Grupo finalizado não volta para rascunho: o PATCH tem a mesma máquina de estados da ativação", async () => {
 		const { json } = await patchUpdateGroup(
 			groupId,
 			{ name: groupName, status: groupsG14.draftStatus },
+			groupsG14.paramsDefault400(adminParams.token),
+		)
+
+		assertTs.equal(
+			json.message,
+			groupsG14.errorMessage,
+			"A recusa da volta de finalized para draft não trouxe a mensagem especificada.",
+		)
+
+		// Ficar no mesmo status não é transição: editar o nome de um grupo
+		// finalizado continua permitido.
+		const renomeado = await patchUpdateGroup(
+			groupId,
+			{ name: `${groupName} renomeado`, status: groupsG14.finalizedStatus },
 			groupsG14.paramsDefault200(adminParams.token),
 		)
 
-		// O caso registra o comportamento real, que a estratégia marca como risco:
-		// qualquer status pode virar qualquer outro pelo PATCH.
 		assertTs.equal(
-			json.status,
-			groupsG14.draftStatus,
-			"A volta de finalized para draft foi recusada — o comportamento mudou em relação ao registrado.",
+			renomeado.json.status,
+			groupsG14.finalizedStatus,
+			"O grupo finalizado mudou de status ao ser renomeado.",
 		)
 	})
 })

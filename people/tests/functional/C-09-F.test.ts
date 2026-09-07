@@ -43,7 +43,7 @@ describe(describeName.public, () => {
 				password: peopleC09.pin,
 				consent: true,
 			},
-			peopleC09.paramsDefault201(),
+			peopleC09.paramsDefault200(),
 		)
 
 		assertTs.exists(

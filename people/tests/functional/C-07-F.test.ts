@@ -41,6 +41,7 @@ describe(describeName.dashboard, () => {
 		)
 
 		const { json } = await getListPeople(
+			{},
 			peopleC07.paramsDefault200(adminParams.token),
 		)
 

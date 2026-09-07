@@ -2,7 +2,6 @@ import { preSetup } from "@core/constants"
 import { hourWindowFromNow, tenantTimezone } from "@core/utils/date.utils"
 import { dateForCase, datesForCase } from "@shared-data/testDates.data"
 import { weekdayOfDate } from "@core/utils/date.utils"
-import { knownBugs } from "@shared-data/knownBugs.data"
 
 /** Senha numérica usada em toda ativação de cliente final desta suíte. */
 const endUserPassword = "1234"
@@ -11,7 +10,7 @@ const endUserPassword = "1234"
  * Login responde **201**, não 200 como o `openapi.json` declara — divergência
  * aberta em https://github.com/pricaimiTech/dev.CrossHub/issues/86.
  */
-const loginParams = preSetup.preSetupParamsDefault(201, 5, 500)
+const loginParams = preSetup.preSetupParamsDefault(200, 5, 500)
 
 /** Base comum a todos os casos de reserva do cliente final. */
 const bookingDefaults = {
@@ -255,8 +254,6 @@ export const bookingAG21 = {
 	approvalMode: "automatic" as const,
 	rescheduleReason: "Profissional remanejado.",
 	cancelledStatus: "cancelled_by_admin",
-	/** O encadeamento especificado não existe no payload — vermelho até a decisão. */
-	knownBug: knownBugs["API-AG-21"],
 }
 
 /** `API-AG-12` — serviço com escolha automática rejeita profissional explícito. */
@@ -269,8 +266,6 @@ export const bookingAG12 = {
 	capacity: 5,
 	approvalMode: "automatic" as const,
 	selectionMode: "automatic" as const,
-	/** A API responde 409, a especificação pede 400 — vermelho até a decisão. */
-	knownBug: knownBugs["API-AG-12"],
 }
 
 /** `API-AG-13` — serviço que exige escolha rejeita a omissão do profissional. */
@@ -283,8 +278,6 @@ export const bookingAG13 = {
 	capacity: 5,
 	approvalMode: "automatic" as const,
 	selectionMode: "required" as const,
-	/** Além do 409, a disponibilidade não exige o profissional. */
-	knownBug: knownBugs["API-AG-13"],
 	expectedAvailabilityStatus: 400,
 }
 

@@ -1,8 +1,7 @@
 import { preSetup } from "@core/constants"
-import { knownBugs } from "@shared-data/knownBugs.data"
 
-/** Login responde 201, não 200 — divergência aberta na issue #86. */
-const loginParams = preSetup.preSetupParamsDefault(201, 5, 500)
+/** Login responde 200, como o contrato declara (#86 corrigido). */
+const loginParams = preSetup.preSetupParamsDefault(200, 5, 500)
 
 const formDefaults = {
 	cleanupReason: "Limpeza da massa de automação de API.",
@@ -47,8 +46,6 @@ export const formsF02 = {
 export const formsF03 = {
 	...formDefaults,
 	casePrefix: "[F-03]",
-	/** A recusa vem como 409, a especificação pede 400 — vermelho até a decisão. */
-	knownBug: knownBugs["API-F-03"],
 	draftStatus: "DRAFT",
 	expectedResponses: 0,
 }
@@ -76,8 +73,6 @@ export const formsF15 = {
 	casePrefix: "[F-15]",
 	caseId: "F-15",
 	submissionMode: "ONCE_PER_PERSON" as const,
-	/** A trigger do banco vaza como 500 — vermelho até a correção. */
-	knownBug: knownBugs["API-F-15"],
 	answer: "Primeira resposta",
 	secondAnswer: "Segunda resposta",
 }
@@ -87,8 +82,6 @@ export const formsF18 = {
 	...formDefaults,
 	casePrefix: "[F-18]",
 	caseId: "F-18",
-	/** O acesso direto vem como 404, a especificação pede 403. */
-	knownBug: knownBugs["API-F-18"],
 }
 
 /** `API-F-09` — publicar para todos os ativos é operação atômica. */
@@ -274,6 +267,4 @@ export const formsF23 = {
 	scaleValues: [1, 3, 5] as Array<number>,
 	expectedAverage: 3,
 	expectedDistributionPercent: 100,
-	/** Com três respostas a soma fecha em 99 — vermelho até a correção. */
-	knownBug: knownBugs["API-F-23"],
 }

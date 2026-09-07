@@ -1,7 +1,7 @@
 import { preSetup } from "@core/constants"
 
-/** Login responde 201, não 200 — divergência aberta na issue #86. */
-const loginParams = preSetup.preSetupParamsDefault(201, 5, 500)
+/** Login responde 200, como o contrato declara (#86 corrigido). */
+const loginParams = preSetup.preSetupParamsDefault(200, 5, 500)
 
 const anonymizationDefaults = {
 	pin: "1234",

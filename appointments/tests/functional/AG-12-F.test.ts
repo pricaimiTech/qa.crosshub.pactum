@@ -10,7 +10,6 @@ import {
 } from "@core/constants"
 import type { IParamsDefault } from "@core/interfaces/global.interface"
 import postPublicCreateAppointment from "@core/services/public/postPublicCreateAppointment.service"
-import { bugMessage, bugTag } from "@core/utils/bug.utils"
 import { endUsersFor } from "@core/utils/endUser.utils"
 import { bookingAG12 } from "@appointments-data/booking.data"
 
@@ -72,7 +71,7 @@ describe(describeName.public, () => {
 		).startsAt
 	})
 
-	it(`[AG-12-F]${bugTag(bookingAG12.knownBug)} - Serviço de escolha automática rejeita o profissional escolhido pelo cliente`, async () => {
+	it(`[AG-12-F] - Serviço de escolha automática rejeita o profissional escolhido pelo cliente`, async () => {
 		const { json } = await postPublicCreateAppointment(
 			{ serviceId, startsAt, professionalId },
 			bookingAG12.paramsDefault400(clientParams.token),
@@ -81,10 +80,7 @@ describe(describeName.public, () => {
 		assertTs.equal(
 			json.statusCode,
 			400,
-			bugMessage(
-				"A recusa da escolha explícita de profissional não veio como 400.",
-				bookingAG12.knownBug,
-			),
+			"A recusa da escolha explícita de profissional não veio como 400.",
 		)
 	})
 })

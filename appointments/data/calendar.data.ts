@@ -1,10 +1,9 @@
 import { preSetup } from "@core/constants"
 import { weekdayOfDate } from "@core/utils/date.utils"
 import { dateForCase } from "@shared-data/testDates.data"
-import { knownBugs } from "@shared-data/knownBugs.data"
 
-/** Login responde 201, não 200 — divergência aberta na issue #86. */
-const loginParams = preSetup.preSetupParamsDefault(201, 5, 500)
+/** Login responde 200, como o contrato declara (#86 corrigido). */
+const loginParams = preSetup.preSetupParamsDefault(200, 5, 500)
 
 const calendarDefaults = {
 	durationMinutes: 60,
@@ -57,7 +56,6 @@ export const calendarAG27 = {
 export const calendarAG28 = {
 	...calendarDefaults,
 	casePrefix: "[AG-28]",
-	knownBug: knownBugs["API-AG-28"],
 	years: [
 		{
 			from: "2026-01-01",
@@ -84,7 +82,6 @@ export const calendarAG28 = {
 export const calendarAG30 = {
 	...calendarDefaults,
 	casePrefix: "[AG-30]",
-	knownBug: knownBugs["API-AG-30"],
 	errorMessage:
 		"O add-on de indicadores de agendamento não está ativo para este tenant.",
 }

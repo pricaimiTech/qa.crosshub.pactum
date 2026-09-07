@@ -7,7 +7,6 @@ import {
 } from "@core/constants"
 import type { IParamsDefault } from "@core/interfaces/global.interface"
 import postCreateCode from "@core/services/people/postCreateCode.service"
-import { bugMessage, bugTag } from "@core/utils/bug.utils"
 import { peopleC04 } from "@people-data/people.data"
 
 describe(describeName.dashboard, () => {
@@ -28,7 +27,7 @@ describe(describeName.dashboard, () => {
 		)
 	})
 
-	it(`[C-04-F]${bugTag(peopleC04.knownBug)} - Sem canal de contato, o código de acesso não é emitido`, async () => {
+	it(`[C-04-F] - Sem canal de contato, o código de acesso não é emitido`, async () => {
 		const { json } = await postCreateCode(
 			personId,
 			peopleC04.paramsDefault409(adminParams.token),
@@ -37,10 +36,7 @@ describe(describeName.dashboard, () => {
 		assertTs.equal(
 			json.statusCode,
 			409,
-			bugMessage(
-				"A recusa do código para pessoa sem canal de contato não veio como 409.",
-				peopleC04.knownBug,
-			),
+			"A recusa do código para pessoa sem canal de contato não veio como 409.",
 		)
 	})
 })

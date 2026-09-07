@@ -2,7 +2,7 @@
 
 Rastreabilidade entre os **46 casos `UNIT-*`** de `.doc/dashboard/estrategia-testes-dashboard.json` (25 deles P0) e os specs de `__tests__/unit/` do repo de desenvolvimento.
 
-Estratégia gerada em 2026-09-03 · mapa gerado por `npm run generate:unit-map` — não editar à mão.
+Estratégia gerada em 2026-09-07 · mapa gerado por `npm run generate:unit-map` — não editar à mão.
 
 | Convenção | Valor |
 |---|---|
@@ -31,10 +31,10 @@ Pasta sugerida: `__tests__/unit/<api|front>/dashboard/agendamentos/`
 
 | Caso | Prio | Alvo | Relação | Extrair | Teste |
 |---|---|---|---|---|---|
-| UNIT-F-01 | P0 | hasAnswerValue(type, answer) · forms.service.ts:1143 | API-F-17 | — | `__tests__/unit/api/dashboard/formularios/respostas.spec.ts:30` |
-| UNIT-F-02 | P0 | normalizeAnswerRows(question, answer) · forms.service.ts:1153 | API-F-17 | — | `__tests__/unit/api/dashboard/formularios/respostas.spec.ts:70` |
-| UNIT-F-03 | P1 | normalizeAnswerRows — ramo CONSENT | API-F-17 · _LGPD_ | — | `__tests__/unit/api/dashboard/formularios/respostas.spec.ts:117` |
-| UNIT-F-04 | P2 | estimateMinutes(questionCount) · forms.service.ts:1095 | — | — | `__tests__/unit/api/dashboard/formularios/respostas.spec.ts:153` |
+| UNIT-F-01 | P0 | hasAnswerValue(type, answer) · forms.service.ts:1143 | API-F-17 | — | `__tests__/unit/api/dashboard/formularios/respostas.spec.ts:34` |
+| UNIT-F-02 | P0 | normalizeAnswerRows(question, answer) · forms.service.ts:1153 | API-F-17 | — | `__tests__/unit/api/dashboard/formularios/respostas.spec.ts:74` |
+| UNIT-F-03 | P1 | normalizeAnswerRows — ramo CONSENT | API-F-17 · _LGPD_ | — | `__tests__/unit/api/dashboard/formularios/respostas.spec.ts:121` |
+| UNIT-F-04 | P2 | estimateMinutes(questionCount) · forms.service.ts:1095 | — | — | `__tests__/unit/api/dashboard/formularios/respostas.spec.ts:157` |
 | UNIT-F-05 | P1 | isFormActiveForResponses , isFormClosedForResponses e formStatusPresentation · forms-panel.tsx:228, 232, 317 | API-F-02 | — | `__tests__/unit/front/dashboard/formularios/painel-de-formularios.test.ts:20` |
 | UNIT-F-06 | P2 | formatDurationSeconds e renderStarRating · forms-panel.tsx:192, 199 | API-F-23 | — | `__tests__/unit/front/dashboard/formularios/painel-de-formularios.test.ts:55` |
 
@@ -67,10 +67,10 @@ Pasta sugerida: `__tests__/unit/<api|front>/dashboard/clientes/`
 
 | Caso | Prio | Alvo | Relação | Extrair | Teste |
 |---|---|---|---|---|---|
-| UNIT-H-01 | P0 | localDateKey(date) · dashboard.service.ts:25 | API-H-03 | — | `__tests__/unit/api/dashboard/home/montagem-da-home.spec.ts:28` |
-| UNIT-H-02 | P0 | janelas de home() → extrair homeWindows(now) · dashboard.service.ts:45-48 | API-H-01, API-H-02, API-H-09 | — | `__tests__/unit/api/dashboard/home/montagem-da-home.spec.ts:45` |
-| UNIT-H-03 | P1 | montagem da lista de ações → extrair a partir de home() | API-H-04, API-H-05 | — | `__tests__/unit/api/dashboard/home/montagem-da-home.spec.ts:71` |
-| UNIT-H-04 | P1 | montagem do feed → extrair a partir de home() | API-H-06, API-H-07 | — | `__tests__/unit/api/dashboard/home/montagem-da-home.spec.ts:123` |
+| UNIT-H-01 | P0 | localDateKey(date) · dashboard.service.ts:25 | API-H-03 | — | `__tests__/unit/api/dashboard/home/montagem-da-home.spec.ts:29` |
+| UNIT-H-02 | P0 | janelas de home() → extrair homeWindows(now) · dashboard.service.ts:45-48 | API-H-01, API-H-02, API-H-09 | — | `__tests__/unit/api/dashboard/home/montagem-da-home.spec.ts:46` |
+| UNIT-H-03 | P1 | montagem da lista de ações → extrair a partir de home() | API-H-04, API-H-05 | — | `__tests__/unit/api/dashboard/home/montagem-da-home.spec.ts:72` |
+| UNIT-H-04 | P1 | montagem do feed → extrair a partir de home() | API-H-06, API-H-07 | — | `__tests__/unit/api/dashboard/home/montagem-da-home.spec.ts:142` |
 | UNIT-H-05 | P1 | formatActivityTime(date) · home-panel.tsx:533 | E2E-H-01 | — | `__tests__/unit/front/dashboard/home/tempo-de-atividade.test.ts:16` |
 
 Pasta sugerida: `__tests__/unit/<api|front>/dashboard/home/`
@@ -79,11 +79,11 @@ Pasta sugerida: `__tests__/unit/<api|front>/dashboard/home/`
 
 | Caso | Prio | Alvo | Relação | Extrair | Teste |
 |---|---|---|---|---|---|
-| UNIT-G-01 | P0 | distributeGroupParticipants(total, groupCount, groupSize) · create-group-wizard.tsx:206 | API-G-09 | — | `__tests__/unit/api/dashboard/grupos/divisao-status-e-formato.spec.ts:14`<br>`__tests__/unit/front/dashboard/grupos/divisao-de-participantes.test.ts:12` |
+| UNIT-G-01 | P0 | distributeGroupParticipants(total, groupCount, groupSize) · create-group-wizard.tsx:206 | API-G-09 | — | `__tests__/unit/api/dashboard/grupos/divisao-status-e-formato.spec.ts:21`<br>`__tests__/unit/front/dashboard/grupos/divisao-de-participantes.test.ts:12` |
 | UNIT-G-02 | P0 | equivalência entre o wizard e o laço sizes de create() · groups.service.ts:174 | API-G-09, E2E-G-02 | — | `__tests__/unit/front/dashboard/grupos/divisao-de-participantes.test.ts:47` |
-| UNIT-G-03 | P0 | validateStatusTransition(current, next, memberCount) · groups.service.ts:27 | API-G-10, API-G-14 | — | `__tests__/unit/api/dashboard/grupos/divisao-status-e-formato.spec.ts:40` |
-| UNIT-G-04 | P2 | strategyLabel(input) · groups.service.ts:34 | API-G-08 | — | `__tests__/unit/api/dashboard/grupos/divisao-status-e-formato.spec.ts:72` |
-| UNIT-G-05 | P1 | toRecord(group, members) · groups.service.ts:205 | API-G-01 | — | `__tests__/unit/api/dashboard/grupos/divisao-status-e-formato.spec.ts:98` |
+| UNIT-G-03 | P0 | validateStatusTransition(current, next, memberCount) · groups.service.ts:27 | API-G-10, API-G-14 | — | `__tests__/unit/api/dashboard/grupos/divisao-status-e-formato.spec.ts:47` |
+| UNIT-G-04 | P2 | strategyLabel(input) · groups.service.ts:34 | API-G-08 | — | `__tests__/unit/api/dashboard/grupos/divisao-status-e-formato.spec.ts:97` |
+| UNIT-G-05 | P1 | toRecord(group, members) · groups.service.ts:205 | API-G-01 | — | `__tests__/unit/api/dashboard/grupos/divisao-status-e-formato.spec.ts:123` |
 
 Pasta sugerida: `__tests__/unit/<api|front>/dashboard/grupos/`
 
@@ -136,9 +136,11 @@ Nenhum. Todo ID declarado em `describe` existe na estratégia.
 
 ## Arquivos unitários sem ID de caso
 
-3 de 25 specs do escopo dashboard não citam caso nenhum. São testes legítimos que a estratégia não conhece — pedem um caso, não bloqueiam.
+5 de 27 specs do escopo dashboard não citam caso nenhum. São testes legítimos que a estratégia não conhece — pedem um caso, não bloqueiam.
 
+- `__tests__/unit/api/dashboard/agendamentos/escolha-do-profissional.spec.ts` (jest)
 - `__tests__/unit/api/dashboard/agendamentos/fase-zero.spec.ts` (jest)
+- `__tests__/unit/api/dashboard/agendamentos/nome-repetido.spec.ts` (jest)
 - `__tests__/unit/api/dashboard/agendamentos/validacao-de-dto.spec.ts` (jest)
 - `__tests__/unit/api/dashboard/grupos/agrupamento-por-afinidade.spec.ts` (jest)
 

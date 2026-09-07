@@ -66,7 +66,7 @@ describe(describeName.dashboard, () => {
 				password: peopleC06.pin,
 				consent: true,
 			},
-			peopleC06.paramsDefault201(),
+			peopleC06.paramsDefault200(),
 		)
 
 		assertTs.exists(

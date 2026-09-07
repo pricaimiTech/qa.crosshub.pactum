@@ -1,8 +1,7 @@
 import { preSetup } from "@core/constants"
-import { knownBugs } from "@shared-data/knownBugs.data"
 
-/** Login responde 201, não 200 — divergência aberta na issue #86. */
-const loginParams = preSetup.preSetupParamsDefault(201, 5, 500)
+/** Login responde 200, como o contrato declara (#86 corrigido). */
+const loginParams = preSetup.preSetupParamsDefault(200, 5, 500)
 
 const bannerDefaults = {
 	/** Imagem gerada em tempo de execução; nenhum arquivo é versionado. */
@@ -101,8 +100,6 @@ export const bannersBN08 = {
 		height: "large" as const,
 		showIndicators: true,
 	},
-	/** O PATCH responde 200 sem gravar quando não há marca — vermelho até a correção. */
-	knownBug: knownBugs["API-BN-08"],
 }
 
 /**
