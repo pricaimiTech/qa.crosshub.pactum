@@ -85,6 +85,7 @@ export const tenantAllocation: Record<string, string> = {
 	"ANL-03b": "Ocupação de 40% com 10 h de agenda e 4 h atendidas",
 	"ANL-03c": "Bloqueio reduz o denominador da ocupação",
 	"ANL-06": "Ativar o add-on atende o pedido de interesse",
+	"CLI-01": "Os três estados da organização",
 }
 
 /** Senha usada por todos os admins dos tenants por caso. */

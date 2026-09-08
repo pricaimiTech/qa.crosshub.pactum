@@ -25,7 +25,7 @@ O admin é uma **SPA de rota única**: a navegação é um estado `screen` (`lis
 |---|---|
 | **P0** | **Campo fantasma `adminLimit`:** editável em `plan-form.tsx` e enviado no payload, mas **não existe** na tabela `plans`, no controller nem no service da API. A coluna "Admins" da listagem sempre exibe "Ilimitado". Decidir: implementar no backend ou remover do form. |
 | **P0** | **Criação de cliente não transacional:** o wizard faz `POST /admin/tenants` e depois `POST /admin/tenants/:id/admins`. Se a 2ª falha, fica um **tenant órfão sem admin** (a UI só avisa). |
-| **P1** | **Campos do wizard descartados no submit:** `customDomain`, `internalNotes` e `initialStatus='setup'` (vira `'inactive'`) não têm destino na API — o usuário preenche e o dado se perde. |
+| **P1** | **Campos do wizard descartados no submit:** `customDomain` e `internalNotes` não têm destino na API — o usuário preenche e o dado se perde. O `initialStatus='setup'` foi resolvido pela issue 143: grava `'onboarding'`, um status próprio da organização. |
 | **P1** | **Logout por heurística de string:** `loadTenants` chama `signOut()` quando a mensagem de erro contém a substring `'carregar'` (`admin-console.tsx:202`) — frágil e propenso a deslogar por engano. |
 | **P1** | **Preços de add-ons hardcoded no frontend** (29/39/49 em `MODULE_META`): o total estimado do wizard pode divergir do que a API/billing considera. |
 | **P2** | **Senha temporária efêmera:** só existe no modal pós-criação; fechar o modal a perde para sempre (sem reenvio por e-mail). |
@@ -126,6 +126,7 @@ Camada unitária **implementada e verde no CI** (`pnpm test` via turbo): 74 caso
 | CRUD de planos: `POST/PATCH /admin/plans`, `PATCH /admin/plans/:id/status` | Criação, edição e ativação/suspensão persistem; `GET /admin/plans?includeInactive=false` filtra corretamente | P1 |
 | `PATCH .../admins/:userId/password` e `/status` | Reset gera novo hash; suspensão bloqueia login do admin do tenant | P1 |
 | `GET /admin/billing/summary` | Contadores corretos, incluindo os ignorados (`customPlan`, `withoutPrice`, `otherCurrency`) | P2 |
+| `API-CLI-01` — os três estados da organização (`PATCH /admin/tenants/:id`, login do tenant, `GET /public/tenants/:slug`) | `onboarding` persiste e volta na listagem; em implantação o admin entra no Dashboard e a consulta pública responde 404; suspensão bloqueia o login e a ativação reabre os dois acessos; `setup` responde 400 "Status inválido." | P0 |
 
 ### 5.2 Frontend — componentes com API mockada (RTL + MSW)
 
@@ -133,7 +134,7 @@ Camada unitária **implementada e verde no CI** (`pnpm test` via turbo): 74 caso
 - **P0** — **Wizard — falha parcial:** MSW responde 201 no tenant e 500 no admin → a UI exibe "Cliente criado, mas não foi possível provisionar o administrador." e **não** mostra modal de senha (documenta o comportamento do tenant órfão até a correção).
 - **P0** — **Regressão do bug `onNotice`:** mensagens emitidas por `PlansManagement`, `PlanForm` e `BillingSummary` aparecem na tela (era descartado em silêncio antes do PR #74).
 - **P1** — **PlanForm:** com `plan.id` faz PATCH, sem faz POST; limite de 200 chars na descrição; preço vazio exibe "Sob consulta".
-- **P1** — **Lista de clientes:** busca em nome+slug+email (case-insensitive pt-BR); mudar filtro reseta paginação; `PAGE_SIZE=5`; MetricCards de ativos/suspensos batem com o dataset mockado.
+- **P1** — **Lista de clientes:** busca em nome+slug+email (case-insensitive pt-BR); mudar filtro reseta paginação; `PAGE_SIZE=5`; MetricCards de ativos/suspensos batem com o dataset mockado — cliente em implantação recebe selo próprio, fica fora do contador de suspensos e tem opção própria no filtro (issue 143).
 - **P1** — **Autenticação no cliente:** reidratação da sessão via `sessionStorage` no mount; 401 em `loadTenants` → volta ao login; `signOut` limpa as duas chaves `crosshub.*`.
 - **P2** — **Tenant detail:** troca de abas; modais de criar/editar admin e reset de senha abrem, validam e fecham.
 
