@@ -8,6 +8,7 @@ import type { IParamsDefault } from "@core/interfaces/global.interface"
 import type { IAddOnInterest } from "@core/interfaces/analytics/IAnalytics.interface"
 import postRequestAnalyticsInterest from "@core/services/analytics/postRequestAnalyticsInterest.service"
 import getTenantAddOnInterests from "@core/services/addons/getTenantAddOnInterests.service"
+import getPendingInterests from "@core/services/addons/getPendingInterests.service"
 import { tenantFor } from "@core/utils/tenant.utils"
 import { analyticsANL06 } from "@analytics-data/analytics.data"
 
@@ -54,6 +55,24 @@ describe(describeName.admin, () => {
 			analyticsANL06.paramsDefault200(platformParams.token),
 		)
 
+		// Sino e Visão geral do Super Admin leem a lista global, com nome e slug da organização.
+		const globalBefore = await getPendingInterests(
+			analyticsANL06.paramsDefault200(platformParams.token),
+		)
+		const mineBefore = (globalBefore.json as Array<IAddOnInterest & { tenantSlug: string; tenantName: string }>).filter(
+			(interest) => interest.id === request.json.id,
+		)
+		assertTs.equal(
+			mineBefore.length,
+			1,
+			"O pedido não apareceu na lista global de pendentes do admin da plataforma.",
+		)
+		assertTs.equal(
+			mineBefore[0].tenantSlug,
+			tenant.slug,
+			"A lista global não trouxe o slug da organização que pediu.",
+		)
+
 		const tenantAddOn = await addonsBusiness.setAddOnStatus(
 			tenant.tenantId,
 			analyticsANL06.addOnCode,
@@ -83,6 +102,15 @@ describe(describeName.admin, () => {
 			afterActivation.json,
 			[],
 			"Ativar o add-on deveria ter atendido o pedido pendente, mas ele continua listado.",
+		)
+
+		const globalAfter = await getPendingInterests(
+			analyticsANL06.paramsDefault200(platformParams.token),
+		)
+		assertTs.equal(
+			(globalAfter.json as Array<IAddOnInterest>).filter((interest) => interest.id === request.json.id).length,
+			0,
+			"O pedido atendido continua na lista global do sino.",
 		)
 	})
 })

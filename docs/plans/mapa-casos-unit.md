@@ -2,7 +2,7 @@
 
 Rastreabilidade entre os **46 casos `UNIT-*`** de `.doc/dashboard/estrategia-testes-dashboard.json` (25 deles P0) e os specs de `__tests__/unit/` do repo de desenvolvimento.
 
-Estratégia gerada em 2026-09-07 · mapa gerado por `npm run generate:unit-map` — não editar à mão.
+Estratégia gerada em 2026-09-08 · mapa gerado por `npm run generate:unit-map` — não editar à mão.
 
 | Convenção | Valor |
 |---|---|

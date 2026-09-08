@@ -2,7 +2,7 @@
 
 Rastreabilidade entre os **175 casos de API** de `.doc/dashboard/estrategia-testes-dashboard.json` (101 deles P0), os endpoints de `openapi.json` e os services em `core/src/services/`.
 
-Estratégia gerada em 2026-09-07 · mapa gerado por `npm run generate:map` — não editar à mão.
+Estratégia gerada em 2026-09-08 · mapa gerado por `npm run generate:map` — não editar à mão.
 
 | Convenção | Valor |
 |---|---|
@@ -296,7 +296,7 @@ Nenhum. Todo arquivo no disco corresponde a um caso da estratégia.
 
 ## Cobertura do contrato
 
-Rotas citadas por algum caso: **97** de 145 do contrato.
+Rotas citadas por algum caso: **97** de 146 do contrato.
 
 ### Rotas `/dashboard/**` sem nenhum caso de API (23 de 101)
 
