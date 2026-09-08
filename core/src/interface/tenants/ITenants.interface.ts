@@ -11,7 +11,7 @@ export interface ICreateTenantAdmin {
 }
 
 export interface ICreateTenant {
-	status?: "active" | "inactive"
+	status?: "active" | "onboarding" | "inactive"
 	/** Módulos liberados para esta organização, além dos incluídos no plano. */
 	enabledModules?: Array<string>
 	/** Recebe as notificações de reserva. Normalizado para minúsculas; vazio vira `null`. */
@@ -52,7 +52,7 @@ export interface ITenantListItem {
 	contactEmail: string | null
 	contactPhone: string | null
 	slug: string
-	status: "active" | "inactive"
+	status: "active" | "onboarding" | "inactive"
 	planId: string
 	enabledModules: Array<string>
 	createdAt: string
@@ -80,7 +80,7 @@ export interface IUpdateTenantAdmin {
 }
 
 export interface IUpdateTenant {
-	status?: "active" | "inactive"
+	status?: "active" | "onboarding" | "inactive"
 	/** Módulos liberados para esta organização, além dos incluídos no plano. */
 	enabledModules?: Array<string>
 	/** Recebe as notificações de reserva. Normalizado para minúsculas; vazio vira `null`. */

@@ -112,7 +112,7 @@ export interface ITenant {
 	contactEmail: string | null
 	contactPhone: string | null
 	slug: string
-	status: "active" | "inactive"
+	status: "active" | "onboarding" | "inactive"
 	planId: string
 	enabledModules: Array<string>
 	createdAt: string
