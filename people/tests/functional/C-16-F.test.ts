@@ -49,10 +49,13 @@ describe(describeName.dashboard, () => {
 			tudo.json,
 			"Sem page/pageSize a resposta deixou de ser o array — o dashboard ainda depende dele.",
 		)
-		assertTs.equal(
+		// O tenant é compartilhado e outros casos criam pessoas entre as duas
+		// chamadas, então o array só pode ter crescido em relação ao `total`
+		// da página — nunca comparar dois totais globais por igualdade.
+		assertTs.isAtLeast(
 			tudo.json.length,
 			pagina.json.total,
-			"O total paginado não bate com o tamanho do array completo.",
+			"O array completo trouxe menos pessoas que o `total` paginado.",
 		)
 	})
 
