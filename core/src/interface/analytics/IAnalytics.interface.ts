@@ -61,6 +61,10 @@ export interface ICustomersAnalyticsCards {
 	averageTicketCents: number | null
 	/** Nulo sem clientes ativos. */
 	recurrencePercent: number | null
+	/** Soma do saldo em aberto de todos os clientes, hoje. Independe do período. */
+	outstandingCents: number
+	/** Clientes com algum saldo em aberto. */
+	customersWithBalance: number
 }
 
 export interface ICustomersAnalytics {
@@ -70,6 +74,8 @@ export interface ICustomersAnalytics {
 	topSpenders: Array<ITopSpender>
 	/** Sem atendimento há mais de 60 dias, com atendimento nos 12 meses anteriores. */
 	churnRisk: Array<IChurnRiskCustomer>
+	/** Clientes com saldo em aberto hoje, do maior para o menor. Independe do período. */
+	outstanding: Array<IOutstandingCustomer>
 }
 
 export interface IFreeMinutesByWeekday {
@@ -97,6 +103,23 @@ export interface IInterestAddOn {
 	name: string
 	/** Preço de referência do catálogo, em centavos, exibido na tela de bloqueio. */
 	priceCents: number
+}
+
+export interface IOutstandingCustomer {
+	personId: string
+	name: string
+	email: string | null
+	phone: string | null
+	/** Atendimentos mais pacotes. */
+	outstandingCents: number
+	/** Atendimentos não pagos ou pagos em parte. */
+	appointmentsCents: number
+	/** Pacotes vendidos e não quitados. */
+	packagesCents: number
+	/** Quantidade de atendimentos e pacotes com saldo. */
+	items: number
+	/** Data do item em aberto mais antigo. */
+	oldestAt: string
 }
 
 export interface IPendingInterest {

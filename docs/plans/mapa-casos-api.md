@@ -1,6 +1,6 @@
 # Mapa dos casos de API — Estratégia do Dashboard
 
-Rastreabilidade entre os **175 casos de API** de `.doc/dashboard/estrategia-testes-dashboard.json` (101 deles P0), os endpoints de `openapi.json` e os services em `core/src/services/`.
+Rastreabilidade entre os **176 casos de API** de `.doc/dashboard/estrategia-testes-dashboard.json` (102 deles P0), os endpoints de `openapi.json` e os services em `core/src/services/`.
 
 Estratégia gerada em 2026-09-08 · mapa gerado por `npm run generate:map` — não editar à mão.
 
@@ -13,7 +13,7 @@ Estratégia gerada em 2026-09-08 · mapa gerado por `npm run generate:map` — n
 
 ## Agendamentos (`AG`)
 
-Domínio: `appointments/` · casos: 36 (P0: 20)
+Domínio: `appointments/` · casos: 37 (P0: 21)
 
 | Caso | Prio | Cenário | Token | Status | Service (ação) | Services (arranjo) | Asserção literal | Teste | Bug |
 |---|---|---|---|---|---|---|---|---|---|
@@ -52,6 +52,7 @@ Domínio: `appointments/` · casos: 36 (P0: 20)
 | `API-AG-31` | P0 | Crédito de pacote — venda e consumo | `tenantAuth` | 200 | `getPackageLedger` | `postCreatePackage`<br>`postSellPackage`<br>`postCreateAppointment` | — | `AG-31-F.test.ts` | — |
 | `API-AG-31b` | P0 | Crédito de pacote — cancelamento e restauração excepcional | `tenantAuth` | 200 | `postExceptionalRestore` | `putSaveSettings`<br>`patchUpdateAppointmentStatus` | `Devolução excepcional:` | `AG-31b-F.test.ts` | — |
 | `API-AG-32` | P0 | Notas internas não vazam para o app | `endUserAuth` | 200 | `getPublicMyAppointments` | `postCreateAppointment`<br>`postCreateBlock` | — | `AG-32-F.test.ts` | — |
+| `API-AG-33` | P0 | Pagamento de pacote — venda em aberto, pagamento pelo contrato e venda paga (issue #145) | `tenantAuth` | 201 | `postContractPayment` | `postCreatePackage`<br>`postSellPackage`<br>`getPersonPackages`<br>`getPersonFinancialSummary` | `O pagamento excede o saldo em aberto.`<br>`Informe a forma de pagamento.` | `AG-33-F.test.ts` | — |
 | `API-AG-XT` | P0 | Isolamento entre tenants | `tenantAuth` | 200 | `getListAppointments` | — | — | `AG-XT-F.test.ts` | — |
 
 ## Formulários (`F`)
@@ -277,7 +278,7 @@ Nenhum bug aberto no momento.
 
 ## Casos sem teste
 
-**3 de 175** casos da estratégia não têm arquivo de teste: 0 ausente(s) e 3 não verificável(is) contra o contrato atual.
+**3 de 176** casos da estratégia não têm arquivo de teste: 0 ausente(s) e 3 não verificável(is) contra o contrato atual.
 
 ### Não verificáveis contra o contrato (3)
 
@@ -296,17 +297,15 @@ Nenhum. Todo arquivo no disco corresponde a um caso da estratégia.
 
 ## Cobertura do contrato
 
-Rotas citadas por algum caso: **97** de 146 do contrato.
+Rotas citadas por algum caso: **100** de 147 do contrato.
 
-### Rotas `/dashboard/**` sem nenhum caso de API (23 de 101)
+### Rotas `/dashboard/**` sem nenhum caso de API (21 de 102)
 
 - `DELETE /dashboard/appointments/blocks/{id}` → `appointments/deleteBlock`
 - `DELETE /dashboard/appointments/services/{id}` → `appointments/deleteService`
 - `DELETE /dashboard/forms/{id}` → `forms/deleteForm`
 - `GET /dashboard/appointments/blocks` → `appointments/getBlocks`
 - `GET /dashboard/appointments/packages` → `appointments/getPackages`
-- `GET /dashboard/appointments/people/{personId}/financial-summary` → `appointments/getPersonFinancialSummary`
-- `GET /dashboard/appointments/people/{personId}/packages` → `appointments/getPersonPackages`
 - `GET /dashboard/appointments/professionals` → `appointments/getProfessionals`
 - `GET /dashboard/appointments/professionals/{id}/availability` → `appointments/getProfessionalAvailability`
 - `GET /dashboard/appointments/services` → `appointments/getServices`

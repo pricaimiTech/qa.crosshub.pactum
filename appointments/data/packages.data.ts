@@ -58,3 +58,30 @@ export const packagesAG31b = {
 	expectedBalanceAfterRestore: 10,
 	cancelReason: "Cancelado pelo admin, fora da política de devolução.",
 }
+
+/**
+ * `API-AG-33` — pagamento de pacote (issue #145): a venda sem pagamento deixa o
+ * valor cheio em aberto; o pagamento pelo contrato abate o saldo; a venda com
+ * pagamento integral nasce quitada. Pessoa e pacote são criados no próprio
+ * teste, então o resumo financeiro reflete só o que o caso lançou.
+ */
+export const packagesAG33 = {
+	...packageDefaults,
+	casePrefix: "[AG-33]",
+	packageName: "[AG-33] Pacote",
+	priceCents: 30000,
+	totalCredits: 10,
+	creditsPerSession: 1,
+	partialPaymentCents: 10000,
+	/** Maior que o saldo depois do pagamento parcial (30000 − 10000). */
+	overOutstandingCents: 25000,
+	expectedOutstandingAfterPartial: 20000,
+	partialMethod: "pix" as const,
+	partialNotes: "[AG-33] Pagamento parcial na venda do pacote.",
+	fullMethod: "cash" as const,
+	paymentType: "payment",
+	overOutstandingMessage: "O pagamento excede o saldo em aberto.",
+	missingMethodMessage: "Informe a forma de pagamento.",
+	paramsDefault400: (token?: string) =>
+		preSetup.preSetupParamsDefault(400, 5, 500, token),
+}
