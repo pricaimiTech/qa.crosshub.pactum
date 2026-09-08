@@ -1305,14 +1305,19 @@
           "papel": "arranjo",
           "metodo": "GET",
           "caminho": "/dashboard/appointments/people/{personId}/financial-summary"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/analytics/customers"
         }
       ],
       "token": "tenantAuth",
       "status": [
         201
       ],
-      "precondicao": "Pessoa nova e pacote criados no caso; uma venda sem pagamento e outra com paymentAmountCents igual ao preço",
-      "assercao": "Sem pagamento: resumo com outstandingCents igual ao preço, receivedCents 0 e contrato com paidCents 0. Pagamento parcial pelo contrato: 201 com paidCents / outstandingCents e resumo abatido; acima do saldo, 409 \"O pagamento excede o saldo em aberto.\" . Venda paga: paidCents igual ao preço; valor sem paymentMethod , 400 \"Informe a forma de pagamento.\"",
+      "precondicao": "Add-on Analytics ativo; pessoa nova e pacote criados no caso; uma venda sem pagamento e outra com paymentAmountCents igual ao preço",
+      "assercao": "Sem pagamento: resumo com outstandingCents igual ao preço, receivedCents 0 e contrato com paidCents 0 e a pessoa em outstanding[] do Analytics com packagesCents igual ao preço. Pagamento parcial pelo contrato: 201 com paidCents / outstandingCents e resumo abatido; acima do saldo, 409 \"O pagamento excede o saldo em aberto.\" . Venda paga: paidCents igual ao preço; valor sem paymentMethod , 400 \"Informe a forma de pagamento.\"",
       "literais": [
         "O pagamento excede o saldo em aberto.",
         "Informe a forma de pagamento."
@@ -1321,6 +1326,8 @@
         "outstandingCents",
         "receivedCents",
         "paidCents",
+        "outstanding[]",
+        "packagesCents",
         "201",
         "409",
         "paymentMethod",
