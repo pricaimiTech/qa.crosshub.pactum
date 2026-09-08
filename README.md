@@ -27,6 +27,53 @@ cross-env TEST_ENV=prod npm run all-auth      # usa .env.prod
 Faltando o arquivo `.env.<ambiente>` correspondente, ou um `TEST_ENV`
 desconhecido, a suíte falha rápido com um erro explicando o que fazer.
 
+### Paralelismo e o limite de login (#133)
+
+O `.mocharc.js` escolhe o número de workers pelo ambiente: 4 no CI, **2 em
+`develop`** e 10 no localhost. `JOBS` sobrepõe (`JOBS=6 cross-env
+TEST_ENV=develop ...`).
+
+`develop` roda mais devagar porque o login do cliente final tem limite de
+tentativas, e ele é compartilhado por todo mundo que sai do mesmo IP — o
+runner inteiro. Desde a correção do #133 os limites são:
+
+| Balde | Limite (janela de 60s) |
+| --- | --- |
+| Conta (`slug` + e-mail) | 5 tentativas |
+| IP (`ip` + `slug`) | 30 falhas |
+
+Um login bem-sucedido zera o balde da conta. O do IP só conta falhas e só
+vence com o tempo, então **uma onda de 401 vira uma onda de 429** um instante
+depois: se muitos casos caírem no `before` com
+
+```
+O status code da requisição POST /auth/platform/public/login não é o esperado.
+HTTP status 429 !== 200
+```
+
+o 429 é consequência, não causa. Procure o que estava gerando 401 antes dele —
+quase sempre o pool `preSetup/.endUsers.json` de outro ambiente (ver
+[Pools do pre-setup](#pools-do-pre-setup)).
+
+Voltar `develop` a 10 workers é seguro assim que a correção do #133 estiver
+publicada lá; o sinal de que deu certo é a suíte passar sem 429 nenhum.
+
+### Pools do pre-setup
+
+`npm run pre-setup` grava a massa reservada em `preSetup/.*.json` (tenants,
+admins, clientes finais). **Esses arquivos são por ambiente e não carregam
+qual ambiente os gerou.** O de clientes finais, `.endUsers.json`, ainda é
+incremental: rodando o pre-setup em `develop` com um arquivo do localhost na
+pasta, ele reaproveita pessoas que não existem lá, e todo caso `endUserAuth`
+cai com 401 — que vira 429 logo em seguida, pelo limite acima.
+
+Ao trocar de ambiente, apague ou mova os pools antes:
+
+```bash
+mv preSetup/.endUsers.json preSetup/.endUsers.localhost.json
+cross-env TEST_ENV=develop npm run pre-setup
+```
+
 ## Estratégias de teste
 
 Este repo é o dono dos documentos de estratégia. A **implementação** dos testes
