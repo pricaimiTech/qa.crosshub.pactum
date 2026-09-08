@@ -32,7 +32,7 @@ const CONTRATO = process.argv[2] ? resolve(process.argv[2]) : null;
 const MODULOS = {
   AG: 'Agendamentos', F: 'Formulários', LGPD: 'Privacidade e LGPD', C: 'Clientes',
   H: 'Home', G: 'Grupos', CAT: 'Catálogo', MK: 'Marca e aparência',
-  BN: 'Banners', MN: 'Menu e navegação', AN: 'Anonimização',
+  BN: 'Banners', MN: 'Menu e navegação', AN: 'Anonimização', ANL: 'Analytics',
 };
 
 const html = readFileSync(HTML, 'utf8');

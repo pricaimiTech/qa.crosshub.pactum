@@ -1,8 +1,8 @@
 # Mapa dos casos de API — Estratégia do Dashboard
 
-Rastreabilidade entre os **167 casos de API** de `.doc/dashboard/estrategia-testes-dashboard.json` (97 deles P0), os endpoints de `openapi.json` e os services em `core/src/services/`.
+Rastreabilidade entre os **176 casos de API** de `.doc/dashboard/estrategia-testes-dashboard.json` (102 deles P0), os endpoints de `openapi.json` e os services em `core/src/services/`.
 
-Estratégia gerada em 2026-09-07 · mapa gerado por `npm run generate:map` — não editar à mão.
+Estratégia gerada em 2026-09-08 · mapa gerado por `npm run generate:map` — não editar à mão.
 
 | Convenção | Valor |
 |---|---|
@@ -13,7 +13,7 @@ Estratégia gerada em 2026-09-07 · mapa gerado por `npm run generate:map` — n
 
 ## Agendamentos (`AG`)
 
-Domínio: `appointments/` · casos: 36 (P0: 20)
+Domínio: `appointments/` · casos: 37 (P0: 21)
 
 | Caso | Prio | Cenário | Token | Status | Service (ação) | Services (arranjo) | Asserção literal | Teste | Bug |
 |---|---|---|---|---|---|---|---|---|---|
@@ -48,10 +48,11 @@ Domínio: `appointments/` · casos: 36 (P0: 20)
 | `API-AG-27` | P1 | Feriado é visual, não bloqueia | `tenantAuth` | 200 | `getCalendar` | `getAvailability` | — | `AG-27-F.test.ts` | — |
 | `API-AG-28` | P2 | Feriado móvel | `tenantAuth` | 200 | `getCalendar` | — | — | `AG-28-F.test.ts` | — |
 | `API-AG-29` | P1 | Exclusão de profissional com histórico | `tenantAuth` | 409 | `deleteProfessional` | `postCreateAppointment` | `Este profissional possui agendamentos e não pode ser excluído. Inative-o para preservar o histórico.` | `AG-29-F.test.ts` | — |
-| `API-AG-30` | P1 | Gate do add-on de indicadores | `tenantAuth` | 400 | `getAnalytics` | `putSaveTenantAddOns` | `O add-on de indicadores de agendamento não está ativo para este tenant.` | `AG-30-F.test.ts` | — |
+| `API-AG-30` | P2 | Gate do add-on de indicadores — substituído por API-ANL-03 : a rota saiu do contrato e o add-on appointment_analytics virou analytics | — | 404 | `GET /dashboard/appointments/analytics` *(não existe no contrato)* | — | — | coberto por `API-ANL-03` | — |
 | `API-AG-31` | P0 | Crédito de pacote — venda e consumo | `tenantAuth` | 200 | `getPackageLedger` | `postCreatePackage`<br>`postSellPackage`<br>`postCreateAppointment` | — | `AG-31-F.test.ts` | — |
 | `API-AG-31b` | P0 | Crédito de pacote — cancelamento e restauração excepcional | `tenantAuth` | 200 | `postExceptionalRestore` | `putSaveSettings`<br>`patchUpdateAppointmentStatus` | `Devolução excepcional:` | `AG-31b-F.test.ts` | — |
 | `API-AG-32` | P0 | Notas internas não vazam para o app | `endUserAuth` | 200 | `getPublicMyAppointments` | `postCreateAppointment`<br>`postCreateBlock` | — | `AG-32-F.test.ts` | — |
+| `API-AG-33` | P0 | Pagamento de pacote — venda em aberto, pagamento pelo contrato e venda paga (issue #145) | `tenantAuth` | 201 | `postContractPayment` | `postCreatePackage`<br>`postSellPackage`<br>`getPersonPackages`<br>`getPersonFinancialSummary`<br>`getCustomersAnalytics` | `O pagamento excede o saldo em aberto.`<br>`Informe a forma de pagamento.` | `AG-33-F.test.ts` | — |
 | `API-AG-XT` | P0 | Isolamento entre tenants | `tenantAuth` | 200 | `getListAppointments` | — | — | `AG-XT-F.test.ts` | — |
 
 ## Formulários (`F`)
@@ -255,6 +256,21 @@ Domínio: `privacy/` · casos: 4 (P0: 2)
 | `API-AN-03` | P0 | "Remover acesso" não é anonimizar | `tenantAuth` | 200 | `postRemoveAccess` | `getListPeople`<br>`getListFormAssignments` | `revoked` | `AN-03-F.test.ts` | — |
 | `API-AN-04` | P2 | Auditoria não tem evento de anonimização | `tenantAuth` | 200 | `getListPeople` | `postRunRetention` | — | **não verificável** — o contrato não expõe leitura de trilha de auditoria ([#98](https://github.com/pricaimiTech/dev.CrossHub/issues/98)) | — |
 
+## Analytics (`ANL`)
+
+Domínio: `analytics/` · casos: 8 (P0: 4)
+
+| Caso | Prio | Cenário | Token | Status | Service (ação) | Services (arranjo) | Asserção literal | Teste | Bug |
+|---|---|---|---|---|---|---|---|---|---|
+| `API-ANL-01` | P0 | Sessão declara add-ons e módulos (história AN-01) | `tenantAuth` | 200 | `getSession` | `putSaveTenantAddOns` | `analytics`<br>`active` | `ANL-01-F.test.ts` | — |
+| `API-ANL-02` | P1 | Pedido de interesse idempotente em 7 dias (história AN-02) | `tenantAuth` | 201, 200 | `postRequestAnalyticsInterest` | `getPendingAnalyticsInterest`<br>`getTenantAddOnInterests`<br>`putSaveTenantAddOns` | `pending`<br>`analytics` | `ANL-02-F.test.ts` | — |
+| `API-ANL-03` | P0 | Gate do add-on nas rotas do Analytics (história AN-03) | `tenantAuth` | 403 | `getAppointmentsAnalytics` | `getAppointmentsAnalyticsExport`<br>`getCustomersAnalytics`<br>`getCustomersAnalyticsExport`<br>`putSaveTenantAddOns` | `O add-on Analytics não está ativo para esta organização.` | `ANL-03-F.test.ts` | — |
+| `API-ANL-03b` | P0 | Ocupação de 40% (história AN-03) | `tenantAuth` | 200 | `getAppointmentsAnalytics` | `putSaveTenantAddOns`<br>`postCreateProfessional`<br>`putSaveProfessionalAvailability`<br>`postCreateService`<br>`putSetProfessionals`<br>`getAvailability`<br>`postCreatePerson`<br>`postCreateAppointment` | — | `ANL-03b-F.test.ts` | — |
+| `API-ANL-03c` | P1 | Bloqueio reduz o denominador (história AN-03) | `tenantAuth` | 200 | `getAppointmentsAnalytics` | `postCreateBlock`<br>`postCreateProfessional`<br>`putSaveProfessionalAvailability`<br>`postCreateService`<br>`postCreateAppointment` | — | `ANL-03c-F.test.ts` | — |
+| `API-ANL-04` | P1 | Período acima de 12 meses (história AN-03) | `tenantAuth` | 400 | `getAppointmentsAnalytics` | `putSaveTenantAddOns` | `Período máximo de 12 meses.` | `ANL-04-F.test.ts` | — |
+| `API-ANL-05` | P0 | Dado sensível na aba Clientes (história AN-05) | `tenantAuth` | 200 | `getCustomersAnalytics` | `putSaveTenantAddOns`<br>`patchSensitiveDataAccess`<br>`postCreatePerson`<br>`postCreateAppointment` | — | `ANL-05-F.test.ts` | — |
+| `API-ANL-06` | P1 | Ativar o add-on atende o pedido pendente (história AN-06) | `platformAuth` | 200 | `putSaveTenantAddOns` | `postRequestAnalyticsInterest`<br>`getTenantAddOnInterests` | `active` | `ANL-06-F.test.ts` | — |
+
 ## Bugs abertos pela automação
 
 Nenhum bug aberto no momento.
@@ -262,7 +278,7 @@ Nenhum bug aberto no momento.
 
 ## Casos sem teste
 
-**3 de 167** casos da estratégia não têm arquivo de teste: 0 ausente(s) e 3 não verificável(is) contra o contrato atual.
+**3 de 176** casos da estratégia não têm arquivo de teste: 0 ausente(s) e 3 não verificável(is) contra o contrato atual.
 
 ### Não verificáveis contra o contrato (3)
 
@@ -281,17 +297,15 @@ Nenhum. Todo arquivo no disco corresponde a um caso da estratégia.
 
 ## Cobertura do contrato
 
-Rotas citadas por algum caso: **90** de 139 do contrato.
+Rotas citadas por algum caso: **100** de 147 do contrato.
 
-### Rotas `/dashboard/**` sem nenhum caso de API (24 de 96)
+### Rotas `/dashboard/**` sem nenhum caso de API (21 de 102)
 
 - `DELETE /dashboard/appointments/blocks/{id}` → `appointments/deleteBlock`
 - `DELETE /dashboard/appointments/services/{id}` → `appointments/deleteService`
 - `DELETE /dashboard/forms/{id}` → `forms/deleteForm`
 - `GET /dashboard/appointments/blocks` → `appointments/getBlocks`
 - `GET /dashboard/appointments/packages` → `appointments/getPackages`
-- `GET /dashboard/appointments/people/{personId}/financial-summary` → `appointments/getPersonFinancialSummary`
-- `GET /dashboard/appointments/people/{personId}/packages` → `appointments/getPersonPackages`
 - `GET /dashboard/appointments/professionals` → `appointments/getProfessionals`
 - `GET /dashboard/appointments/professionals/{id}/availability` → `appointments/getProfessionalAvailability`
 - `GET /dashboard/appointments/services` → `appointments/getServices`
@@ -306,6 +320,5 @@ Rotas citadas por algum caso: **90** de 139 do contrato.
 - `PATCH /dashboard/appointments/{id}/financial` → `appointments/patchAdjustFinancial`
 - `PATCH /dashboard/categories/{id}` → `catalog/patchUpdateCategory`
 - `PATCH /dashboard/forms/{id}` → `forms/patchUpdateForm`
-- `POST /dashboard/appointments/professionals` → `appointments/postCreateProfessional`
 - `POST /dashboard/appointments/{id}/payments` → `appointments/postRegisterPayment`
 - `POST /dashboard/appointments/{id}/refunds` → `appointments/postRefundPayment`

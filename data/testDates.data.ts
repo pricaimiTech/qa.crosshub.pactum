@@ -39,7 +39,6 @@ export const caseDayOffset: Record<string, number> = {
 	"AG-26": 40,
 	"AG-27": 41,
 	"AG-29": 39,
-	"AG-30": 42,
 	"AG-16": 43,
 	"AG-20": 44,
 	"AG-19": 45,
@@ -47,6 +46,9 @@ export const caseDayOffset: Record<string, number> = {
 	"AG-01": 47,
 	"AG-02": 48,
 	"AG-03": 49,
+	"ANL-03b": 51,
+	"ANL-03c": 52,
+	"ANL-05": 53,
 }
 
 /**

@@ -20,6 +20,10 @@
       "@shared-data/*": ["./data/*"],
       "@preSetup/*": ["./preSetup/*"],
 
+      "@analytics/*": ["./analytics/*"],
+      "@analytics-data/*": ["./analytics/data/*"],
+      "@analytics-tests/*": ["./analytics/tests/*"],
+
       "@addons/*": ["./addons/*"],
       "@addons-data/*": ["./addons/data/*"],
       "@addons-tests/*": ["./addons/tests/*"],

@@ -1,3 +1,4 @@
+import { faker } from "@faker-js/faker"
 import { assertTs, preSetup } from "../../constants"
 import AuthBusiness from "../auth/auth.business"
 import type { IServiceProfessionalLinkDraft } from "../../dataBuilder/appointments/serviceProfessionalLink.dataBuilder"
@@ -913,5 +914,52 @@ export default class AppointmentsBusiness {
 				read200,
 			)
 		}
+	}
+
+	/**
+	 * Cria uma pessoa nova para cada janela e agenda cada uma nela.
+	 *
+	 * A cota de um agendamento por pessoa por dia impede reaproveitar o mesmo
+	 * cliente: os casos de ocupação do Analytics precisam de vários atendimentos
+	 * no mesmo dia, então cada janela recebe um cliente próprio.
+	 * @param serviceId - Serviço agendado
+	 * @param casePrefix - Prefixo do nome das pessoas (ex.: `[ANL-03b]`)
+	 * @param startsAts - Inícios das janelas, um agendamento por item
+	 * @param paramsDefault - Parâmetros padrão já autenticados como admin do tenant
+	 * @returns Ids dos agendamentos criados, na ordem das janelas
+	 */
+	public async bookAppointmentsForNewPeople(
+		serviceId: string,
+		casePrefix: string,
+		startsAts: Array<string>,
+		paramsDefault: IParamsDefault,
+	): Promise<Array<string>> {
+		const created201 = preSetup.preSetupParamsDefault(
+			201,
+			paramsDefault.retry.count,
+			paramsDefault.retry.delay,
+			paramsDefault.token,
+		)
+
+		const appointmentIds: Array<string> = []
+
+		for (const startsAt of startsAts) {
+			const person = await postCreatePerson(
+				{
+					name: `${casePrefix} ${faker.person.fullName()}`,
+					email: `qa-${faker.string.alphanumeric(10).toLowerCase()}@example.com`,
+				},
+				created201,
+			)
+
+			const appointment = await postCreateAppointment(
+				{ personId: person.json.id, serviceId, startsAt },
+				created201,
+			)
+
+			appointmentIds.push(appointment.json.id)
+		}
+
+		return appointmentIds
 	}
 }

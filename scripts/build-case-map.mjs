@@ -32,6 +32,7 @@ const DOMAIN_BY_MODULE = {
 	BN: "banners",
 	MN: "dashboard",
 	AN: "privacy",
+	ANL: "analytics",
 }
 
 /**
@@ -64,6 +65,8 @@ const naoVerificavelDe = (testCase) => testCase.naoVerificavel ?? null
  */
 const COBERTO_POR = {
 	"API-AN-02": "API-AN-01",
+	// A rota antiga de indicadores saiu do contrato; o gate vive agora em ANL-03.
+	"API-AG-30": "API-ANL-03",
 }
 
 /** Onde o arquivo de teste de um caso deve estar. */
