@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker"
-import { assertTs, preSetup } from "../../constants"
+import { assertTs, preSetup, specPactumJs } from "../../constants"
+import { apiName } from "../../data/api.data"
 import AuthBusiness from "../auth/auth.business"
 import type { IServiceProfessionalLinkDraft } from "../../dataBuilder/appointments/serviceProfessionalLink.dataBuilder"
 import type { ICreatePerson } from "../../interface/people/IPeople.interface"
@@ -14,8 +15,6 @@ import type {
 import type { IParamsDefault } from "../../interface/global.interface"
 import type { IPooledEndUser } from "../../utils/endUser.utils"
 import { timeInTenantTimezone } from "../../utils/date.utils"
-import deleteProfessional from "../../services/appointments/deleteProfessional.service"
-import deleteService from "../../services/appointments/deleteService.service"
 import getProfessionals from "../../services/appointments/getProfessionals.service"
 import getAvailability from "../../services/appointments/getAvailability.service"
 import getListAppointments from "../../services/appointments/getListAppointments.service"
@@ -127,8 +126,10 @@ export default class AppointmentsBusiness {
 	 * caso. O prefixo é o ID do caso (ex.: `[AG-01]`), então a limpeza nunca
 	 * alcança a massa de outro teste rodando em paralelo.
 	 *
-	 * Recursos com histórico respondem 409 e são ignorados de propósito — o
-	 * objetivo é não acumular lixo, não garantir base vazia.
+	 * Recursos com histórico (agendamento, pacote) respondem 409 e são ignorados
+	 * de propósito — o objetivo é não acumular lixo, não garantir base vazia.
+	 * Qualquer outro status derruba a limpeza: era um `.catch(() => undefined)`
+	 * que escondeu o 500 da issue #146 (serviço coberto por pacote) por semanas.
 	 * @param prefix - Prefixo do nome dos recursos do caso
 	 * @param paramsDefault - Parâmetros padrão já autenticados como admin do tenant
 	 */
@@ -141,12 +142,6 @@ export default class AppointmentsBusiness {
 			paramsDefault.retry.delay,
 			paramsDefault.token,
 		)
-		const anyStatus = preSetup.preSetupParamsDefault(
-			200,
-			0,
-			0,
-			paramsDefault.token,
-		)
 
 		const services: Array<INamedResource> = (await getServices(read200)).json
 		const professionals: Array<INamedResource> = (
@@ -156,14 +151,43 @@ export default class AppointmentsBusiness {
 		for (const service of services.filter((item) =>
 			item.name.startsWith(prefix),
 		)) {
-			await deleteService(service.id, anyStatus).catch(() => undefined)
+			await this.deleteForCleanup("services", service, paramsDefault.token)
 		}
 
 		for (const professional of professionals.filter((item) =>
 			item.name.startsWith(prefix),
 		)) {
-			await deleteProfessional(professional.id, anyStatus).catch(
-				() => undefined,
+			await this.deleteForCleanup(
+				"professionals",
+				professional,
+				paramsDefault.token,
+			)
+		}
+	}
+
+	/**
+	 * `DELETE` de um recurso da limpeza aceitando os dois desfechos legítimos:
+	 * `200` apagou, `409` tem histórico e fica. Não passa pelo service gerado
+	 * porque ele fixa um único status no `expectStatus`.
+	 * @param resource - Segmento da rota: `services` ou `professionals`
+	 * @param item - Recurso encontrado pelo prefixo do caso
+	 * @param token - Bearer token do admin do tenant
+	 */
+	private async deleteForCleanup(
+		resource: "services" | "professionals",
+		item: INamedResource,
+		token?: string,
+	): Promise<void> {
+		const response = await specPactumJs()
+			.delete(
+				`${process.env.BASE_URL}${apiName.dashboardAppointments}/${resource}/${item.id}`,
+			)
+			.withBearerToken(`${token}`)
+			.toss()
+
+		if (![200, 409].includes(response.statusCode)) {
+			throw new Error(
+				`Limpeza de ${resource} "${item.name}" (${item.id}) respondeu ${response.statusCode}, esperava 200 ou 409: ${JSON.stringify(response.json)}`,
 			)
 		}
 	}

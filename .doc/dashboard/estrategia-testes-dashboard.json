@@ -3,10 +3,10 @@
   "origem": ".doc/dashboard/estrategia-testes-dashboard.html",
   "aviso": "Artefato de build. Editar o HTML e rodar build-strategy-json.mjs.",
   "totais": {
-    "casos": 176,
+    "casos": 177,
     "p0": 102,
     "porModulo": {
-      "AG": 37,
+      "AG": 38,
       "F": 25,
       "LGPD": 14,
       "C": 18,
@@ -39,8 +39,8 @@
   },
   "conferencia": {
     "contrato": 147,
-    "comCaso": 100,
-    "semCaso": 47
+    "comCaso": 101,
+    "semCaso": 46
   },
   "casos": [
     {
@@ -1332,6 +1332,46 @@
         "409",
         "paymentMethod",
         "400"
+      ],
+      "doc": "AG-31",
+      "novo": true
+    },
+    {
+      "id": "API-AG-34",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Exclusão de serviço coberto por pacote (issue #146)",
+      "naoVerificavel": null,
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "DELETE",
+          "caminho": "/dashboard/appointments/services/{id}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/services"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/packages"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        409
+      ],
+      "precondicao": "Serviço vinculado a um pacote",
+      "assercao": "\"Este serviço faz parte de um pacote e não pode ser excluído. Inative-o para preservar o histórico.\" . Sem pacote, 200",
+      "literais": [
+        "Este serviço faz parte de um pacote e não pode ser excluído. Inative-o para preservar o histórico."
+      ],
+      "campos": [
+        "200"
       ],
       "doc": "AG-31",
       "novo": true

@@ -3,7 +3,7 @@ import { apiName } from "../../data/api.data"
 import type { IParamsDefault } from "../../interface/global.interface"
 
 /**
- * Exclui um serviço sem histórico de agendamentos
+ * Exclui um serviço sem agendamentos e fora de pacotes
  * @param id - id
  * @param paramsDefault - Parâmetros padrão da requisição
  * @returns Resposta de `DELETE /dashboard/appointments/services/{id}`
