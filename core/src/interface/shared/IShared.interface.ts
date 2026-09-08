@@ -36,6 +36,10 @@ export interface IPackageContract {
 	status: "active" | "exhausted" | "expired" | "cancelled"
 	createdAt: string
 	updatedAt: string
+	/** Pagamentos menos estornos do contrato (listagem por pessoa). */
+	paidCents?: number
+	/** Valor do contrato menos o pago; zero se cancelado (listagem por pessoa). */
+	outstandingCents?: number
 }
 
 export interface IProfessional {

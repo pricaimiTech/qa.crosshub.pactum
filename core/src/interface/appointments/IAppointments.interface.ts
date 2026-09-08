@@ -107,6 +107,14 @@ export interface ICalendar {
 	holidays: Array<IHoliday>
 }
 
+export interface IContractPaymentResult {
+	/** Pagamentos menos estornos vinculados ao contrato. */
+	paidCents: number
+	/** Valor do contrato menos o pago. Zero em contratos cancelados. */
+	outstandingCents: number
+	payment: IPayment
+}
+
 export interface ICreateAppointment {
 	personId: string
 	serviceId: string
@@ -304,6 +312,11 @@ export interface ISellPackage {
 	packageId: string
 	/** Sobrescreve a validade padrão do pacote. */
 	expiresAt?: string
+	/** Valor recebido na venda, em centavos. Sem ele, o pacote fica em aberto até um pagamento posterior. */
+	paymentAmountCents?: number
+	/** Obrigatório quando há valor recebido. */
+	paymentMethod?: "cash" | "pix" | "credit_card" | "debit_card" | "bank_transfer" | "other"
+	paymentNotes?: string
 }
 
 export interface IServiceProfessionalLink {
