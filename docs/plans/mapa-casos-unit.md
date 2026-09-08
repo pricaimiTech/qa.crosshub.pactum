@@ -136,9 +136,10 @@ Nenhum. Todo ID declarado em `describe` existe na estratégia.
 
 ## Arquivos unitários sem ID de caso
 
-7 de 29 specs do escopo dashboard não citam caso nenhum. São testes legítimos que a estratégia não conhece — pedem um caso, não bloqueiam.
+8 de 30 specs do escopo dashboard não citam caso nenhum. São testes legítimos que a estratégia não conhece — pedem um caso, não bloqueiam.
 
 - `__tests__/unit/api/dashboard/agendamentos/escolha-do-profissional.spec.ts` (jest)
+- `__tests__/unit/api/dashboard/agendamentos/exclusao-de-servico.spec.ts` (jest)
 - `__tests__/unit/api/dashboard/agendamentos/fase-zero.spec.ts` (jest)
 - `__tests__/unit/api/dashboard/agendamentos/nome-repetido.spec.ts` (jest)
 - `__tests__/unit/api/dashboard/agendamentos/validacao-de-dto.spec.ts` (jest)
