@@ -1,6 +1,8 @@
 import { preSetup } from "@core/constants"
 import { tenantTimezone, weekdayOfDate } from "@core/utils/date.utils"
 import { dateForCase } from "@shared-data/testDates.data"
+import { ANALYTICS_ADDON_CODE } from "@core/business/addons/addons.business"
+import { dateInDays } from "@core/utils/date.utils"
 
 /** Login responde 200, como o contrato declara (#86 corrigido). */
 const loginParams = preSetup.preSetupParamsDefault(200, 5, 500)
@@ -80,6 +82,9 @@ export const packagesAG33 = {
 	partialNotes: "[AG-33] Pagamento parcial na venda do pacote.",
 	fullMethod: "cash" as const,
 	paymentType: "payment",
+	/** O `outstanding` do Analytics é saldo acumulado, não filtrado pelo período. */
+	addOnCode: ANALYTICS_ADDON_CODE,
+	analyticsPeriod: { from: dateInDays(0), to: dateInDays(0) },
 	overOutstandingMessage: "O pagamento excede o saldo em aberto.",
 	missingMethodMessage: "Informe a forma de pagamento.",
 	paramsDefault400: (token?: string) =>

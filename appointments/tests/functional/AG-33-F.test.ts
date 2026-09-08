@@ -1,4 +1,5 @@
 import {
+	addonsBusiness,
 	appointmentsBusiness,
 	assertTs,
 	authBusiness,
@@ -8,6 +9,8 @@ import {
 	serviceBuilder,
 } from "@core/constants"
 import type { IParamsDefault } from "@core/interfaces/global.interface"
+import type { IOutstandingCustomer } from "@core/interfaces/analytics/IAnalytics.interface"
+import getCustomersAnalytics from "@core/services/analytics/getCustomersAnalytics.service"
 import type { IPackageContract } from "@core/interfaces/shared/IShared.interface"
 import getPersonFinancialSummary from "@core/services/appointments/getPersonFinancialSummary.service"
 import getPersonPackages from "@core/services/appointments/getPersonPackages.service"
@@ -23,7 +26,23 @@ describe(describeName.dashboard, () => {
 	let personId: string
 	let packageId: string
 
-	before("Pessoa nova e pacote do caso, sem nenhum lançamento financeiro", async () => {
+	before("Add-on Analytics ativo; pessoa nova e pacote do caso, sem nenhum lançamento financeiro", async () => {
+		const platformParams = await authBusiness.loginAsPlatformAdmin(
+			`${process.env.ADMIN_EMAIL}`,
+			`${process.env.ADMIN_PASSWORD}`,
+			packagesAG33.loginParams,
+		)
+		const tenantId = await addonsBusiness.tenantIdBySlug(
+			`${process.env.TENANT_SLUG}`,
+			platformParams,
+		)
+		await addonsBusiness.setAddOnStatus(
+			tenantId,
+			packagesAG33.addOnCode,
+			"active",
+			platformParams,
+		)
+
 		adminParams = await authBusiness.loginAsTenantAdmin(
 			`${process.env.TENANT_SLUG}`,
 			`${process.env.TENANT_EMAIL}`,
@@ -72,6 +91,10 @@ describe(describeName.dashboard, () => {
 			personId,
 			packagesAG33.paramsDefault200(adminParams.token),
 		)
+		const customersUnpaid = await getCustomersAnalytics(
+			packagesAG33.analyticsPeriod,
+			packagesAG33.paramsDefault200(adminParams.token),
+		)
 
 		const partial = await postContractPayment(
 			unpaidContract.json.id,
@@ -117,6 +140,9 @@ describe(describeName.dashboard, () => {
 		const unpaidInList = (listUnpaid.json as Array<IPackageContract>).filter(
 			(contract) => contract.id === unpaidContract.json.id,
 		)
+		const outstandingInAnalytics = (
+			customersUnpaid.json.outstanding as Array<IOutstandingCustomer>
+		).filter((row) => row.personId === personId)
 		const paidInList = (listPaid.json as Array<IPackageContract>).filter(
 			(contract) => contract.id === paidContract.json.id,
 		)
@@ -140,6 +166,16 @@ describe(describeName.dashboard, () => {
 			unpaidInList[0].outstandingCents,
 			packagesAG33.priceCents,
 			"A listagem de contratos não traz o valor cheio em `outstandingCents`.",
+		)
+		assertTs.equal(
+			outstandingInAnalytics.length,
+			1,
+			"O Analytics de clientes não listou a pessoa com o pacote em aberto.",
+		)
+		assertTs.equal(
+			outstandingInAnalytics[0].packagesCents,
+			packagesAG33.priceCents,
+			"O `packagesCents` do Analytics não é o preço do pacote vendido sem pagamento.",
 		)
 
 		assertTs.equal(

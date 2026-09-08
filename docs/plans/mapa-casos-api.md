@@ -52,7 +52,7 @@ Domínio: `appointments/` · casos: 37 (P0: 21)
 | `API-AG-31` | P0 | Crédito de pacote — venda e consumo | `tenantAuth` | 200 | `getPackageLedger` | `postCreatePackage`<br>`postSellPackage`<br>`postCreateAppointment` | — | `AG-31-F.test.ts` | — |
 | `API-AG-31b` | P0 | Crédito de pacote — cancelamento e restauração excepcional | `tenantAuth` | 200 | `postExceptionalRestore` | `putSaveSettings`<br>`patchUpdateAppointmentStatus` | `Devolução excepcional:` | `AG-31b-F.test.ts` | — |
 | `API-AG-32` | P0 | Notas internas não vazam para o app | `endUserAuth` | 200 | `getPublicMyAppointments` | `postCreateAppointment`<br>`postCreateBlock` | — | `AG-32-F.test.ts` | — |
-| `API-AG-33` | P0 | Pagamento de pacote — venda em aberto, pagamento pelo contrato e venda paga (issue #145) | `tenantAuth` | 201 | `postContractPayment` | `postCreatePackage`<br>`postSellPackage`<br>`getPersonPackages`<br>`getPersonFinancialSummary` | `O pagamento excede o saldo em aberto.`<br>`Informe a forma de pagamento.` | `AG-33-F.test.ts` | — |
+| `API-AG-33` | P0 | Pagamento de pacote — venda em aberto, pagamento pelo contrato e venda paga (issue #145) | `tenantAuth` | 201 | `postContractPayment` | `postCreatePackage`<br>`postSellPackage`<br>`getPersonPackages`<br>`getPersonFinancialSummary`<br>`getCustomersAnalytics` | `O pagamento excede o saldo em aberto.`<br>`Informe a forma de pagamento.` | `AG-33-F.test.ts` | — |
 | `API-AG-XT` | P0 | Isolamento entre tenants | `tenantAuth` | 200 | `getListAppointments` | — | — | `AG-XT-F.test.ts` | — |
 
 ## Formulários (`F`)
