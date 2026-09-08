@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-09-07",
+  "gerado": "2026-09-08",
   "origem": ".doc/dashboard/estrategia-testes-dashboard.html",
   "aviso": "Artefato de build. Editar o HTML e rodar build-strategy-json.mjs.",
   "totais": {
@@ -38,9 +38,9 @@
     }
   },
   "conferencia": {
-    "contrato": 145,
+    "contrato": 146,
     "comCaso": 97,
-    "semCaso": 48
+    "semCaso": 49
   },
   "casos": [
     {
