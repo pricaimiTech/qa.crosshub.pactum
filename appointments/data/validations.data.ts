@@ -85,3 +85,20 @@ export const validationsAG29 = {
 	errorMessage:
 		"Este profissional possui agendamentos e não pode ser excluído. Inative-o para preservar o histórico.",
 }
+
+/**
+ * `API-AG-34` — serviço coberto por pacote não pode ser excluído (issue #146):
+ * respondia 500 pela FK `appointment_package_services_tenant_service_fkey`.
+ * O pacote não tem rota de exclusão, então o serviço vinculado é massa
+ * permanente — a limpeza por prefixo recebe 409 e segue.
+ */
+export const validationsAG34 = {
+	...validationDefaults,
+	casePrefix: "[AG-34]",
+	packageName: "[AG-34] Pacote",
+	priceCents: 10000,
+	totalCredits: 5,
+	creditsPerSession: 1,
+	errorMessage:
+		"Este serviço faz parte de um pacote e não pode ser excluído. Inative-o para preservar o histórico.",
+}
