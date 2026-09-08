@@ -1,12 +1,12 @@
 {
-  "gerado": "2026-09-07",
+  "gerado": "2026-09-08",
   "origem": ".doc/dashboard/estrategia-testes-dashboard.html",
   "aviso": "Artefato de build. Editar o HTML e rodar build-strategy-json.mjs.",
   "totais": {
-    "casos": 167,
-    "p0": 97,
+    "casos": 176,
+    "p0": 102,
     "porModulo": {
-      "AG": 36,
+      "AG": 37,
       "F": 25,
       "LGPD": 14,
       "C": 18,
@@ -16,7 +16,8 @@
       "MK": 12,
       "BN": 11,
       "MN": 3,
-      "AN": 4
+      "AN": 4,
+      "ANL": 8
     },
     "unit": {
       "casos": 46,
@@ -37,9 +38,9 @@
     }
   },
   "conferencia": {
-    "contrato": 139,
-    "comCaso": 90,
-    "semCaso": 49
+    "contrato": 147,
+    "comCaso": 100,
+    "semCaso": 47
   },
   "casos": [
     {
@@ -1119,35 +1120,29 @@
       "modulo": "AG",
       "moduloNome": "Agendamentos",
       "camada": "API",
-      "prioridade": "P1",
-      "cenario": "Gate do add-on de indicadores",
+      "prioridade": "P2",
+      "cenario": "Gate do add-on de indicadores — substituído por API-ANL-03 : a rota saiu do contrato e o add-on appointment_analytics virou analytics",
       "naoVerificavel": null,
       "rotas": [
         {
-          "papel": "acao",
+          "papel": "inexistente",
           "metodo": "GET",
           "caminho": "/dashboard/appointments/analytics"
-        },
-        {
-          "papel": "arranjo",
-          "metodo": "PUT",
-          "caminho": "/admin/add-ons/tenants/{tenantId}"
         }
       ],
-      "token": "tenantAuth",
+      "token": null,
       "status": [
-        400
+        404
       ],
-      "precondicao": "Tenant sem appointment_analytics",
-      "assercao": "\"O add-on de indicadores de agendamento não está ativo para este tenant.\" . Com o add-on ligado, 200 com os agregados",
-      "literais": [
-        "O add-on de indicadores de agendamento não está ativo para este tenant."
-      ],
+      "precondicao": "Tenant qualquer",
+      "assercao": "A rota antiga não existe mais; o gate do add-on é verificado nas rotas /dashboard/analytics/* pelo caso API-ANL-03",
+      "literais": [],
       "campos": [
-        "200"
+        "/dashboard/analytics/*",
+        "API-ANL-03"
       ],
       "doc": "—",
-      "novo": true
+      "novo": false
     },
     {
       "id": "API-AG-31",
@@ -1276,6 +1271,70 @@
       ],
       "doc": "AG-18",
       "novo": false
+    },
+    {
+      "id": "API-AG-33",
+      "modulo": "AG",
+      "moduloNome": "Agendamentos",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Pagamento de pacote — venda em aberto, pagamento pelo contrato e venda paga (issue #145)",
+      "naoVerificavel": null,
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/package-contracts/{id}/payments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/packages"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/people/{personId}/packages"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/appointments/people/{personId}/packages"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/appointments/people/{personId}/financial-summary"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/analytics/customers"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Add-on Analytics ativo; pessoa nova e pacote criados no caso; uma venda sem pagamento e outra com paymentAmountCents igual ao preço",
+      "assercao": "Sem pagamento: resumo com outstandingCents igual ao preço, receivedCents 0 e contrato com paidCents 0 e a pessoa em outstanding[] do Analytics com packagesCents igual ao preço. Pagamento parcial pelo contrato: 201 com paidCents / outstandingCents e resumo abatido; acima do saldo, 409 \"O pagamento excede o saldo em aberto.\" . Venda paga: paidCents igual ao preço; valor sem paymentMethod , 400 \"Informe a forma de pagamento.\"",
+      "literais": [
+        "O pagamento excede o saldo em aberto.",
+        "Informe a forma de pagamento."
+      ],
+      "campos": [
+        "outstandingCents",
+        "receivedCents",
+        "paidCents",
+        "outstanding[]",
+        "packagesCents",
+        "201",
+        "409",
+        "paymentMethod",
+        "400"
+      ],
+      "doc": "AG-31",
+      "novo": true
     },
     {
       "id": "API-AG-XT",
@@ -5609,6 +5668,407 @@
       "literais": [],
       "campos": [
         "audit_logs"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-ANL-01",
+      "modulo": "ANL",
+      "moduloNome": "Analytics",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Sessão declara add-ons e módulos (história AN-01)",
+      "naoVerificavel": null,
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/session"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/admin/add-ons/tenants/{tenantId}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Tenant próprio; add-on analytics desligado e depois ligado",
+      "assercao": "Sem o add-on, addons não contém analytics e enabledModules é lista; com ele, addons traz code: \"analytics\" , status: \"active\" e endsAt nulo; enabledModules não muda",
+      "literais": [
+        "analytics",
+        "active"
+      ],
+      "campos": [
+        "addons",
+        "analytics",
+        "enabledModules",
+        "code: \"analytics\"",
+        "status: \"active\"",
+        "endsAt"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-ANL-02",
+      "modulo": "ANL",
+      "moduloNome": "Analytics",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Pedido de interesse idempotente em 7 dias (história AN-02)",
+      "naoVerificavel": null,
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/analytics/interest"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/analytics/interest"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/admin/add-ons/tenants/{tenantId}/interests"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/admin/add-ons/tenants/{tenantId}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        201,
+        200
+      ],
+      "precondicao": "Tenant próprio sem o add-on e sem pedido pendente (ativar e desativar no arranjo atende o pedido anterior)",
+      "assercao": "Primeiro POST 201 com reused: false e status: \"pending\" ; segundo POST 200 com o mesmo id e reused: true ; GET devolve pending.id igual e addon.code: \"analytics\" ; o admin da plataforma lista o pedido com kind e requestedByEmail",
+      "literais": [
+        "pending",
+        "analytics"
+      ],
+      "campos": [
+        "201",
+        "reused: false",
+        "status: \"pending\"",
+        "200",
+        "id",
+        "reused: true",
+        "GET",
+        "pending.id",
+        "addon.code: \"analytics\"",
+        "kind",
+        "requestedByEmail"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-ANL-03",
+      "modulo": "ANL",
+      "moduloNome": "Analytics",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Gate do add-on nas rotas do Analytics (história AN-03)",
+      "naoVerificavel": null,
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/analytics/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/analytics/appointments/export"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/analytics/customers"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/analytics/customers/export"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/admin/add-ons/tenants/{tenantId}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        403
+      ],
+      "precondicao": "Tenant próprio com o add-on inactive",
+      "assercao": "As quatro rotas respondem 403 com \"O add-on Analytics não está ativo para esta organização.\"",
+      "literais": [
+        "O add-on Analytics não está ativo para esta organização."
+      ],
+      "campos": [
+        "403"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-ANL-03b",
+      "modulo": "ANL",
+      "moduloNome": "Analytics",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Ocupação de 40% (história AN-03)",
+      "naoVerificavel": null,
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/analytics/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/admin/add-ons/tenants/{tenantId}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/professionals"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/appointments/professionals/{id}/availability"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/services"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/appointments/services/{id}/professionals"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/dashboard/appointments/availability"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/people"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Tenant próprio com o add-on ativo; profissional novo com 10 h de agenda no dia reservado; 4 atendimentos aprovados de 60 min para 4 clientes (cota de um por dia)",
+      "assercao": "Na entrada do profissional em professionals : hasAvailability: true , availableMinutes: 600 , scheduledMinutes: 240 , occupancyPercent: 40 ; period.from ecoa a data consultada",
+      "literais": [],
+      "campos": [
+        "professionals",
+        "hasAvailability: true",
+        "availableMinutes: 600",
+        "scheduledMinutes: 240",
+        "occupancyPercent: 40",
+        "period.from"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-ANL-03c",
+      "modulo": "ANL",
+      "moduloNome": "Analytics",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Bloqueio reduz o denominador (história AN-03)",
+      "naoVerificavel": null,
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/analytics/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/blocks"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/professionals"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/dashboard/appointments/professionals/{id}/availability"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments/services"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Mesmo arranjo do 03b, mais um bloqueio de 2 h (16:00–18:00) no profissional",
+      "assercao": "availableMinutes: 480 , scheduledMinutes: 240 , occupancyPercent: 50",
+      "literais": [],
+      "campos": [
+        "availableMinutes: 480",
+        "scheduledMinutes: 240",
+        "occupancyPercent: 50"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-ANL-04",
+      "modulo": "ANL",
+      "moduloNome": "Analytics",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Período acima de 12 meses (história AN-03)",
+      "naoVerificavel": null,
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/analytics/appointments"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/admin/add-ons/tenants/{tenantId}"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        400
+      ],
+      "precondicao": "Tenant principal com o add-on ativo; from hoje e to a 400 dias",
+      "assercao": "\"Período máximo de 12 meses.\"",
+      "literais": [
+        "Período máximo de 12 meses."
+      ],
+      "campos": [],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-ANL-05",
+      "modulo": "ANL",
+      "moduloNome": "Analytics",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Dado sensível na aba Clientes (história AN-05)",
+      "naoVerificavel": null,
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "GET",
+          "caminho": "/dashboard/analytics/customers"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PUT",
+          "caminho": "/admin/add-ons/tenants/{tenantId}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "PATCH",
+          "caminho": "/dashboard/privacy/professionals/{userId}/sensitive-data-access"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/people"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/appointments"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Tenant principal com o add-on ativo; um atendimento no dia reservado ao caso; admin do pool sem canViewSensitiveData",
+      "assercao": "Para o admin restrito, a cliente aparece em topSpenders com email e phone nulos ; para o principal, com o e-mail cadastrado; cards.activeCustomers é igual para os dois",
+      "literais": [],
+      "campos": [
+        "topSpenders",
+        "email",
+        "phone",
+        "cards.activeCustomers"
+      ],
+      "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-ANL-06",
+      "modulo": "ANL",
+      "moduloNome": "Analytics",
+      "camada": "API",
+      "prioridade": "P1",
+      "cenario": "Ativar o add-on atende o pedido pendente (história AN-06)",
+      "naoVerificavel": null,
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "PUT",
+          "caminho": "/admin/add-ons/tenants/{tenantId}"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "POST",
+          "caminho": "/dashboard/analytics/interest"
+        },
+        {
+          "papel": "arranjo",
+          "metodo": "GET",
+          "caminho": "/admin/add-ons/tenants/{tenantId}/interests"
+        }
+      ],
+      "token": "platformAuth",
+      "status": [
+        200
+      ],
+      "precondicao": "Tenant próprio sem o add-on; um pedido de interesse recém-criado",
+      "assercao": "Antes do PUT o pedido está na lista do admin; após status: \"active\" , a lista de pendentes é []",
+      "literais": [
+        "active"
+      ],
+      "campos": [
+        "status: \"active\"",
+        "[]"
       ],
       "doc": null,
       "novo": false

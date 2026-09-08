@@ -2,6 +2,7 @@ import "./env"
 import { assert } from "chai"
 import { spec } from "pactum"
 import type Spec from "pactum/src/models/Spec"
+import AddonsBusiness from "./business/addons/addons.business"
 import AppointmentsBusiness from "./business/appointments/appointments.business"
 import AuthBusiness from "./business/auth/auth.business"
 import FormsBusiness from "./business/forms/forms.business"
@@ -110,6 +111,7 @@ export const groupsBusiness = new GroupsBusiness()
 export const catalogBusiness = new CatalogBusiness()
 export const brandingBusiness = new BrandingBusiness()
 export const bannersBusiness = new BannersBusiness()
+export const addonsBusiness = new AddonsBusiness()
 
 /** DataBuilders instanciados, consumidos pelos testes via `@core/constants`. */
 export const serviceBuilder = new ServiceDataBuilder()

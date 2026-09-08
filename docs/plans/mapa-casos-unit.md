@@ -2,7 +2,7 @@
 
 Rastreabilidade entre os **46 casos `UNIT-*`** de `.doc/dashboard/estrategia-testes-dashboard.json` (25 deles P0) e os specs de `__tests__/unit/` do repo de desenvolvimento.
 
-Estratégia gerada em 2026-09-07 · mapa gerado por `npm run generate:unit-map` — não editar à mão.
+Estratégia gerada em 2026-09-08 · mapa gerado por `npm run generate:unit-map` — não editar à mão.
 
 | Convenção | Valor |
 |---|---|
@@ -136,13 +136,15 @@ Nenhum. Todo ID declarado em `describe` existe na estratégia.
 
 ## Arquivos unitários sem ID de caso
 
-5 de 27 specs do escopo dashboard não citam caso nenhum. São testes legítimos que a estratégia não conhece — pedem um caso, não bloqueiam.
+7 de 29 specs do escopo dashboard não citam caso nenhum. São testes legítimos que a estratégia não conhece — pedem um caso, não bloqueiam.
 
 - `__tests__/unit/api/dashboard/agendamentos/escolha-do-profissional.spec.ts` (jest)
 - `__tests__/unit/api/dashboard/agendamentos/fase-zero.spec.ts` (jest)
 - `__tests__/unit/api/dashboard/agendamentos/nome-repetido.spec.ts` (jest)
 - `__tests__/unit/api/dashboard/agendamentos/validacao-de-dto.spec.ts` (jest)
+- `__tests__/unit/api/dashboard/clientes/validacao-de-pessoa.spec.ts` (jest)
 - `__tests__/unit/api/dashboard/grupos/agrupamento-por-afinidade.spec.ts` (jest)
+- `__tests__/unit/front/dashboard/analytics/periodo.test.ts` (vitest)
 
 ## Selos `extrair` a remover da estratégia
 

@@ -22,6 +22,7 @@ export const adminAllocation: Record<string, string> = {
 	"H-08": "Não vê dado sensível na Home",
 	"MN-02": "Admin desativado durante a sessão",
 	"MN-03": "Menu escondido não substitui a checagem da API",
+	"ANL-05": "Não vê e-mail nem telefone na aba Clientes do Analytics",
 }
 
 /** Senha usada por todos os admins do pool (mínimo de 12 caracteres). */

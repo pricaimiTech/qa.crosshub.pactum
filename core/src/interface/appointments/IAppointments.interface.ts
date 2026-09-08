@@ -18,48 +18,6 @@ export interface IAdminAvailability {
 	slots: Array<IAvailabilitySlot>
 }
 
-export interface IAnalyticsHole {
-	professionalName: string
-	date: string
-	/** Somente janelas de 30 minutos ou mais são reportadas. */
-	minutes: number
-}
-
-export interface IAnalyticsQuery {
-	from?: string
-	to?: string
-	serviceId?: string
-	professionalId?: string
-}
-
-export interface IAnalyticsRow {
-	id: string
-	date: string
-	serviceName: string
-	professionalName: string
-	status: "pending" | "approved" | "rejected" | "cancelled_by_client" | "cancelled_by_admin" | "completed" | "no_show"
-	totalCents: number
-	receivedCents: number
-}
-
-export interface IAppointmentAnalytics {
-	/** Filtros ecoados da consulta. */
-	filters: IAnalyticsQuery
-	appointmentCount: number
-	completedCount: number
-	noShowCount: number
-	/** Soma de cancelamentos por admin, por cliente e rejeições. */
-	cancellationCount: number
-	/** Receita prevista do período. */
-	projectedCents: number
-	receivedCents: number
-	outstandingCents: number
-	occupancyPercent: number
-	/** Janelas ociosas, da maior para a menor. */
-	holes: Array<IAnalyticsHole>
-	rows: Array<IAnalyticsRow>
-}
-
 export interface IAppointment {
 	id: string
 	tenantId: string
@@ -147,6 +105,14 @@ export interface ICalendar {
 	appointments: Array<IAppointment>
 	/** Feriados nacionais dentro do período consultado. */
 	holidays: Array<IHoliday>
+}
+
+export interface IContractPaymentResult {
+	/** Pagamentos menos estornos vinculados ao contrato. */
+	paidCents: number
+	/** Valor do contrato menos o pago. Zero em contratos cancelados. */
+	outstandingCents: number
+	payment: IPayment
 }
 
 export interface ICreateAppointment {
@@ -346,6 +312,11 @@ export interface ISellPackage {
 	packageId: string
 	/** Sobrescreve a validade padrão do pacote. */
 	expiresAt?: string
+	/** Valor recebido na venda, em centavos. Sem ele, o pacote fica em aberto até um pagamento posterior. */
+	paymentAmountCents?: number
+	/** Obrigatório quando há valor recebido. */
+	paymentMethod?: "cash" | "pix" | "credit_card" | "debit_card" | "bank_transfer" | "other"
+	paymentNotes?: string
 }
 
 export interface IServiceProfessionalLink {
@@ -409,14 +380,6 @@ export interface IGetBlocksQuery {
 export interface IGetAvailabilityQuery {
 	serviceId: string
 	date: string
-}
-
-/** Query string de `GET /dashboard/appointments/analytics`. */
-export interface IGetAnalyticsQuery {
-	from?: string
-	to?: string
-	serviceId?: string
-	professionalId?: string
 }
 
 /** Query string de `GET /dashboard/appointments`. */

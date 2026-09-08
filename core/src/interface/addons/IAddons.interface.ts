@@ -14,6 +14,32 @@ export interface IAddOn {
 	updatedAt: string
 }
 
+export interface IAdminAddOnInterest {
+	id: string
+	kind: "contract" | "trial"
+	status: "pending" | "handled"
+	createdAt: string
+	requestedByEmail: string | null
+	tenantId: string
+	addOnCode: string
+	requestedByUserId: string | null
+	handledAt: string | null
+}
+
+export interface IAdminPendingInterest {
+	id: string
+	kind: "contract" | "trial"
+	status: "pending" | "handled"
+	createdAt: string
+	requestedByEmail: string | null
+	tenantId: string
+	addOnCode: string
+	requestedByUserId: string | null
+	handledAt: string | null
+	tenantName: string
+	tenantSlug: string
+}
+
 export interface ISaveTenantAddOn {
 	addOnId: string
 	/** `trial` só vale enquanto `trialEndsAt` estiver no futuro. */
