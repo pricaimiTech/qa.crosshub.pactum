@@ -13,6 +13,7 @@ import {
 import type { IParamsDefault } from "@core/interfaces/global.interface"
 import getListAppointments from "@core/services/appointments/getListAppointments.service"
 import getAvailability from "@core/services/appointments/getAvailability.service"
+import getProfessionals from "@core/services/appointments/getProfessionals.service"
 import getServices from "@core/services/appointments/getServices.service"
 import { secondTenantFile } from "@shared-data/tenants.data"
 import { isolationAGXT } from "@appointments-data/isolation.data"
@@ -20,6 +21,7 @@ import { isolationAGXT } from "@appointments-data/isolation.data"
 describe(describeName.dashboard, () => {
 	let firstTenantParams: IParamsDefault
 	let secondTenantServiceId: string
+	let secondTenantProfessionalId: string
 
 	before("Serviço, profissional e agenda criados no tenant B", async () => {
 		const secondTenant = JSON.parse(
@@ -58,6 +60,7 @@ describe(describeName.dashboard, () => {
 		)
 
 		secondTenantServiceId = bookable.serviceId
+		secondTenantProfessionalId = bookable.professionalId
 
 		firstTenantParams = await authBusiness.loginAsTenantAdmin(
 			`${process.env.TENANT_SLUG}`,
@@ -80,6 +83,48 @@ describe(describeName.dashboard, () => {
 			leaked,
 			0,
 			"Um serviço do tenant B apareceu na listagem do tenant A.",
+		)
+
+		/*
+		 * O #132 vazou nas duas listagens, e a versão anterior deste caso só
+		 * olhava serviços — profissionais passou batido. A asserção por
+		 * `tenantId` é a que descreve a regra: a listagem é de um tenant só.
+		 */
+		const serviceTenants = new Set(
+			services.json.map((service: { tenantId: string }) => service.tenantId),
+		)
+
+		assertTs.lengthOf(
+			[...serviceTenants],
+			1,
+			"A listagem de serviços do tenant A trouxe registros de mais de um tenant.",
+		)
+
+		const professionals = await getProfessionals(
+			isolationAGXT.paramsDefault200(firstTenantParams.token),
+		)
+
+		const leakedProfessionals = professionals.json.filter(
+			(professional: { id: string }) =>
+				professional.id === secondTenantProfessionalId,
+		)
+
+		assertTs.lengthOf(
+			leakedProfessionals,
+			0,
+			"Um profissional do tenant B apareceu na listagem do tenant A.",
+		)
+
+		const professionalTenants = new Set(
+			professionals.json.map(
+				(professional: { tenantId: string }) => professional.tenantId,
+			),
+		)
+
+		assertTs.lengthOf(
+			[...professionalTenants],
+			1,
+			"A listagem de profissionais do tenant A trouxe registros de mais de um tenant.",
 		)
 
 		await getAvailability(
