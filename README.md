@@ -11,6 +11,29 @@ cp .env.develop.example .env.develop
 cp .env.prod.example .env.prod
 ```
 
+Além das credenciais de acesso, cada `.env.<ambiente>` precisa de
+`POOL_PASSWORD`: é a senha das contas descartáveis que o `pre-setup` cria
+(pools de admins, segundo tenant, tenant vazio e tenants por caso). Mínimo de
+12 caracteres, exigido pelo `ResetTenantAdminPasswordDto` da API. Fica no
+ambiente, e não em `data/`, porque este repositório é público. Como o
+`pre-setup` redefine a senha dessas contas a cada execução, trocar o valor é
+só rodar `npm run pre-setup` de novo.
+
+### Rotas de apoio da API (só localhost)
+
+Os casos que precisam de precondição impossível pela API normal — "reserva
+criada há 25 h", "resposta sensível de 31 dias" — usam
+`POST /dashboard/test-fixtures/backdate`. O módulo dessa rota só é registrado
+com `TEST_FIXTURES_ENABLED=true`, e a decisão acontece **em tempo de import do
+`AppModule`**, antes de a API carregar o próprio `.env`. Ou seja: a variável
+precisa estar no ambiente do processo, não basta o arquivo.
+
+```bash
+TEST_FIXTURES_ENABLED=true pnpm --filter @crosshub/api dev
+```
+
+Sem isso, `H-01`, `H-02`, `H-09` e `LGPD-11` caem com `404 Cannot POST`.
+
 ## Ambientes
 
 A suíte roda contra três ambientes: `localhost`, `develop` e `prod`. Cada um

@@ -1,3 +1,5 @@
+import { poolPassword } from "@core/env"
+
 /**
  * Admins de tenant reservados a casos de permissão.
  *
@@ -25,8 +27,8 @@ export const adminAllocation: Record<string, string> = {
 	"ANL-05": "Não vê e-mail nem telefone na aba Clientes do Analytics",
 }
 
-/** Senha usada por todos os admins do pool (mínimo de 12 caracteres). */
-export const adminPassword = "QaPermissao2026!"
+/** Senha usada por todos os admins do pool; vem de `POOL_PASSWORD`. */
+export const adminPassword = poolPassword
 
 /**
  * E-mail determinístico do admin de um caso.
