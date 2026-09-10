@@ -1,3 +1,5 @@
+import { poolPassword } from "@core/env"
+
 /**
  * Segundo tenant, usado só pelos casos de isolamento multi-tenant.
  *
@@ -10,8 +12,8 @@ export const secondTenant = {
 	name: "Automação Teste de API — Tenant B",
 	adminName: "QA Isolamento",
 	adminEmail: "qa-isolamento@example.com",
-	/** Mínimo de 12 caracteres, exigido por `ResetTenantAdminPasswordDto`. */
-	adminPassword: "QaIsolamento2026!",
+	/** Vem de `POOL_PASSWORD`; mínimo de 12 caracteres, exigido por `ResetTenantAdminPasswordDto`. */
+	adminPassword: poolPassword,
 	contactEmail: "qa-isolamento@example.com",
 }
 
@@ -28,7 +30,7 @@ export const secondTenantFile = "preSetup/.tenants.json"
 export const secondTenantExtraAdmin = {
 	name: "QA segundo admin",
 	email: "qa-segundo-admin@example.com",
-	password: "QaSegundoAdmin2026!",
+	password: poolPassword,
 }
 
 /**
@@ -43,7 +45,7 @@ export const emptyTenant = {
 	name: "Automação Teste de API — Tenant vazio",
 	adminName: "QA tenant vazio",
 	adminEmail: "qa-tenant-vazio@example.com",
-	adminPassword: "QaTenantVazio2026!",
+	adminPassword: poolPassword,
 	contactEmail: "qa-tenant-vazio@example.com",
 }
 
@@ -88,8 +90,8 @@ export const tenantAllocation: Record<string, string> = {
 	"CLI-01": "Os três estados da organização",
 }
 
-/** Senha usada por todos os admins dos tenants por caso. */
-export const caseTenantPassword = "QaTenantCaso2026!"
+/** Senha usada por todos os admins dos tenants por caso; vem de `POOL_PASSWORD`. */
+export const caseTenantPassword = poolPassword
 
 /**
  * Slug determinístico do tenant de um caso.
