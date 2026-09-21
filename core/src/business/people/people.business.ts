@@ -7,6 +7,9 @@ import postCreatePerson from "../../services/people/postCreatePerson.service"
 import postActivate from "../../services/auth/postActivate.service"
 import patchUpdatePerson from "../../services/people/patchUpdatePerson.service"
 import postCreatePersonService from "../../services/people/postCreatePerson.service"
+import postCreatePersonRace from "../../services/people/postCreatePersonRace.service"
+import getListPeople from "../../services/people/getListPeople.service"
+import postRegenerateCode from "../../services/people/postRegenerateCode.service"
 
 /** Cliente final já ativado, pronto para logar no app do tenant. */
 export interface IActivatedPerson {
@@ -92,6 +95,53 @@ export default class PeopleBusiness {
 	}
 
 	/**
+	 * Pessoa com um e-mail literal, criando só se ela ainda não existir, mais um
+	 * código de acesso novo.
+	 *
+	 * O caso `C-17` precisa do e-mail **do administrador do tenant**, que não
+	 * pode ser sufixado. Criar direto funciona uma vez: na segunda execução a
+	 * própria unicidade que o caso existe para provar (dev.CrossHub#175) recusa
+	 * o cadastro, e o `before` quebra por um motivo que não é o do caso.
+	 * @param email - E-mail literal da pessoa
+	 * @param person - Payload usado só quando a pessoa ainda não existe
+	 * @param paramsDefault - Parâmetros padrão já autenticados como admin do tenant
+	 * @returns Id da pessoa e um código de acesso ativo
+	 */
+	public async ensurePersonWithCode(
+		email: string,
+		person: ICreatePerson,
+		paramsDefault: IParamsDefault,
+	): Promise<{ personId: string; code: string }> {
+		const listed = await getListPeople(
+			{},
+			preSetup.preSetupParamsDefault200(
+				paramsDefault.retry.count,
+				paramsDefault.retry.delay,
+				paramsDefault.token,
+			),
+		)
+		const existing = (listed.json as Array<{ id: string; email: string | null }>).find(
+			(candidate) => candidate.email?.toLowerCase() === email.toLowerCase(),
+		)
+
+		if (!existing) return this.createPersonWithCode(person, paramsDefault)
+
+		// Regenerar revoga o código anterior e devolve um novo: o da execução
+		// passada foi consumido ou ficou pendurado.
+		const codeResponse = await postRegenerateCode(
+			existing.id,
+			preSetup.preSetupParamsDefault(
+				201,
+				paramsDefault.retry.count,
+				paramsDefault.retry.delay,
+				paramsDefault.token,
+			),
+		)
+
+		return { personId: existing.id, code: codeResponse.json.code }
+	}
+
+	/**
 	 * Tenta criar pessoas inválidas e devolve a mensagem de erro de cada tentativa.
 	 *
 	 * O laço mora aqui porque os arquivos de teste não podem ter `for` — e o caso
@@ -117,6 +167,51 @@ export default class PeopleBusiness {
 		}
 
 		return messages
+	}
+
+	/**
+	 * Cadastra um cliente e devolve o id.
+	 * @param person - Payload da pessoa, vindo do `PersonDataBuilder`
+	 * @param paramsDefault - Parâmetros padrão já autenticados como admin do tenant
+	 * @returns Id da pessoa criada
+	 */
+	public async createPerson(
+		person: ICreatePerson,
+		paramsDefault: IParamsDefault,
+	): Promise<string> {
+		const response = await postCreatePerson(
+			person,
+			preSetup.preSetupParamsDefault(
+				201,
+				paramsDefault.retry.count,
+				paramsDefault.retry.delay,
+				paramsDefault.token,
+			),
+		)
+
+		return response.json.id
+	}
+
+	/**
+	 * Dispara duas criações **ao mesmo tempo** com o mesmo payload.
+	 *
+	 * É o que a consulta prévia de e-mail não alcança: as duas requisições
+	 * passam por ela antes de qualquer insert. Em sequência, o teste passaria
+	 * mesmo com o defeito de volta (dev.CrossHub#175).
+	 * @param person - Payload idêntico para as duas requisições
+	 * @param paramsDefault - Parâmetros padrão já autenticados como admin do tenant
+	 * @returns Os dois status, na ordem em que as respostas chegaram
+	 */
+	public async createPeopleRace(
+		person: ICreatePerson,
+		paramsDefault: IParamsDefault,
+	): Promise<Array<number>> {
+		const responses = await Promise.all([
+			postCreatePersonRace(person, paramsDefault),
+			postCreatePersonRace(person, paramsDefault),
+		])
+
+		return responses.map((response) => response.statusCode)
 	}
 
 	/**

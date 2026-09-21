@@ -13,6 +13,9 @@ export interface IGroupSummary {
 	participantCount: number
 	participantIds: Array<string>
 	strategyLabel: string
+	/** Formulário de origem; `manual-<id>` quando o grupo não veio de um. */
+	formId: string
+	description: string | null
 }
 
 export default class GroupsBusiness {
@@ -77,6 +80,32 @@ export default class GroupsBusiness {
 		const groups: Array<IGroupSummary> = response.json
 
 		return groups.filter((group) => group.name.startsWith(prefix))
+	}
+
+	/**
+	 * Grupos que nasceram de um formulário.
+	 *
+	 * O encerramento da coleta de um `TEAM_FORMATION` passou a compor os grupos
+	 * (dev.CrossHub#161), e é por `formId` que se confere o que ele criou — o
+	 * nome deles vem do título do formulário, não do prefixo do caso.
+	 * @param formId - Formulário de origem
+	 * @param paramsDefault - Parâmetros padrão já autenticados como admin do tenant
+	 * @returns Grupos cuja origem é o formulário
+	 */
+	public async groupsOfForm(
+		formId: string,
+		paramsDefault: IParamsDefault,
+	): Promise<Array<IGroupSummary>> {
+		const response = await getListGroups(
+			preSetup.preSetupParamsDefault200(
+				paramsDefault.retry.count,
+				paramsDefault.retry.delay,
+				paramsDefault.token,
+			),
+		)
+		const groups: Array<IGroupSummary> = response.json
+
+		return groups.filter((group) => group.formId === formId)
 	}
 
 	/**

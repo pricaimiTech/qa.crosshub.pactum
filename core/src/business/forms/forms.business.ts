@@ -3,6 +3,7 @@ import AuthBusiness from "../auth/auth.business"
 import type { ICreatePerson } from "../../interface/people/IPeople.interface"
 import type {
 	ICreateForm,
+	IForm,
 	IReplaceQuestion,
 	IReplaceQuestions,
 } from "../../interface/forms/IForms.interface"
@@ -469,7 +470,11 @@ export default class FormsBusiness {
 		slug: string,
 		values: Array<number>,
 		paramsDefault: IParamsDefault,
-	): Promise<{ formId: string; answerByPerson: Record<string, number> }> {
+	): Promise<{
+		formId: string
+		answerByPerson: Record<string, number>
+		closed: IForm
+	}> {
 		const created201 = preSetup.preSetupParamsDefault(
 			201,
 			paramsDefault.retry.count,
@@ -502,13 +507,15 @@ export default class FormsBusiness {
 			paramsDefault,
 		)
 
-		await postClose(published.formId, created201)
+		const closed = await postClose(published.formId, created201)
 
 		const answerByPerson: Record<string, number> = {}
 		clients.forEach((client, index) => {
 			answerByPerson[client.personId] = values[index]
 		})
 
-		return { formId: published.formId, answerByPerson }
+		// `closed.json` carrega `groupsCreated`: encerrar um formulário de
+		// formação de grupos passou a compor os grupos (dev.CrossHub#161).
+		return { formId: published.formId, answerByPerson, closed: closed.json }
 	}
 }

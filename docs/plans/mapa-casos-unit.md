@@ -1,8 +1,8 @@
 # Mapa dos casos unitários
 
-Rastreabilidade entre os **46 casos `UNIT-*`** de `.doc/dashboard/estrategia-testes-dashboard.json` (25 deles P0) e os specs de `__tests__/unit/` do repo de desenvolvimento.
+Rastreabilidade entre os **48 casos `UNIT-*`** de `.doc/dashboard/estrategia-testes-dashboard.json` (25 deles P0) e os specs de `__tests__/unit/` do repo de desenvolvimento.
 
-Estratégia gerada em 2026-09-08 · mapa gerado por `npm run generate:unit-map` — não editar à mão.
+Estratégia gerada em 2026-09-21 · mapa gerado por `npm run generate:unit-map` — não editar à mão.
 
 | Convenção | Valor |
 |---|---|
@@ -75,15 +75,17 @@ Pasta sugerida: `__tests__/unit/<api|front>/dashboard/clientes/`
 
 Pasta sugerida: `__tests__/unit/<api|front>/dashboard/home/`
 
-## G — Grupos (5/5)
+## G — Grupos (7/7)
 
 | Caso | Prio | Alvo | Relação | Extrair | Teste |
 |---|---|---|---|---|---|
-| UNIT-G-01 | P0 | distributeGroupParticipants(total, groupCount, groupSize) · create-group-wizard.tsx:206 | API-G-09 | — | `__tests__/unit/api/dashboard/grupos/divisao-status-e-formato.spec.ts:21`<br>`__tests__/unit/front/dashboard/grupos/divisao-de-participantes.test.ts:12` |
-| UNIT-G-02 | P0 | equivalência entre o wizard e o laço sizes de create() · groups.service.ts:174 | API-G-09, E2E-G-02 | — | `__tests__/unit/front/dashboard/grupos/divisao-de-participantes.test.ts:47` |
-| UNIT-G-03 | P0 | validateStatusTransition(current, next, memberCount) · groups.service.ts:27 | API-G-10, API-G-14 | — | `__tests__/unit/api/dashboard/grupos/divisao-status-e-formato.spec.ts:47` |
-| UNIT-G-04 | P2 | strategyLabel(input) · groups.service.ts:34 | API-G-08 | — | `__tests__/unit/api/dashboard/grupos/divisao-status-e-formato.spec.ts:97` |
-| UNIT-G-05 | P1 | toRecord(group, members) · groups.service.ts:205 | API-G-01 | — | `__tests__/unit/api/dashboard/grupos/divisao-status-e-formato.spec.ts:123` |
+| UNIT-G-01 | P0 | distributeGroupParticipants(total, groupCount, groupSize) · create-group-wizard.tsx:206 | API-G-09 | — | `__tests__/unit/api/dashboard/grupos/divisao-status-e-formato.spec.ts:22`<br>`__tests__/unit/front/dashboard/grupos/divisao-de-participantes.test.ts:19` |
+| UNIT-G-02 | P0 | equivalência entre o wizard e o laço sizes de create() · groups.service.ts:174 | API-G-09, E2E-G-02 | — | `__tests__/unit/front/dashboard/grupos/divisao-de-participantes.test.ts:79` |
+| UNIT-G-03 | P0 | validateStatusTransition(current, next, memberCount) · groups.service.ts:27 | API-G-10, API-G-14 | — | `__tests__/unit/api/dashboard/grupos/divisao-status-e-formato.spec.ts:96` |
+| UNIT-G-04 | P2 | strategyLabel(input) · groups.service.ts:34 | API-G-08 | — | `__tests__/unit/api/dashboard/grupos/divisao-status-e-formato.spec.ts:146` |
+| UNIT-G-05 | P1 | toRecord(group, members) · groups.service.ts:205 | API-G-01 | — | `__tests__/unit/api/dashboard/grupos/divisao-status-e-formato.spec.ts:177` |
+| UNIT-G-06 | P1 | allowedStatusTransitions(current) · group-record.ts · groupStatusOptions(current) · dashboard/lib/groups.ts | API-G-14 | — | `__tests__/unit/api/dashboard/grupos/divisao-status-e-formato.spec.ts:62`<br>`__tests__/unit/front/dashboard/grupos/divisao-de-participantes.test.ts:111` |
+| UNIT-G-07 | P2 | defaultGroupDescription(input) · groups.service.ts | API-G-01 | — | `__tests__/unit/api/dashboard/grupos/divisao-status-e-formato.spec.ts:70` |
 
 Pasta sugerida: `__tests__/unit/<api|front>/dashboard/grupos/`
 
@@ -111,9 +113,9 @@ Pasta sugerida: `__tests__/unit/<api|front>/dashboard/marca/`
 
 | Caso | Prio | Alvo | Relação | Extrair | Teste |
 |---|---|---|---|---|---|
-| UNIT-BN-01 | P0 | guarda de presignUpload() e upload() · r2-storage.service.ts:20, 29 | API-BN-03, API-MK-07, API-C-13, API-CAT-08 | — | `__tests__/unit/api/dashboard/banners/upload-de-ativo.spec.ts:17` |
+| UNIT-BN-01 | P0 | guarda de presignUpload() e upload() · r2-storage.service.ts:20, 29 | API-BN-03, API-MK-07, API-C-13, API-CAT-08 | — | `__tests__/unit/api/dashboard/banners/upload-de-ativo.spec.ts:18` |
 | UNIT-BN-02 | P1 | validação do formato do link do banner | API-BN-04 | — | `__tests__/unit/api/dashboard/banners/link-do-banner.spec.ts:22` |
-| UNIT-BN-03 | P2 | withUrl(banner) · banners.service.ts:19 | API-BN-01 | — | `__tests__/unit/api/dashboard/marca/urls-de-ativo.spec.ts:10` |
+| UNIT-BN-03 | P2 | withUrl(banner) · banners.service.ts:19 | API-BN-01 | — | `__tests__/unit/api/dashboard/banners/upload-de-ativo.spec.ts:64`<br>`__tests__/unit/api/dashboard/marca/urls-de-ativo.spec.ts:10` |
 
 Pasta sugerida: `__tests__/unit/<api|front>/dashboard/banners/`
 
@@ -136,7 +138,7 @@ Nenhum. Todo ID declarado em `describe` existe na estratégia.
 
 ## Arquivos unitários sem ID de caso
 
-8 de 30 specs do escopo dashboard não citam caso nenhum. São testes legítimos que a estratégia não conhece — pedem um caso, não bloqueiam.
+9 de 31 specs do escopo dashboard não citam caso nenhum. São testes legítimos que a estratégia não conhece — pedem um caso, não bloqueiam.
 
 - `__tests__/unit/api/dashboard/agendamentos/escolha-do-profissional.spec.ts` (jest)
 - `__tests__/unit/api/dashboard/agendamentos/exclusao-de-servico.spec.ts` (jest)
@@ -145,6 +147,7 @@ Nenhum. Todo ID declarado em `describe` existe na estratégia.
 - `__tests__/unit/api/dashboard/agendamentos/validacao-de-dto.spec.ts` (jest)
 - `__tests__/unit/api/dashboard/clientes/validacao-de-pessoa.spec.ts` (jest)
 - `__tests__/unit/api/dashboard/grupos/agrupamento-por-afinidade.spec.ts` (jest)
+- `__tests__/unit/front/dashboard/agendamentos/grade-do-dia.test.ts` (vitest)
 - `__tests__/unit/front/dashboard/analytics/periodo.test.ts` (vitest)
 
 ## Selos `extrair` a remover da estratégia

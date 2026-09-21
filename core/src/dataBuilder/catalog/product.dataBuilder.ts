@@ -28,6 +28,17 @@ export default class ProductDataBuilder {
 	}
 
 	/**
+	 * Fixa o nome exatamente como recebido, sem sufixo.
+	 *
+	 * O caso de unicidade precisa enviar **o mesmo** nome duas vezes.
+	 * @param name - Nome literal do produto
+	 */
+	withExactName(name: string): ProductDataBuilder {
+		this.productData.name = name
+		return this
+	}
+
+	/**
 	 * Vincula o produto a uma categoria
 	 * @param categoryId - Categoria de destino
 	 */

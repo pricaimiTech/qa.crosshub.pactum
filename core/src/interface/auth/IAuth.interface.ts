@@ -7,6 +7,8 @@ export interface IAccessTokenResponse {
 	tokenType: string
 	/** Duração do token, em segundos. */
 	expiresIn: number
+	/** Quando true, a senha usada é provisória: o token só vale em PATCH /auth/platform/tenant/me/password, e a pessoa precisa criar a senha definitiva antes de usar o painel. */
+	mustChangePassword?: boolean
 }
 
 export interface IPlatformLoginRequest {
@@ -63,6 +65,12 @@ export interface IUpdatePublicProfileRequest {
 	phone: string
 	/** Obrigatória somente ao alterar o e-mail. */
 	currentPassword?: string
+}
+
+export interface IUpdateTenantAdminPasswordRequest {
+	/** A senha provisória recebida do suporte, ou a senha atual. */
+	currentPassword: string
+	newPassword: string
 }
 
 export interface IUpdatedResponse {

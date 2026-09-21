@@ -18,6 +18,11 @@ export interface ICreateForm {
 	/** Marca o formulário como sensível: só administradores autorizados veem as respostas. */
 	containsSensitiveData?: boolean
 	submissionMode?: "ONCE_PER_PERSON" | "MULTIPLE"
+	/** Quantos grupos criar ao encerrar a coleta. */
+	groupingGroupCount?: number | null
+	/** Teto de participantes por grupo. */
+	groupingGroupSize?: number | null
+	groupingStrategy?: "random" | "similar" | null
 }
 
 export interface IDuplicatedForm {
@@ -29,6 +34,13 @@ export interface IDuplicatedForm {
 	status: "DRAFT" | "PUBLISHED" | "CLOSED" | "UNPUBLISHED" | "ARCHIVED"
 	submissionMode: "ONCE_PER_PERSON" | "MULTIPLE"
 	audienceMode: "ALL_ACTIVE" | "SPECIFIC"
+	/** Quantos grupos o encerramento cria. Só em `TEAM_FORMATION`. */
+	groupingGroupCount?: number | null
+	/** Teto de participantes por grupo na composição do encerramento. */
+	groupingGroupSize?: number | null
+	groupingStrategy?: "random" | "similar" | null
+	/** Grupos criados pelo encerramento da coleta. */
+	groupsCreated?: number
 	containsSensitiveData: boolean
 	showResultToPerson: boolean
 	completionMessage: string
@@ -67,6 +79,13 @@ export interface IForm {
 	status: "DRAFT" | "PUBLISHED" | "CLOSED" | "UNPUBLISHED" | "ARCHIVED"
 	submissionMode: "ONCE_PER_PERSON" | "MULTIPLE"
 	audienceMode: "ALL_ACTIVE" | "SPECIFIC"
+	/** Quantos grupos o encerramento cria. Só em `TEAM_FORMATION`. */
+	groupingGroupCount?: number | null
+	/** Teto de participantes por grupo na composição do encerramento. */
+	groupingGroupSize?: number | null
+	groupingStrategy?: "random" | "similar" | null
+	/** Grupos criados pelo encerramento da coleta. */
+	groupsCreated?: number
 	containsSensitiveData: boolean
 	showResultToPerson: boolean
 	completionMessage: string
@@ -268,6 +287,11 @@ export interface IUpdateForm {
 	type?: "ASSESSMENT" | "FEEDBACK" | "ANAMNESIS" | "SURVEY" | "TEAM_FORMATION" | "REGISTRATION" | "KNOWLEDGE_QUIZ" | "BLANK"
 	containsSensitiveData?: boolean
 	submissionMode?: "ONCE_PER_PERSON" | "MULTIPLE"
+	/** Quantos grupos criar ao encerrar a coleta. */
+	groupingGroupCount?: number | null
+	/** Teto de participantes por grupo. */
+	groupingGroupSize?: number | null
+	groupingStrategy?: "random" | "similar" | null
 }
 
 /** Query string de `GET /dashboard/forms/submissions`. */

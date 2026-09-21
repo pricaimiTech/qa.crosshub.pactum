@@ -48,6 +48,27 @@ export default class FormDataBuilder {
 	}
 
 	/**
+	 * Configura a composição que o encerramento vai aplicar.
+	 *
+	 * Só vale em `TEAM_FORMATION`: sem isso, encerrar a coleta não cria grupo
+	 * nenhum — que é o comportamento de todo formulário criado antes de a
+	 * configuração existir (dev.CrossHub#161).
+	 * @param groupCount - Quantos grupos criar
+	 * @param groupSize - Teto de participantes por grupo
+	 * @param strategy - `random` ou `similar`
+	 */
+	withGrouping(
+		groupCount: number,
+		groupSize: number,
+		strategy: "random" | "similar",
+	): FormDataBuilder {
+		this.formData.groupingGroupCount = groupCount
+		this.formData.groupingGroupSize = groupSize
+		this.formData.groupingStrategy = strategy
+		return this
+	}
+
+	/**
 	 * Define quantas vezes a mesma pessoa pode responder
 	 * @param submissionMode - `ONCE_PER_PERSON` ou `MULTIPLE`
 	 */

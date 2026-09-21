@@ -28,6 +28,21 @@ export const catalogCAT01 = {
 	sharedName: `[CAT-01] Categoria ${faker.string.alphanumeric(8)}`,
 }
 
+/**
+ * `API-CAT-16` — nome de produto é único dentro do tenant.
+ *
+ * Par de dev.CrossHub#174: `products` não tinha restrição de unicidade nenhuma
+ * e o clique duplo do cadastro criava dois produtos idênticos, cada um com sua
+ * própria imagem no armazenamento.
+ */
+export const catalogCAT16 = {
+	...catalogDefaults,
+	casePrefix: "[CAT-16]",
+	/** O mesmo nome literal, enviado duas vezes. */
+	sharedName: `[CAT-16] Produto ${faker.string.alphanumeric(8)}`,
+	duplicateMessage: "Já existe um produto com este nome.",
+}
+
 /** `API-CAT-02` — limites de nome, descrição e ícone da categoria. */
 export const catalogCAT02 = {
 	...catalogDefaults,
