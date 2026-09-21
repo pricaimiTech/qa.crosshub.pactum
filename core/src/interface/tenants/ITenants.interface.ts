@@ -39,11 +39,24 @@ export interface ITenantAdmin {
 	isActive: boolean
 	createdAt: string
 	updatedAt: string
+	/** true enquanto a pessoa não trocar a senha provisória recebida do suporte. */
+	mustChangePassword: boolean
+	/** Quando a senha provisória vence. Nulo quando a senha atual não é provisória. */
+	provisionalExpiresAt: string | null
 }
 
 export interface ITenantAdminPasswordReset {
 	id: string
 	email: string
+}
+
+export interface ITenantAdminProvisionalPassword {
+	id: string
+	email: string
+	/** Exibida uma única vez. Não é recuperável depois desta resposta. */
+	provisionalPassword: string
+	/** Instante em que a provisória deixa de autenticar. */
+	provisionalExpiresAt: string
 }
 
 export interface ITenantListItem {

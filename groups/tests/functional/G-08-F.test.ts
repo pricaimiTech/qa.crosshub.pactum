@@ -33,7 +33,7 @@ describe(describeName.dashboard, () => {
 		)
 	})
 
-	it("[G-08-F] - As três estratégias produzem a mesma composição: o rótulo não muda o algoritmo", async () => {
+	it("[G-08-F] - Sem formulário, a estratégia não tem resposta para comparar e a composição é a mesma", async () => {
 		const composicoes = await groupsBusiness.compositionsOf(
 			groupsG08.strategies.map((strategy) =>
 				groupBuilder
@@ -52,7 +52,7 @@ describe(describeName.dashboard, () => {
 		assertTs.deepEqual(
 			diferentes,
 			[],
-			"As estratégias produziram composições diferentes — o rótulo estaria mudando o algoritmo.",
+			"Com origem em pessoas não há resposta para comparar: as estratégias deveriam produzir a mesma composição. Quando há formulário, elas divergem — é o G-08b.",
 		)
 	})
 })

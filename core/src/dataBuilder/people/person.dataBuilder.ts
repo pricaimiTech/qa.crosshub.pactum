@@ -36,6 +36,18 @@ export default class PersonDataBuilder {
 	}
 
 	/**
+	 * Fixa o e-mail exatamente como recebido, sem sufixo.
+	 *
+	 * O caso de unicidade precisa enviar **o mesmo** e-mail duas vezes, e o de
+	 * ativação precisa do e-mail do administrador do tenant.
+	 * @param email - E-mail literal
+	 */
+	withExactEmail(email: string): PersonDataBuilder {
+		this.personData.email = email
+		return this
+	}
+
+	/**
 	 * Constrói o payload final.
 	 *
 	 * Devolve uma cópia **e volta o builder ao estado inicial**.

@@ -37,6 +37,8 @@ export const endUserAllocation: Record<string, number> = {
 	"F-21": 1,
 	"F-22": 1,
 	"F-23": 3,
+	/** Quatro respondentes para o encerramento compor dois grupos (dev.CrossHub#161). */
+	"F-25": 4,
 	"LGPD-04": 1,
 	"LGPD-05": 1,
 	"LGPD-08": 1,

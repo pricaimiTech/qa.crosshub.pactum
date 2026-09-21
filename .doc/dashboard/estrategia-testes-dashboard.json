@@ -1,18 +1,18 @@
 {
-  "gerado": "2026-09-08",
+  "gerado": "2026-09-21",
   "origem": ".doc/dashboard/estrategia-testes-dashboard.html",
   "aviso": "Artefato de build. Editar o HTML e rodar build-strategy-json.mjs.",
   "totais": {
-    "casos": 177,
-    "p0": 102,
+    "casos": 181,
+    "p0": 106,
     "porModulo": {
       "AG": 38,
-      "F": 25,
+      "F": 26,
       "LGPD": 14,
-      "C": 18,
+      "C": 20,
       "H": 12,
       "G": 16,
-      "CAT": 16,
+      "CAT": 17,
       "MK": 12,
       "BN": 11,
       "MN": 3,
@@ -20,7 +20,7 @@
       "ANL": 8
     },
     "unit": {
-      "casos": 46,
+      "casos": 48,
       "p0": 25,
       "extrair": 0,
       "porModulo": {
@@ -29,7 +29,7 @@
         "LGPD": 3,
         "C": 6,
         "H": 5,
-        "G": 5,
+        "G": 7,
         "CAT": 3,
         "MK": 3,
         "BN": 3,
@@ -38,9 +38,9 @@
     }
   },
   "conferencia": {
-    "contrato": 147,
+    "contrato": 149,
     "comCaso": 101,
-    "semCaso": 46
+    "semCaso": 48
   },
   "casos": [
     {
@@ -2229,6 +2229,39 @@
       "novo": true
     },
     {
+      "id": "API-F-25",
+      "modulo": "F",
+      "moduloNome": "Formulários",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Encerrar formação de grupos cria os grupos",
+      "naoVerificavel": null,
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/forms/{id}/close"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        201
+      ],
+      "precondicao": "Formulário TEAM_FORMATION com composição configurada (2 grupos de até 12, similar ), respondido por quatro pessoas",
+      "assercao": "groupsCreated: 2 na resposta, e os dois grupos aparecem na listagem em draft — nada é ativado sem revisão. O elo não existia: close não lia forms.type e encerrar um TEAM_FORMATION seguia o mesmo caminho de um SURVEY , #161",
+      "literais": [],
+      "campos": [
+        "groupsCreated: 2",
+        "draft",
+        "close",
+        "forms.type",
+        "TEAM_FORMATION",
+        "SURVEY"
+      ],
+      "doc": "G-04",
+      "novo": false
+    },
+    {
       "id": "API-F-XT",
       "modulo": "F",
       "moduloNome": "Formulários",
@@ -3260,6 +3293,64 @@
       "novo": true
     },
     {
+      "id": "API-C-17",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Ativação com o e-mail de um administrador do tenant",
+      "naoVerificavel": null,
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/auth/platform/public/activate"
+        }
+      ],
+      "token": "—",
+      "status": [
+        409
+      ],
+      "precondicao": "Pessoa cadastrada com o mesmo e-mail do tenant_admin , ativando com código válido",
+      "assercao": "Este e-mail já é usado pelo administrador da organização. Fale com a equipe para cadastrar outro e-mail no seu perfil. Respondia 500 : a guarda filtrava por role = end_user e não via a linha do admin, e a violação de users_tenant_email_unique subia crua, #160",
+      "literais": [],
+      "campos": [
+        "Este e-mail já é usado pelo administrador da organização. Fale com a equipe para cadastrar outro e-mail no seu perfil.",
+        "role = end_user",
+        "users_tenant_email_unique"
+      ],
+      "doc": "C-09",
+      "novo": false
+    },
+    {
+      "id": "API-C-18",
+      "modulo": "C",
+      "moduloNome": "Clientes",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "E-mail de cliente único por organização",
+      "naoVerificavel": null,
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/people"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        409
+      ],
+      "precondicao": "Mesmo e-mail em sequência, e duas requisições simultâneas com outro e-mail repetido",
+      "assercao": "Já existe um cliente cadastrado com este e-mail. nas duas formas. A corrida é o que a consulta prévia não alcança — as duas passam por ela antes de qualquer insert —, e com e-mail duplicado o login do app público passava a resolver uma pessoa indefinida, #175",
+      "literais": [],
+      "campos": [
+        "Já existe um cliente cadastrado com este e-mail."
+      ],
+      "doc": "C-02",
+      "novo": false
+    },
+    {
       "id": "API-C-XT",
       "modulo": "C",
       "moduloNome": "Clientes",
@@ -3873,7 +3964,7 @@
       "moduloNome": "Grupos",
       "camada": "API",
       "prioridade": "P0",
-      "cenario": "Distribuição sequencial e descarte do excedente",
+      "cenario": "Distribuição reparte entre os grupos pedidos, e o excedente fica de fora",
       "naoVerificavel": null,
       "rotas": [
         {
@@ -3886,11 +3977,12 @@
       "status": [
         201
       ],
-      "precondicao": "25 pessoas, creationMode: \"split\" , groupCount: 4 , groupSize: 12",
-      "assercao": "Três grupos com participantCount 12, 12 e 1. O quarto não é criado e as pessoas acima da capacidade total são descartadas em silêncio",
+      "precondicao": "25 pessoas, creationMode: \"split\" , groupCount: 4 , groupSize: 12 ; e as mesmas 25 em groupCount: 2 , groupSize: 10",
+      "assercao": "Quatro grupos com participantCount 7, 6, 6 e 6: groupSize é teto, não meta. Na segunda configuração cabem 20, então saem dois grupos de 10 e as cinco restantes ficam de fora . Antes o preenchimento era sequencial e dava 12, 12 e 1, #167",
       "literais": [],
       "campos": [
-        "participantCount"
+        "participantCount",
+        "groupSize"
       ],
       "doc": "G-06",
       "novo": false
@@ -3901,7 +3993,7 @@
       "moduloNome": "Grupos",
       "camada": "API",
       "prioridade": "P1",
-      "cenario": "Estratégia é só rótulo",
+      "cenario": "Sem formulário, a estratégia não tem o que decidir",
       "naoVerificavel": null,
       "rotas": [
         {
@@ -3914,12 +4006,13 @@
       "status": [
         201
       ],
-      "precondicao": "Mesma população dividida com random , similar e balanced",
-      "assercao": "participantIds idêntico nas três. O rótulo é persistido em strategyLabel mas não muda o algoritmo",
+      "precondicao": "Mesma população, com origem em pessoas, dividida com random e similar",
+      "assercao": "participantIds idêntico nas duas: sem formulário não há resposta para comparar. Com formulário elas divergem — é o API-G-08b . balanced saiu do contrato: era rótulo sem definição e sem efeito, #167",
       "literais": [],
       "campos": [
         "participantIds",
-        "strategyLabel"
+        "API-G-08b",
+        "balanced"
       ],
       "doc": "G-07",
       "novo": false
@@ -4110,7 +4203,7 @@
       "moduloNome": "Grupos",
       "camada": "API",
       "prioridade": "P1",
-      "cenario": "Transição livre de status",
+      "cenario": "Finalizado é terminal, no status e na composição",
       "naoVerificavel": null,
       "rotas": [
         {
@@ -4123,12 +4216,10 @@
       "status": [
         200
       ],
-      "precondicao": "status indo de finalized direto para draft",
-      "assercao": "Hoje é aceito — não há máquina de estados no PATCH . Registrar o comportamento real e escalar como risco",
+      "precondicao": "status indo de finalized para draft , e personIds novo em grupo finalizado",
+      "assercao": "Os dois são recusados com 400. Renomear continua permitido: ficar no mesmo status não é transição. A trava da composição veio com #168 — o status era terminal, mas a lista de participantes escapava disso",
       "literais": [],
-      "campos": [
-        "PATCH"
-      ],
+      "campos": [],
       "doc": "—",
       "novo": true
     },
@@ -4683,6 +4774,35 @@
       "literais": [],
       "campos": [],
       "doc": null,
+      "novo": false
+    },
+    {
+      "id": "API-CAT-16",
+      "modulo": "CAT",
+      "moduloNome": "Catálogo",
+      "camada": "API",
+      "prioridade": "P0",
+      "cenario": "Nome de produto único por organização",
+      "naoVerificavel": null,
+      "rotas": [
+        {
+          "papel": "acao",
+          "metodo": "POST",
+          "caminho": "/dashboard/products"
+        }
+      ],
+      "token": "tenantAuth",
+      "status": [
+        409
+      ],
+      "precondicao": "Dois produtos com o mesmo nome no mesmo tenant, e o mesmo nome em outro tenant",
+      "assercao": "Já existe um produto com este nome. no segundo, e 201 no outro tenant: a unicidade é por organização, como já era a da categoria. products não tinha restrição nenhuma e o clique duplo criava dois produtos idênticos, cada um com sua imagem no armazenamento, #174",
+      "literais": [],
+      "campos": [
+        "Já existe um produto com este nome.",
+        "products"
+      ],
+      "doc": "CAT-01",
       "novo": false
     },
     {
@@ -7278,6 +7398,69 @@
         "manual-<id>",
         "participantCount"
       ],
+      "relacao": [
+        "API-G-01"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-G-06",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "UNIT",
+      "prioridade": "P1",
+      "alvo": "allowedStatusTransitions(current) · group-record.ts · groupStatusOptions(current) · dashboard/lib/groups.ts",
+      "fontes": [
+        {
+          "arquivo": "group-record.ts",
+          "linhas": [],
+          "bruto": null
+        }
+      ],
+      "funcoes": [
+        "allowedStatusTransitions",
+        "groupStatusOptions"
+      ],
+      "codigos": [
+        "dashboard/lib/groups.ts"
+      ],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "Cada status oferece só os destinos que a API aceita, e o espelho do wizard não diverge da máquina da API. A tela listava os três status sem olhar o atual e recebia 400 ao oferecer o impossível, #168 .",
+      "literais": [],
+      "campos": [],
+      "relacao": [
+        "API-G-14"
+      ],
+      "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-G-07",
+      "modulo": "G",
+      "moduloNome": "Grupos",
+      "camada": "UNIT",
+      "prioridade": "P2",
+      "alvo": "defaultGroupDescription(input) · groups.service.ts",
+      "fontes": [
+        {
+          "arquivo": "groups.service.ts",
+          "linhas": [],
+          "bruto": null
+        }
+      ],
+      "funcoes": [
+        "defaultGroupDescription"
+      ],
+      "codigos": [],
+      "superficie": "api",
+      "extrair": false,
+      "prova": "Grupo vindo de formulário ou de divisão nasce sem descrição; só o grupo único montado à mão mantém \"Grupo criado manualmente no dashboard.\" A frase padrão era usada em todos e contradizia os campos ao lado na mesma tela, #170 .",
+      "literais": [
+        "Grupo criado manualmente no dashboard."
+      ],
+      "campos": [],
       "relacao": [
         "API-G-01"
       ],

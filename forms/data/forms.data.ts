@@ -23,6 +23,28 @@ const formDefaults = {
 		preSetup.preSetupParamsDefault(statusCode, 5, 500, token),
 }
 
+/**
+ * `API-F-25` — encerrar formulário de formação de grupos cria os grupos.
+ *
+ * Par de dev.CrossHub#161: o elo não existia. `close` não lia `forms.type`, e
+ * encerrar um `TEAM_FORMATION` seguia exatamente o mesmo caminho de um
+ * `SURVEY` — nenhum grupo, e nenhum aviso de que faltava um passo.
+ */
+export const formsF25 = {
+	...formDefaults,
+	casePrefix: "[F-25]",
+	caseId: "F-25",
+	formType: "TEAM_FORMATION" as const,
+	/** Quatro respostas alternando entre os extremos da escala. */
+	scaleValues: [1, 5, 1, 5] as Array<number>,
+	groupingGroupCount: 2,
+	groupingGroupSize: 12,
+	groupingStrategy: "similar" as const,
+	draftStatus: "draft",
+	/** Sem a configuração de composição, o encerramento não compõe nada. */
+	semComposicao: { groupsCreated: 0 },
+}
+
 /** `API-F-01` — publicar exige ao menos uma pergunta. */
 export const formsF01 = {
 	...formDefaults,

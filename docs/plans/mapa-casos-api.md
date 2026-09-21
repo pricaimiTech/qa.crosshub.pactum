@@ -1,8 +1,8 @@
 # Mapa dos casos de API — Estratégia do Dashboard
 
-Rastreabilidade entre os **177 casos de API** de `.doc/dashboard/estrategia-testes-dashboard.json` (102 deles P0), os endpoints de `openapi.json` e os services em `core/src/services/`.
+Rastreabilidade entre os **181 casos de API** de `.doc/dashboard/estrategia-testes-dashboard.json` (106 deles P0), os endpoints de `openapi.json` e os services em `core/src/services/`.
 
-Estratégia gerada em 2026-09-08 · mapa gerado por `npm run generate:map` — não editar à mão.
+Estratégia gerada em 2026-09-21 · mapa gerado por `npm run generate:map` — não editar à mão.
 
 | Convenção | Valor |
 |---|---|
@@ -58,7 +58,7 @@ Domínio: `appointments/` · casos: 38 (P0: 21)
 
 ## Formulários (`F`)
 
-Domínio: `forms/` · casos: 25 (P0: 13)
+Domínio: `forms/` · casos: 26 (P0: 14)
 
 | Caso | Prio | Cenário | Token | Status | Service (ação) | Services (arranjo) | Asserção literal | Teste | Bug |
 |---|---|---|---|---|---|---|---|---|---|
@@ -71,7 +71,7 @@ Domínio: `forms/` · casos: 25 (P0: 13)
 | `API-F-07` | P0 | PUT de perguntas substitui tudo | `tenantAuth` | 200 | `putReplaceQuestions` | `getListQuestions` | — | `F-07-F.test.ts` | — |
 | `API-F-08` | P0 | Perguntas travadas após resposta | `tenantAuth` | 400 | `putReplaceQuestions` | `postPublicSubmitForm` | — | `F-08-F.test.ts` | — |
 | `API-F-09` | P0 | Publicar para todos os ativos | `tenantAuth` | 200 | `postPublishToAllActive` | `getListFormAssignments` | — | `F-09-F.test.ts` | — |
-| `API-F-10` | P0 | "Todos os ativos" é fotografia | `tenantAuth` | 200 | `getListFormAssignments` | `postPublishToAllActive`<br>`postCreatePerson` | — | `F-10-F.test.ts` | — |
+| `API-F-10` | P0 | "Todos os ativos" é fotografia | `tenantAuth` | 200 | `getListFormAssignments` | `postPublishToAllActive`<br>`postCreatePersonRace` | — | `F-10-F.test.ts` | — |
 | `API-F-11` | P1 | Atribuição reenviada | `tenantAuth` | 201 | `postAssignForm` | `postAssignForm` | — | `F-11-F.test.ts` | — |
 | `API-F-12` | P1 | Estado da atribuição | `tenantAuth` | 200 | `getListFormAssignments` | `postAssignForm`<br>`postPublicSubmitForm` | `COMPLETED`<br>`AVAILABLE` | `F-12-F.test.ts` | — |
 | `API-F-13` | P0 | Pessoa inválida aborta o lote inteiro | `tenantAuth` | 400 | `postAssignForm` | `getListFormAssignments` | — | `F-13-F.test.ts` | — |
@@ -86,6 +86,7 @@ Domínio: `forms/` · casos: 25 (P0: 13)
 | `API-F-22` | P1 | Paginação | `tenantAuth` | 200 | `getListAllSubmissions` | — | — | `F-22-F.test.ts` | — |
 | `API-F-23` | P2 | Indicadores de escala | `tenantAuth` | 200 | `getFormInsights` | — | — | `F-23-F.test.ts` | — |
 | `API-F-24` | P1 | Colisão de rota | `tenantAuth` | 200 | `getListAllSubmissions` | — | `submissions` | `F-24-F.test.ts` | — |
+| `API-F-25` | P0 | Encerrar formação de grupos cria os grupos | `tenantAuth` | 201 | `postClose` | — | — | `F-25-F.test.ts` | — |
 | `API-F-XT` | P0 | Isolamento entre tenants | `tenantAuth` | 200 | `getListForms` | — | — | `F-XT-F.test.ts` | — |
 
 ## Privacidade e LGPD (`LGPD`)
@@ -111,14 +112,14 @@ Domínio: `privacy/` · casos: 14 (P0: 11)
 
 ## Clientes (`C`)
 
-Domínio: `people/` · casos: 18 (P0: 10)
+Domínio: `people/` · casos: 20 (P0: 12)
 
 | Caso | Prio | Cenário | Token | Status | Service (ação) | Services (arranjo) | Asserção literal | Teste | Bug |
 |---|---|---|---|---|---|---|---|---|---|
-| `API-C-01` | P0 | Cadastro mínimo | `tenantAuth` | 201 | `postCreatePerson` | — | `active` | `C-01-F.test.ts` | — |
-| `API-C-01b` | P1 | Cadastro sem e-mail é recusado | `tenantAuth` | 400 | `postCreatePerson` | — | `E-mail é obrigatório para cadastrar um cliente.` | `C-01b-F.test.ts` | — |
-| `API-C-02` | P1 | Normalização de campos | `tenantAuth` | 201 | `postCreatePerson` | — | `maria@exemplo.com` | `C-02-F.test.ts` | — |
-| `API-C-03` | P1 | Limites dos campos | `tenantAuth` | 400 | `postCreatePerson` | — | `Observações devem ter no máximo 500 caracteres.`<br>`Documento deve ter no máximo 40 caracteres.`<br>`Gênero inválido.`<br>`Data de nascimento inválida.` | `C-03-F.test.ts` | — |
+| `API-C-01` | P0 | Cadastro mínimo | `tenantAuth` | 201 | `postCreatePersonRace` | — | `active` | `C-01-F.test.ts` | — |
+| `API-C-01b` | P1 | Cadastro sem e-mail é recusado | `tenantAuth` | 400 | `postCreatePersonRace` | — | `E-mail é obrigatório para cadastrar um cliente.` | `C-01b-F.test.ts` | — |
+| `API-C-02` | P1 | Normalização de campos | `tenantAuth` | 201 | `postCreatePersonRace` | — | `maria@exemplo.com` | `C-02-F.test.ts` | — |
+| `API-C-03` | P1 | Limites dos campos | `tenantAuth` | 400 | `postCreatePersonRace` | — | `Observações devem ter no máximo 500 caracteres.`<br>`Documento deve ter no máximo 40 caracteres.`<br>`Gênero inválido.`<br>`Data de nascimento inválida.` | `C-03-F.test.ts` | — |
 | `API-C-04` | P0 | Código exige um canal de contato | `tenantAuth` | 409 | `postCreateCode` | — | — | `C-04-F.test.ts` | — |
 | `API-C-05` | P0 | Um único código ativo | `tenantAuth` | 409 | `postCreateCode` | `postCreateCode` | — | `C-05-F.test.ts` | — |
 | `API-C-06` | P0 | Regenerar revoga o anterior | `tenantAuth` | 201 | `postRegenerateCode` | `postCreateCode`<br>`postActivate` | — | `C-06-F.test.ts` | — |
@@ -130,8 +131,10 @@ Domínio: `people/` · casos: 18 (P0: 10)
 | `API-C-12` | P0 | Remover acesso | `tenantAuth` | 200 | `postRemoveAccess` | `postPublicLogin` | `revoked` | `C-12-F.test.ts` | — |
 | `API-C-13` | P1 | Foto — validações | `tenantAuth` | 400 | `postUploadPhoto` | — | `Envie JPEG, PNG ou WebP com até 5 MB.` | `C-13-F.test.ts` | — |
 | `API-C-14` | P1 | Remover foto | `tenantAuth` | 200 | `patchUpdatePerson` | `postUploadPhoto` | — | `C-14-F.test.ts` | — |
-| `API-C-15` | P1 | Auditoria | `tenantAuth` | 201 | `postCreatePerson` | `patchUpdatePerson`<br>`postCreateCode`<br>`postRegenerateCode`<br>`postRemoveAccess`<br>`getList` | — | `C-15-F.test.ts` | — |
+| `API-C-15` | P1 | Auditoria | `tenantAuth` | 201 | `postCreatePersonRace` | `patchUpdatePerson`<br>`postCreateCode`<br>`postRegenerateCode`<br>`postRemoveAccess`<br>`getList` | — | `C-15-F.test.ts` | — |
 | `API-C-16` | P1 | Volume sem paginação | `tenantAuth` | 200 | `getListPeople` | — | — | `C-16-F.test.ts` | — |
+| `API-C-17` | P0 | Ativação com o e-mail de um administrador do tenant | `—` | 409 | `postActivate` | — | — | `C-17-F.test.ts` | — |
+| `API-C-18` | P0 | E-mail de cliente único por organização | `tenantAuth` | 409 | `postCreatePersonRace` | — | — | `C-18-F.test.ts` | — |
 | `API-C-XT` | P0 | Isolamento entre tenants | `tenantAuth` | 200 | `getListPeople` | `patchUpdatePerson` | — | `C-XT-F.test.ts` | — |
 
 ## Home (`H`)
@@ -141,7 +144,7 @@ Domínio: `dashboard/` · casos: 12 (P0: 7)
 | Caso | Prio | Cenário | Token | Status | Service (ação) | Services (arranjo) | Asserção literal | Teste | Bug |
 |---|---|---|---|---|---|---|---|---|---|
 | `API-H-01` | P0 | Janela de 24 h nas reservas | `tenantAuth` | 200 | `getHome` | `postPublicReserveProduct`<br>`patchUpdateReservation`<br>`postBackdate` | — | `H-01-F.test.ts` | — |
-| `API-H-02` | P1 | Janela de 7 dias nas pessoas | `tenantAuth` | 200 | `getHome` | `postCreatePerson`<br>`postBackdate` | — | `H-02-F.test.ts` | — |
+| `API-H-02` | P1 | Janela de 7 dias nas pessoas | `tenantAuth` | 200 | `getHome` | `postCreatePersonRace`<br>`postBackdate` | — | `H-02-F.test.ts` | — |
 | `API-H-03` | P0 | Janelas deslizantes das métricas | `tenantAuth` | 200 | `getHome` | `putSaveSettings` | — | `H-03-F.test.ts` | — |
 | `API-H-04` | P0 | Limite de quatro ações | `tenantAuth` | 200 | `getHome` | — | — | `H-04-F.test.ts` | — |
 | `API-H-05` | P1 | Contagem zero não vira ação | `tenantAuth` | 200 | `getHome` | — | — | `H-05-F.test.ts` | — |
@@ -165,20 +168,20 @@ Domínio: `groups/` · casos: 16 (P0: 8)
 | `API-G-04` | P0 | Origem formulário exige CLOSED | `tenantAuth` | 400 | `postCreateGroup` | — | — | `G-04-F.test.ts` | — |
 | `API-G-05` | P0 | Dedupe por pessoa | `tenantAuth` | 201 | `postCreateGroup` | — | — | `G-05-F.test.ts` | — |
 | `API-G-06` | P1 | Formulário sem respondente elegível | `tenantAuth` | 400 | `postCreateGroup` | — | — | `G-06-F.test.ts` | — |
-| `API-G-07` | P0 | Distribuição sequencial e descarte do excedente | `tenantAuth` | 201 | `postCreateGroup` | — | — | `G-07-F.test.ts` | — |
-| `API-G-08` | P1 | Estratégia é só rótulo | `tenantAuth` | 201 | `postCreateGroup` | — | — | `G-08-F.test.ts` | — |
+| `API-G-07` | P0 | Distribuição reparte entre os grupos pedidos, e o excedente fica de fora | `tenantAuth` | 201 | `postCreateGroup` | — | — | `G-07-F.test.ts` | — |
+| `API-G-08` | P1 | Sem formulário, a estratégia não tem o que decidir | `tenantAuth` | 201 | `postCreateGroup` | — | — | `G-08-F.test.ts` | — |
 | `API-G-08b` | P1 | Estratégia deixa de ser só rótulo quando há formulário | `tenantAuth` | 201 | `postCreateGroup` | — | — | `G-08b-F.test.ts` | — |
 | `API-G-09` | P1 | Limites da divisão | `tenantAuth` | 400 | `postCreateGroup` | — | `A configuração de divisão é inválida.` | `G-09-F.test.ts` | — |
 | `API-G-10` | P0 | Estados e integrantes | `tenantAuth` | 400 | `patchUpdateGroup` | — | — | `G-10-F.test.ts` | — |
 | `API-G-11` | P1 | Ativação dedicada | `tenantAuth` | 400 | `postActivateGroup` | — | `Somente grupos em rascunho podem ser ativados.`<br>`Adicione participantes antes de ativar o grupo.` | `G-11-F.test.ts` | — |
 | `API-G-12` | P0 | Grupo de formulário tem integrantes imutáveis | `tenantAuth` | 400 | `patchUpdateGroup` | — | — | `G-12-F.test.ts` | — |
 | `API-G-13` | P1 | Edição substitui a composição | `tenantAuth` | 200 | `patchUpdateGroup` | — | — | `G-13-F.test.ts` | — |
-| `API-G-14` | P1 | Transição livre de status | `tenantAuth` | 200 | `patchUpdateGroup` | — | — | `G-14-F.test.ts` | — |
+| `API-G-14` | P1 | Finalizado é terminal, no status e na composição | `tenantAuth` | 200 | `patchUpdateGroup` | — | — | `G-14-F.test.ts` | — |
 | `API-G-XT` | P0 | Isolamento entre tenants | `tenantAuth` | 200 | `getListGroups` | `patchUpdateGroup`<br>`postActivateGroup` | — | `G-XT-F.test.ts` | — |
 
 ## Catálogo (`CAT`)
 
-Domínio: `catalog/` · casos: 16 (P0: 12)
+Domínio: `catalog/` · casos: 17 (P0: 13)
 
 | Caso | Prio | Cenário | Token | Status | Service (ação) | Services (arranjo) | Asserção literal | Teste | Bug |
 |---|---|---|---|---|---|---|---|---|---|
@@ -197,6 +200,7 @@ Domínio: `catalog/` · casos: 16 (P0: 12)
 | `API-CAT-13` | P0 | Cliente só cancela a própria, e só em pending | `endUserAuth` | 409 | `patchPublicCancelReservation` | `postPublicReserveProduct`<br>`patchUpdateReservation` | `A reserva só pode ser cancelada enquanto estiver nova.`<br>`client` | `CAT-13-F.test.ts` | — |
 | `API-CAT-14` | P0 | Falha de e-mail não desfaz a reserva | `endUserAuth` | 201 | `postPublicReserveProduct` | — | — | `CAT-14-F.test.ts` | — |
 | `API-CAT-15` | P2 | E-mail só com configuração completa | `endUserAuth` | 201 | `postPublicReserveProduct` | — | — | **não verificável** — verificação manual : exige a API no ar sem EMAIL_FROM , que é estado do processo, não de uma requisição. Decisão registrada em #123 ([#123](https://github.com/pricaimiTech/dev.CrossHub/issues/123)) | — |
+| `API-CAT-16` | P0 | Nome de produto único por organização | `tenantAuth` | 409 | `postCreateProduct` | — | — | `CAT-16-F.test.ts` | — |
 | `API-CAT-XT` | P0 | Isolamento entre tenants | `tenantAuth` | 200 | `getProducts` | `patchUpdateProduct`<br>`getPublicProducts` | — | `CAT-XT-F.test.ts` | — |
 
 ## Marca e aparência (`MK`)
@@ -266,10 +270,10 @@ Domínio: `analytics/` · casos: 8 (P0: 4)
 | `API-ANL-01` | P0 | Sessão declara add-ons e módulos (história AN-01) | `tenantAuth` | 200 | `getSession` | `putSaveTenantAddOns` | `analytics`<br>`active` | `ANL-01-F.test.ts` | — |
 | `API-ANL-02` | P1 | Pedido de interesse idempotente em 7 dias (história AN-02) | `tenantAuth` | 201, 200 | `postRequestAnalyticsInterest` | `getPendingAnalyticsInterest`<br>`getTenantAddOnInterests`<br>`putSaveTenantAddOns` | `pending`<br>`analytics` | `ANL-02-F.test.ts` | — |
 | `API-ANL-03` | P0 | Gate do add-on nas rotas do Analytics (história AN-03) | `tenantAuth` | 403 | `getAppointmentsAnalytics` | `getAppointmentsAnalyticsExport`<br>`getCustomersAnalytics`<br>`getCustomersAnalyticsExport`<br>`putSaveTenantAddOns` | `O add-on Analytics não está ativo para esta organização.` | `ANL-03-F.test.ts` | — |
-| `API-ANL-03b` | P0 | Ocupação de 40% (história AN-03) | `tenantAuth` | 200 | `getAppointmentsAnalytics` | `putSaveTenantAddOns`<br>`postCreateProfessional`<br>`putSaveProfessionalAvailability`<br>`postCreateService`<br>`putSetProfessionals`<br>`getAvailability`<br>`postCreatePerson`<br>`postCreateAppointment` | — | `ANL-03b-F.test.ts` | — |
+| `API-ANL-03b` | P0 | Ocupação de 40% (história AN-03) | `tenantAuth` | 200 | `getAppointmentsAnalytics` | `putSaveTenantAddOns`<br>`postCreateProfessional`<br>`putSaveProfessionalAvailability`<br>`postCreateService`<br>`putSetProfessionals`<br>`getAvailability`<br>`postCreatePersonRace`<br>`postCreateAppointment` | — | `ANL-03b-F.test.ts` | — |
 | `API-ANL-03c` | P1 | Bloqueio reduz o denominador (história AN-03) | `tenantAuth` | 200 | `getAppointmentsAnalytics` | `postCreateBlock`<br>`postCreateProfessional`<br>`putSaveProfessionalAvailability`<br>`postCreateService`<br>`postCreateAppointment` | — | `ANL-03c-F.test.ts` | — |
 | `API-ANL-04` | P1 | Período acima de 12 meses (história AN-03) | `tenantAuth` | 400 | `getAppointmentsAnalytics` | `putSaveTenantAddOns` | `Período máximo de 12 meses.` | `ANL-04-F.test.ts` | — |
-| `API-ANL-05` | P0 | Dado sensível na aba Clientes (história AN-05) | `tenantAuth` | 200 | `getCustomersAnalytics` | `putSaveTenantAddOns`<br>`patchSensitiveDataAccess`<br>`postCreatePerson`<br>`postCreateAppointment` | — | `ANL-05-F.test.ts` | — |
+| `API-ANL-05` | P0 | Dado sensível na aba Clientes (história AN-05) | `tenantAuth` | 200 | `getCustomersAnalytics` | `putSaveTenantAddOns`<br>`patchSensitiveDataAccess`<br>`postCreatePersonRace`<br>`postCreateAppointment` | — | `ANL-05-F.test.ts` | — |
 | `API-ANL-06` | P1 | Ativar o add-on atende o pedido pendente (história AN-06) | `platformAuth` | 200 | `putSaveTenantAddOns` | `postRequestAnalyticsInterest`<br>`getTenantAddOnInterests` | `active` | `ANL-06-F.test.ts` | — |
 
 ## Bugs abertos pela automação
@@ -279,7 +283,7 @@ Nenhum bug aberto no momento.
 
 ## Casos sem teste
 
-**3 de 177** casos da estratégia não têm arquivo de teste: 0 ausente(s) e 3 não verificável(is) contra o contrato atual.
+**3 de 181** casos da estratégia não têm arquivo de teste: 0 ausente(s) e 3 não verificável(is) contra o contrato atual.
 
 ### Não verificáveis contra o contrato (3)
 
@@ -298,7 +302,7 @@ Nenhum. Todo arquivo no disco corresponde a um caso da estratégia.
 
 ## Cobertura do contrato
 
-Rotas citadas por algum caso: **101** de 147 do contrato.
+Rotas citadas por algum caso: **101** de 149 do contrato.
 
 ### Rotas `/dashboard/**` sem nenhum caso de API (20 de 102)
 

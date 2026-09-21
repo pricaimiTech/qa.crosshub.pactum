@@ -22,6 +22,36 @@ const peopleDefaults = {
 		preSetup.preSetupParamsDefault(409, 5, 500, token),
 }
 
+/**
+ * `API-C-17` — ativação com o e-mail de um administrador do mesmo tenant.
+ *
+ * Par de dev.CrossHub#160: a guarda de duplicidade filtrava por
+ * `role = 'end_user'` e não via a linha do administrador; o insert batia em
+ * `users_tenant_email_unique`, que é agnóstica de role, e o 23505 subia cru
+ * até virar 500.
+ */
+export const peopleC17 = {
+	...peopleDefaults,
+	casePrefix: "[C-17]",
+	adminMessage:
+		"Este e-mail já é usado pelo administrador da organização. Fale com a equipe para cadastrar outro e-mail no seu perfil.",
+}
+
+/**
+ * `API-C-18` — e-mail de cliente é único dentro do tenant.
+ *
+ * Par de dev.CrossHub#175: a regra era só uma consulta prévia, sem índice
+ * atrás. Duas requisições simultâneas passavam as duas, e o login do app
+ * público, que resolve a pessoa pelo e-mail, passava a pegar uma linha
+ * indefinida.
+ */
+export const peopleC18 = {
+	...peopleDefaults,
+	casePrefix: "[C-18]",
+	sharedEmail: `c18-${Date.now().toString(36)}@example.com`,
+	duplicateMessage: "Já existe um cliente cadastrado com este e-mail.",
+}
+
 /** `API-C-01` — cadastro mínimo nasce ativo e com os opcionais nulos. */
 export const peopleC01 = {
 	...peopleDefaults,

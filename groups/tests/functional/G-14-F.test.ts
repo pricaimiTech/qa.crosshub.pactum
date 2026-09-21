@@ -15,6 +15,7 @@ describe(describeName.dashboard, () => {
 	let adminParams: IParamsDefault
 	let groupId: string
 	let groupName: string
+	let people: Array<string>
 
 	before("Grupo manual finalizado", async () => {
 		adminParams = await authBusiness.loginAsTenantAdmin(
@@ -24,20 +25,22 @@ describe(describeName.dashboard, () => {
 			groupsG14.loginParams,
 		)
 
-		const people = await formsBusiness.createPeople(
-			[
+		// Três pessoas: uma entra no grupo, as outras são a troca que o grupo
+		// finalizado tem de recusar.
+		people = await formsBusiness.createPeople(
+			Array.from({ length: groupsG14.memberCount }, () =>
 				personBuilder
 					.withName(groupsG14.personPrefix)
 					.withEmail(groupsG14.personPrefix)
 					.build(),
-			],
+			),
 			adminParams,
 		)
 
 		const grupos = await groupsBusiness.createGroups(
 			groupBuilder
 				.withName(groupsG14.casePrefix)
-				.withPeople(people)
+				.withPeople([people[0]])
 				.build(),
 			groupsG14.paramsDefault201(adminParams.token),
 		)
@@ -83,6 +86,35 @@ describe(describeName.dashboard, () => {
 			renomeado.json.status,
 			groupsG14.finalizedStatus,
 			"O grupo finalizado mudou de status ao ser renomeado.",
+		)
+	})
+
+	it("[G-14-F] - Grupo finalizado também não aceita troca de participantes", async () => {
+		const { json } = await patchUpdateGroup(
+			groupId,
+			{
+				name: `${groupName} renomeado`,
+				status: groupsG14.finalizedStatus,
+				personIds: [people[1], people[2]],
+			},
+			groupsG14.paramsDefault400(adminParams.token),
+		)
+
+		assertTs.equal(
+			json.message,
+			groupsG14.sealedMembersMessage,
+			"A turma encerrada aceitou ser reescrita: o status é terminal, e a composição precisa acompanhar.",
+		)
+
+		const atual = await groupsBusiness.groupsByPrefix(
+			groupsG14.casePrefix,
+			adminParams,
+		)
+
+		assertTs.deepEqual(
+			atual[0].participantIds,
+			[people[0]],
+			"A composição do grupo finalizado mudou apesar da recusa.",
 		)
 	})
 })

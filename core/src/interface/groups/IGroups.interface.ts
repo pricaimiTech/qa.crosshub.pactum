@@ -18,7 +18,7 @@ export interface ICreateGroups {
 	/** Participantes por grupo. Obrigatório e limitado a 1..100 quando `creationMode` é `split`. */
 	groupSize?: number
 	/** Como distribuir os participantes entre os grupos na divisão. */
-	strategy?: "random" | "balanced" | "similar"
+	strategy?: "random" | "similar"
 	/** Nome do ícone exibido no card do grupo. */
 	icon?: string
 }

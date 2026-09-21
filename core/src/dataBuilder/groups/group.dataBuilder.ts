@@ -53,7 +53,7 @@ export default class GroupDataBuilder {
 	/**
 	 * Divide os participantes em vários grupos
 	 * @param groupCount - Quantos grupos criar
-	 * @param groupSize - Capacidade de cada grupo
+	 * @param groupSize - Teto de participantes de cada grupo
 	 */
 	withSplit(groupCount: number, groupSize: number): GroupDataBuilder {
 		this.groupData.creationMode = "split"
@@ -63,10 +63,13 @@ export default class GroupDataBuilder {
 	}
 
 	/**
-	 * Define o rótulo da estratégia de divisão
-	 * @param strategy - `random`, `balanced` ou `similar`
+	 * Define a estratégia de composição.
+	 *
+	 * `balanced` saiu do contrato em dev.CrossHub#167 — era rótulo sem
+	 * definição e sem efeito no algoritmo.
+	 * @param strategy - `random` ou `similar`
 	 */
-	withStrategy(strategy: "random" | "balanced" | "similar"): GroupDataBuilder {
+	withStrategy(strategy: "random" | "similar"): GroupDataBuilder {
 		this.groupData.strategy = strategy
 		return this
 	}

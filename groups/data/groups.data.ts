@@ -78,7 +78,16 @@ export const groupsG07 = {
 	memberCount: 25,
 	groupCount: 4,
 	groupSize: 12,
-	expectedSizes: [12, 12, 1] as Array<number>,
+	/**
+	 * 25 pessoas em 4 grupos de até 12 cabem inteiras (48 vagas), então são
+	 * repartidas: [7,6,6,6]. Antes o preenchimento era sequencial e dava
+	 * [12,12,1] — dois grupos cheios e um com uma pessoa (dev.CrossHub#167).
+	 */
+	expectedSizes: [7, 6, 6, 6] as Array<number>,
+	/** Configuração em que o excedente não cabe: 2 grupos de 10 para 25 pessoas. */
+	overflowGroupCount: 2,
+	overflowGroupSize: 10,
+	overflowExpectedSizes: [10, 10] as Array<number>,
 }
 
 /** `API-G-08` — a estratégia é rótulo, não algoritmo. */
@@ -87,9 +96,13 @@ export const groupsG08 = {
 	casePrefix: "[G-08]",
 	personPrefix: "[G-08]",
 	memberCount: 6,
-	strategies: ["random", "balanced", "similar"] as Array<
-		"random" | "balanced" | "similar"
-	>,
+	/**
+	 * "balanced" saiu do contrato em dev.CrossHub#167: era rótulo sem definição
+	 * e sem efeito. Sobraram as duas que decidem alguma coisa — e, sem
+	 * formulário, nem elas decidem: não há resposta para comparar.
+	 */
+	strategies: ["random", "similar"] as Array<"random" | "similar">,
+	retiredStrategy: "balanced",
 }
 
 /** `API-G-09` — limites de `groupCount` e `groupSize`. */
@@ -173,6 +186,13 @@ export const groupsG14 = {
 	draftStatus: "draft" as const,
 	/** A mesma máquina de estados da ativação, agora também no PATCH (API-G-14). */
 	errorMessage: "Um grupo finalizado não pode voltar a rascunho nem a ativo.",
+	/**
+	 * O status era terminal, mas a lista de participantes escapava disso: dava
+	 * para reescrever a turma encerrada sem que o status mudasse, e sem rastro
+	 * (dev.CrossHub#168).
+	 */
+	sealedMembersMessage: "Um grupo finalizado não aceita troca de participantes.",
+	memberCount: 3,
 }
 
 /** `API-G-XT` — isolamento entre tenants. */
