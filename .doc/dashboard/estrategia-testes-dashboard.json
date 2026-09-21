@@ -20,7 +20,7 @@
       "ANL": 8
     },
     "unit": {
-      "casos": 48,
+      "casos": 49,
       "p0": 25,
       "extrair": 0,
       "porModulo": {
@@ -33,7 +33,7 @@
         "CAT": 3,
         "MK": 3,
         "BN": 3,
-        "MN": 2
+        "MN": 3
       }
     }
   },
@@ -7820,28 +7820,53 @@
       "moduloNome": "Menu e navegação",
       "camada": "UNIT",
       "prioridade": "P1",
-      "alvo": "derivação dos itens visíveis a partir da sessão e dos add-ons",
+      "alvo": "derivação das abas de Agendamentos a partir da sessão e dos add-ons",
       "fontes": [],
       "funcoes": [],
       "codigos": [],
       "superficie": null,
       "extrair": false,
-      "prova": "Todos os itens aparecem para qualquer tenant_admin : nem o add-on appointment_analytics nem canViewSensitiveData escondem item. É o que a especificação do menu decide — visibilidade por plano está fora de escopo , a §3.5 diz que todo item é apresentado a qualquer admin autenticado, e o ADR-004 explica por quê: \"visibilidade de interface não é controle de segurança e não impede chamadas diretas às rotas\" . A fronteira é a API: GET /dashboard/appointments/analytics responde 400 a quem não tem o add-on. O teste registra essa divisão de responsabilidade.",
+      "prova": "As abas de Agendamentos não dependem de add-on nem de canViewSensitiveData : a lista é a mesma para qualquer tenant_admin do tenant que contratou o módulo. O que esconde item de menu é o módulo do plano, e isso é o UNIT-MN-03 . O ADR-004 continua valendo nos dois casos: \"visibilidade de interface não é controle de segurança e não impede chamadas diretas às rotas\" — a fronteira é a API, que responde 403 a quem não contratou.",
       "literais": [
-        "fora de escopo",
+        "item de menu",
         "visibilidade de interface não é controle de segurança e não impede chamadas diretas às rotas"
       ],
       "campos": [
-        "tenant_admin",
-        "appointment_analytics",
         "canViewSensitiveData",
-        "GET /dashboard/appointments/analytics",
-        "400"
+        "tenant_admin",
+        "403"
       ],
       "relacao": [
         "API-MN-03"
       ],
       "relacaoNota": null,
+      "naoVerificavel": null
+    },
+    {
+      "id": "UNIT-MN-03",
+      "modulo": "MN",
+      "moduloNome": "Menu e navegação",
+      "camada": "UNIT",
+      "prioridade": "P1",
+      "alvo": "hasModule() e showsContentGroup() · apps/dashboard/lib/navigation.ts",
+      "fontes": [],
+      "funcoes": [
+        "hasModule",
+        "showsContentGroup"
+      ],
+      "codigos": [
+        "apps/dashboard/lib/navigation.ts"
+      ],
+      "superficie": null,
+      "extrair": false,
+      "prova": "O item só aparece se o módulo está em enabledModules da sessão: o plano Beta (marca, banners, clientes, códigos e agenda) mostra Agendamentos e Clientes e esconde Catálogo, Formulários, Grupos, Pacotes e Privacidade. Lista ausente mostra tudo — um contrato antigo, sem o campo, não pode apagar o menu inteiro; lista presente vale , inclusive vazia. O grupo CONTEÚDO some quando nenhum item dele sobra. Segurança segue na API (403 do RequiresModuleGuard ), ver ADR-002 dos Planos.",
+      "literais": [],
+      "campos": [
+        "enabledModules",
+        "RequiresModuleGuard"
+      ],
+      "relacao": [],
+      "relacaoNota": "API-PLAN-MOD",
       "naoVerificavel": null
     }
   ]
