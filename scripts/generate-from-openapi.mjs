@@ -155,6 +155,8 @@ const PRESERVED = new Set([
 	"core/src/services/public/postPublicRescheduleAppointment.service.ts",
 	// Disputa da última vaga: não assere status, ver caso AG-16.
 	"core/src/services/public/postPublicCreateAppointmentRace.service.ts",
+	// Mesma corrida, com e-mail repetido: não assere status, ver caso C-18.
+	"core/src/services/people/postCreatePersonRace.service.ts",
 	// Rotas de anonimização que não existem de propósito, ver caso AN-01.
 	"core/src/services/privacy/postAnonymizationRequest.service.ts",
 ])
