@@ -3375,7 +3375,7 @@
         200
       ],
       "precondicao": "Token do tenant A; pessoa, código e foto do tenant B",
-      "assercao": "A lista do A nunca traz pessoa do B; acesso direto por id do B dá 404",
+      "assercao": "A lista do A nunca traz pessoa do B; acesso direto por id do B dá 404 . Este caso só encontra o defeito rodando contra um ambiente no ar : em localhost e no CI a API conecta com a role certa e ele passa mesmo com o produto vulnerável. Foi o que aconteceu em develop — a API subiu conectada como superusuário, o Postgres deixou de aplicar RLS, e cada organização passou a ver o banco inteiro (144 pessoas para quem tinha 117). A causa ganhou guard no boot da API e na conferência do deploy; este caso é a checagem de fora.",
       "literais": [],
       "campos": [
         "404"

@@ -157,7 +157,14 @@ export const peopleC12 = {
 	expectedStatus: "revoked",
 }
 
-/** `API-C-XT` — isolamento entre tenants. */
+/**
+ * `API-C-XT` — isolamento entre tenants.
+ *
+ * Só encontra o defeito contra um ambiente **no ar**: em localhost e no CI a
+ * API conecta com `application_user` e o caso passa mesmo com o produto
+ * vulnerável. Em develop a API subiu como superusuário — o Postgres não aplica
+ * RLS a superusuário — e cada organização passou a enxergar o banco inteiro.
+ */
 export const peopleCXT = {
 	...peopleDefaults,
 	casePrefix: "[C-XT]",
